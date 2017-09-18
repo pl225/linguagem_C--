@@ -13,6 +13,12 @@ struct atributos
 	string traducao;
 };
 
+string proximaVariavelTemporaria () {
+	static int n = 0;
+	n++;
+	return to_string(n);
+}
+
 int yylex(void);
 void yyerror(string);
 %}
@@ -24,7 +30,8 @@ void yyerror(string);
 
 %start S
 
-%left '+'
+%left '+' '-'
+%left '*' '/'
 
 %%
 
@@ -60,13 +67,37 @@ ATRIBUICAO  : TK_TIPO_FLUT32 TK_ID '=' TK_NUM
 
 E 			: E '+' E
 			{
-				$$.traducao = $1.traducao + $3.traducao + "\ta = b + c;\n";
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				$$.traducao = $1.traducao + $3.traducao + '\t' + $$.label + " = " + $1.label +  " + " + $3.label + ";\n";
+			}
+			|
+			E '-' E
+			{
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				$$.traducao = $1.traducao + $3.traducao + '\t' + $$.label + " = " + $1.label +  " - " + $3.label + ";\n";
+			}
+			|
+			E '*' E
+			{
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				$$.traducao = $1.traducao + $3.traducao + '\t' + $$.label + " = " + $1.label +  " * " + $3.label + ";\n";
+			}
+			|
+			E '/' E
+			{
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				$$.traducao = $1.traducao + $3.traducao + '\t' + $$.label + " = " + $1.label +  " / " + $3.label + ";\n";
 			}
 			| TK_NUM
 			{
-				$$.traducao = "\ta = " + $1.traducao + ";\n";
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				$$.traducao = '\t' + $$.label + " = " + $1.traducao + ";\n";
 			}
-			| TK_ID
+			| TK_ID 
+			{
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				$$.traducao = '\t' + $$.label + " = " + $1.label + ";\n";
+			}
 			;
 
 %%
