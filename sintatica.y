@@ -93,6 +93,18 @@ E 			: E '+' E
 				$$.label = "tmp" + proximaVariavelTemporaria();
 				$$.traducao = '\t' + $$.label + " = " + $1.traducao + ";\n";
 			}
+			|
+			'-' E 
+			{
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				$$.traducao = $2.traducao + '\t' + $$.label + " = -" + $2.label + ";\n";
+			}
+			|
+			'(' E ')'
+			{
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				$$.traducao = $2.traducao + '\t' + $$.label + " = " + $2.label + ";\n";
+			}
 			| TK_ID 
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
