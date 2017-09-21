@@ -81,6 +81,8 @@ Retorna "retorna"
 
 {Atribui} { return *yytext; }
 
+{MaiorQue}|{MaiorOuIgualQue}|{MenorQue}|{MenorOuIgualQue}|{Diferente}|{Igual} { yylval.traducao = yytext; return TK_RELACIONAL; }
+
 "main"		{return TK_MAIN;}
 
 "int"		{return TK_TIPO_INT;}
