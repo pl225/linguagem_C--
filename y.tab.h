@@ -56,8 +56,9 @@ extern int yydebug;
     TK_HEX = 266,
     TK_OCT = 267,
     TK_RELACIONAL = 268,
-    TK_FIM = 269,
-    TK_ERROR = 270
+    TK_LOGICO = 269,
+    TK_FIM = 270,
+    TK_ERROR = 271
   };
 #endif
 /* Tokens.  */
@@ -72,8 +73,9 @@ extern int yydebug;
 #define TK_HEX 266
 #define TK_OCT 267
 #define TK_RELACIONAL 268
-#define TK_FIM 269
-#define TK_ERROR 270
+#define TK_LOGICO 269
+#define TK_FIM 270
+#define TK_ERROR 271
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

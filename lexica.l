@@ -82,6 +82,7 @@ Retorna "retorna"
 {Atribui} { return *yytext; }
 
 {MaiorQue}|{MaiorOuIgualQue}|{MenorQue}|{MenorOuIgualQue}|{Diferente}|{Igual} { yylval.traducao = yytext; return TK_RELACIONAL; }
+{And}|{Or}|{Not} { yylval.traducao = yytext; return TK_LOGICO; }
 
 "main"		{return TK_MAIN;}
 

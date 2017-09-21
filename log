@@ -1,0 +1,22 @@
+/*Compilador FOCA*/
+#include <iostream>
+#include<string.h>
+#include<stdio.h>
+int main(void)
+{
+	tmp1 = 4;
+	tmp2 = 2;
+	tmp3 = tmp1 == tmp2;
+	tmp4 = tmp3;
+	tmp5 = 2;
+	tmp6 = 7;
+	tmp7 = tmp5 ~= tmp6;
+	tmp8 = 4;
+	tmp9 = 7;
+	tmp10 = tmp8 > tmp9;
+	tmp11 = tmp10;
+	tmp12 = tmp7 e tmp11;
+	tmp13 = tmp12;
+	tmp14 = tmp4 ou tmp13;
+	return 0;
+}

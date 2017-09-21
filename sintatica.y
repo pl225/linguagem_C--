@@ -26,13 +26,14 @@ void yyerror(string);
 %token TK_NUM
 %token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLUT32 TK_TIPO_FLUT64  TK_TIPO_BOOL
 %token TK_BIN TK_HEX TK_OCT
-%token TK_RELACIONAL
+%token TK_RELACIONAL TK_LOGICO
 %token TK_FIM TK_ERROR
 
 %start S
 
 %left '+' '-'
 %left '*' '/'
+%left TK_LOGICO TK_RELACIONAL
 
 %%
 
@@ -58,7 +59,7 @@ COMANDOS	: COMANDO COMANDOS
 
 COMANDO 	: E ';'
 			| ATRIBUICAO ';'
-			| R ';'
+			| L ';'
 			;
 
 ATRIBUICAO  : TK_TIPO_FLUT32 TK_ID '=' TK_NUM
@@ -120,6 +121,22 @@ R			: E TK_RELACIONAL E
 				$$.traducao = $1.traducao + $3.traducao + '\t' + 
 				$$.label + " = " + $1.label + ' ' + $2.traducao + ' ' + $3.label + ";\n";
 			}
+			;
+
+L 			: L TK_LOGICO L
+			{
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				$$.traducao = $1.traducao + $3.traducao + '\t' + $$.label + " = " + $1.label + ' ' + $2.traducao + ' ' + $3.label + ";\n";				
+			}
+			|
+			'(' L ')'
+			{
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				$$.traducao = $2.traducao + '\t' + $$.label + " = " + $2.label + ";\n";
+			}
+			|
+			R
+			;
 
 %%
 
