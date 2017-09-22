@@ -4,19 +4,18 @@
 #include<stdio.h>
 int main(void)
 {
-	float tmp1 = 4.7;
-	int tmp2 = 2;
-	int tmp3 = tmp1==tmp2;
-	int tmp4 = tmp3;
-	int tmp5 = 2;
-	float tmp6 = 7.8;
-	int tmp7 = tmp5 != tmp6;
-	float tmp8 = 4.9;
-	int tmp9 = 7;
-	int tmp10 = tmp8>tmp9;
-	int tmp11 = tmp10;
-	int tmp12 = tmp7 && tmp11;
-	int tmp13 = tmp12;
-	int tmp14 = tmp4 || tmp13;
+	float tmp1 = 4.8;
+	int tmp2 = 7;
+	int tmp3 = 2;
+	tmp4 = -tmp3;
+	float tmp5 = 2.8;
+	tmp6 = tmp4+tmp5;
+	tmp7 = tmp6;
+	tmp8 = tmp2*tmp7;
+	int tmp9 = 5;
+	tmp10 = tmp8*tmp9;
+	int tmp11 = 3;
+	tmp12 = tmp10/tmp11;
+	tmp13 = tmp1+tmp12;
 	return 0;
 }

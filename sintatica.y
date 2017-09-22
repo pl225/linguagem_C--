@@ -52,8 +52,8 @@ void yyerror(string);
 
 %start S
 
-%left '+' '-'
-%left '*' '/'
+%left TK_MAIS_MENOS
+%left TK_MULTI_DIV
 %left TK_LOGICO TK_RELACIONAL
 
 %%
@@ -89,37 +89,28 @@ ATRIBUICAO  : TK_TIPO_FLUT32 TK_ID '=' TK_NUM
 			}
 			;
 
-E 			: E '+' E
+E 			: E TK_MAIS_MENOS E
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = $1.traducao + $3.traducao + '\t' + $$.label + " = " + $1.label +  " + " + $3.label + ";\n";
+				$$.traducao = $1.traducao + $3.traducao + '\t' + $$.label + " = " + $1.label + 
+				$2.traducao + $3.label + ";\n";
 			}
 			|
-			E '-' E
+			E TK_MULTI_DIV E
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = $1.traducao + $3.traducao + '\t' + $$.label + " = " + $1.label +  " - " + $3.label + ";\n";
+				$$.traducao = $1.traducao + $3.traducao + '\t' + $$.label + " = " + $1.label + 
+				$2.traducao + $3.label + ";\n";
 			}
-			|
-			E '*' E
-			{
-				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = $1.traducao + $3.traducao + '\t' + $$.label + " = " + $1.label +  " * " + $3.label + ";\n";
-			}
-			|
-			E '/' E
-			{
-				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = $1.traducao + $3.traducao + '\t' + $$.label + " = " + $1.label +  " / " + $3.label + ";\n";
-			}
-			| TK_NUM
+			| 
+			TK_NUM
 			{
 				$$.tipo = decideTipo($1.tipo);
 				$$.label = "tmp" + proximaVariavelTemporaria();
 				$$.traducao = '\t' + $$.tipo + $$.label + " = " + $1.traducao + ";\n";
 			}
 			|
-			'-' E 
+			TK_MAIS_MENOS E 
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
 				$$.traducao = $2.traducao + '\t' + $$.label + " = -" + $2.label + ";\n";

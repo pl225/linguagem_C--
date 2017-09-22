@@ -41,8 +41,8 @@ Goto "vapara"
 
 
 Soma "+"
-Subtraçao "-"
-Multiplicaçao "*"
+Subtracao "-"
+Multiplicacao "*"
 Divisao "/"
 Modulo "%"
 Igual "=="
@@ -76,7 +76,8 @@ Retorna "retorna"
 
 {DELIM} 	{}
 
-[+\-*/]		{ return *yytext; }
+{Soma}|{Subtracao} { yylval.traducao = yytext; return TK_MAIS_MENOS; }
+{Divisao}|{Multiplicacao} { yylval.traducao = yytext; return TK_MULTI_DIV; }
 
 [(){}[\];,]	{ return *yytext; }
 
