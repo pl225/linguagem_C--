@@ -10,6 +10,7 @@ INT [1-9][0-9]*|0
 BIN [b][0-1]+
 HEX [0x]([A-F]|[0-9])*
 FLOAT [1-9][0-9]*[\.][0-9]+|0[\.][0-9]+
+CHAR \'(\\.|[^'])\'
 
 True "verdadeiro"
 False "falso"
@@ -88,17 +89,19 @@ Retorna "retorna"
 
 "int"		{return TK_TIPO_INT;}
 
-{INT}   {yylval.traducao = yytext; return TK_NUM; };
+{INT}   {yylval.traducao = yytext; yylval.tipo = INT; return TK_NUM; }
 
-{BIN} {yylval.traducao = yytext; return TK_BIN; };
+{BIN} {yylval.traducao = yytext; return TK_BIN; }
 
-{OCT} {yylval.traducao = yytext; return TK_OCT; };
+{OCT} {yylval.traducao = yytext; return TK_OCT; }
 
-{HEX} {yylval.traducao = yytext; return TK_HEX; };
+{HEX} {yylval.traducao = yytext; return TK_HEX; }
 
-{FLOAT} { yylval.traducao = yytext; return TK_NUM; }
+{FLOAT} { yylval.traducao = yytext; yylval.tipo = FLUT32; return TK_NUM; }
 
-{True}|{False} {yylval.traducao = yytext; return TK_TIPO_BOOL; };  
+{True}|{False} {yylval.traducao = yytext; yylval.tipo = BOOL; return TK_TIPO_BOOL; }
+
+{CHAR} {yylval.traducao = yytext; yylval.tipo = CHAR; return TK_TIPO_CHAR; }
 
 {PontoFlutuante} {yylval.traducao = yytext; return TK_TIPO_FLUT32; }
 

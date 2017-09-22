@@ -4,6 +4,10 @@
 #include <sstream>
 
 #define YYSTYPE atributos
+#define INT "0"
+#define FLUT32 "1"
+#define BOOL "2"
+#define CHAR "3"
 
 using namespace std;
 
@@ -11,6 +15,7 @@ struct atributos
 {
 	string label;
 	string traducao;
+	string tipo;
 };
 
 string proximaVariavelTemporaria () {
@@ -19,12 +24,28 @@ string proximaVariavelTemporaria () {
 	return to_string(n);
 }
 
+string decideTipo (string tipo) {
+	if (tipo == INT) return "int ";
+	else if (tipo == FLUT32) return "float ";
+	else if (tipo == BOOL) return "int ";
+	else if (tipo == CHAR) return "char ";
+}
+
+string decideOperadorRelacional (string op) {
+	if (op == "e") return " && ";
+	else if (op == "ou") return " || ";
+	else if (op == "~=") return " != ";
+	else if (op == "~") return " ! ";
+	else return op;
+}
+
 int yylex(void);
 void yyerror(string);
 %}
 
 %token TK_NUM
 %token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLUT32 TK_TIPO_FLUT64  TK_TIPO_BOOL
+%token TK_TIPO_CHAR TK_MAIS_MENOS TK_MULTI_DIV
 %token TK_BIN TK_HEX TK_OCT
 %token TK_RELACIONAL TK_LOGICO
 %token TK_FIM TK_ERROR
@@ -93,8 +114,9 @@ E 			: E '+' E
 			}
 			| TK_NUM
 			{
+				$$.tipo = decideTipo($1.tipo);
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = '\t' + $$.label + " = " + $1.traducao + ";\n";
+				$$.traducao = '\t' + $$.tipo + $$.label + " = " + $1.traducao + ";\n";
 			}
 			|
 			'-' E 
@@ -118,21 +140,22 @@ E 			: E '+' E
 R			: E TK_RELACIONAL E
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = $1.traducao + $3.traducao + '\t' + 
-				$$.label + " = " + $1.label + ' ' + $2.traducao + ' ' + $3.label + ";\n";
+				$$.traducao = $1.traducao + $3.traducao + '\t' + "int " +
+				$$.label + " = " + $1.label + decideOperadorRelacional($2.traducao) + $3.label + ";\n";
 			}
 			;
 
 L 			: L TK_LOGICO L
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = $1.traducao + $3.traducao + '\t' + $$.label + " = " + $1.label + ' ' + $2.traducao + ' ' + $3.label + ";\n";				
+				$$.traducao = $1.traducao + $3.traducao + '\t' + "int " + $$.label + " = " + $1.label + 
+				decideOperadorRelacional($2.traducao) + $3.label + ";\n";				
 			}
 			|
 			'(' L ')'
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = $2.traducao + '\t' + $$.label + " = " + $2.label + ";\n";
+				$$.traducao = $2.traducao + '\t' + "int " + $$.label + " = " + $2.label + ";\n";
 			}
 			|
 			R

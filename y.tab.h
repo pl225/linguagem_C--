@@ -52,13 +52,16 @@ extern int yydebug;
     TK_TIPO_FLUT32 = 262,
     TK_TIPO_FLUT64 = 263,
     TK_TIPO_BOOL = 264,
-    TK_BIN = 265,
-    TK_HEX = 266,
-    TK_OCT = 267,
-    TK_RELACIONAL = 268,
-    TK_LOGICO = 269,
-    TK_FIM = 270,
-    TK_ERROR = 271
+    TK_TIPO_CHAR = 265,
+    TK_MAIS_MENOS = 266,
+    TK_MULTI_DIV = 267,
+    TK_BIN = 268,
+    TK_HEX = 269,
+    TK_OCT = 270,
+    TK_RELACIONAL = 271,
+    TK_LOGICO = 272,
+    TK_FIM = 273,
+    TK_ERROR = 274
   };
 #endif
 /* Tokens.  */
@@ -69,13 +72,16 @@ extern int yydebug;
 #define TK_TIPO_FLUT32 262
 #define TK_TIPO_FLUT64 263
 #define TK_TIPO_BOOL 264
-#define TK_BIN 265
-#define TK_HEX 266
-#define TK_OCT 267
-#define TK_RELACIONAL 268
-#define TK_LOGICO 269
-#define TK_FIM 270
-#define TK_ERROR 271
+#define TK_TIPO_CHAR 265
+#define TK_MAIS_MENOS 266
+#define TK_MULTI_DIV 267
+#define TK_BIN 268
+#define TK_HEX 269
+#define TK_OCT 270
+#define TK_RELACIONAL 271
+#define TK_LOGICO 272
+#define TK_FIM 273
+#define TK_ERROR 274
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
