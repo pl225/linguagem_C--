@@ -39,6 +39,11 @@ string decideOperadorRelacional (string op) {
 	else return op;
 }
 
+string decideValorBooleano (string b) {
+	if (b == "falso") return "0";
+	else if (b == "verdadeiro") return "1";
+}
+
 int yylex(void);
 void yyerror(string);
 %}
@@ -133,6 +138,12 @@ R			: E TK_RELACIONAL E
 				$$.label = "tmp" + proximaVariavelTemporaria();
 				$$.traducao = $1.traducao + $3.traducao + '\t' + "int " +
 				$$.label + " = " + $1.label + decideOperadorRelacional($2.traducao) + $3.label + ";\n";
+			}
+			| R TK_RELACIONAL TK_TIPO_BOOL 
+			{
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				$$.traducao = $1.traducao + '\t' + "int " + $$.label + " = " + $1.label + 
+				"==" + decideValorBooleano($3.traducao) + ";\n";
 			}
 			;
 
