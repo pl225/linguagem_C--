@@ -98,22 +98,48 @@ ATRIBUICAO  : TK_TIPO_FLUT32 TK_ID '=' TK_NUM
 E 			: E TK_MAIS_MENOS E
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = $1.traducao + $3.traducao + '\t' + $$.label + " = " + $1.label + 
-				$2.traducao + $3.label + ";\n";
+				$$.traducao = $1.traducao + $3.traducao;
+				if ($1.tipo == INT && $3.tipo == FLUT32) {
+					string varCast = "tmp" + proximaVariavelTemporaria();
+					$$.tipo = FLUT32;
+					$$.traducao += '\t' + varCast + " = (float) " + $1.label + ";\n" +
+					'\t' + $$.label + " = " + varCast + $2.traducao + $3.label + ";\n";
+				} else if ($1.tipo == FLUT32 && $3.tipo == INT) {
+					string varCast = "tmp" + proximaVariavelTemporaria();
+					$$.tipo = FLUT32;
+					$$.traducao += '\t' + varCast + " = (float) " + $3.label + ";\n" +
+					'\t' + $$.label + " = " + varCast + $2.traducao + $1.label + ";\n";
+				} else {
+					$$.tipo = $1.tipo;
+					$$.traducao += '\t' + $$.label + " = " + $1.label + $2.traducao + $3.label + ";\n";
+				}
 			}
 			|
 			E TK_MULTI_DIV E
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = $1.traducao + $3.traducao + '\t' + $$.label + " = " + $1.label + 
-				$2.traducao + $3.label + ";\n";
+				$$.traducao = $1.traducao + $3.traducao;
+				if ($1.tipo == INT && $3.tipo == FLUT32) {
+					string varCast = "tmp" + proximaVariavelTemporaria();
+					$$.tipo = FLUT32;
+					$$.traducao += '\t' + varCast + " = (float) " + $1.label + ";\n" +
+					'\t' + $$.label + " = " + varCast + $2.traducao + $3.label + ";\n";
+				} else if ($1.tipo == FLUT32 && $3.tipo == INT) {
+					string varCast = "tmp" + proximaVariavelTemporaria();
+					$$.tipo = FLUT32;
+					$$.traducao += '\t' + varCast + " = (float) " + $3.label + ";\n" +
+					'\t' + $$.label + " = " + varCast + $2.traducao + $1.label + ";\n";
+				} else {
+					$$.tipo = $1.tipo;
+					$$.traducao += '\t' + $$.label + " = " + $1.label + $2.traducao + $3.label + ";\n";
+				}
 			}
 			| 
 			TK_NUM
 			{
-				$$.tipo = decideTipo($1.tipo);
+				$$.tipo = $1.tipo;
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = '\t' + $$.tipo + $$.label + " = " + $1.traducao + ";\n";
+				$$.traducao = '\t' + decideTipo($1.tipo) + $$.label + " = " + $1.traducao + ";\n";
 			}
 			|
 			TK_MAIS_MENOS E 
@@ -136,11 +162,11 @@ E 			: E TK_MAIS_MENOS E
 			TK_CAST E
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.tipo = decideTipo($1.tipo);
-				$$.traducao = $2.traducao + '\t' + $$.tipo + $$.label + " = ( " + $$.tipo + " ) " + $2.label + ";\n";
+				$$.tipo = $1.tipo;
+				$$.traducao = $2.traducao + '\t' + $$.tipo + $$.label + " = ( " + decideTipo($1.tipo) + " ) " + $2.label + ";\n";
 			}
 			;
-			
+
 
 R			: E TK_RELACIONAL E
 			{

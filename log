@@ -5,8 +5,18 @@
 int main(void)
 {
 	int tmp1 = 4;
-	float tmp2 = ( float  ) tmp1;
-	float tmp3 = 2.8;
-	tmp4 = tmp2+tmp3;
+	float tmp2 = 2.8;
+	tmp4 = (float) tmp1;
+	tmp3 = tmp4+tmp2;
+	int tmp5 = 12;
+	float tmp6 = 7.4;
+	tmp8 = (float) tmp5;
+	tmp7 = tmp8/tmp6;
+	int tmp9 = 3;
+	tmp11 = (float) tmp9;
+	tmp10 = tmp11*tmp7;
+	tmp12 = tmp3+tmp10;
+	float tmp13 = 4.7;
+	tmp14 = tmp12+tmp13;
 	return 0;
 }
