@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <map>
 
 #define YYSTYPE atributos
 #define INT "0"
@@ -17,6 +18,16 @@ struct atributos
 	string traducao;
 	string tipo;
 };
+
+typedef struct
+{
+	string id;
+	string tipo;	
+} variavelTemporaria;
+
+typedef map<string, variavelTemporaria> mapT;
+
+static mapT mapaTemporario;
 
 string proximaVariavelTemporaria () {
 	static int n = 0;
@@ -42,6 +53,13 @@ string decideOperadorRelacional (string op) {
 string decideValorBooleano (string b) {
 	if (b == "falso") return "0";
 	else if (b == "verdadeiro") return "1";
+}
+
+string declaraVariaveisTemporarias () {
+	string s = "";
+	for (mapT::iterator it = mapaTemporario.begin(); it!=mapaTemporario.end(); ++it)
+    	s += '\t' + decideTipo(it->second.tipo) + ' ' + it->second.id + ";\n";
+    return s;
 }
 
 int yylex(void);
@@ -70,7 +88,7 @@ S 			: TK_TIPO_INT TK_MAIN '(' ')' BLOCO
 			}
 			| BLOCO
 			{
-				cout << "/*Compilador FOCA*/\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n" << $1.traducao << "\treturn 0;\n}" << endl; 
+				cout << "/*Compilador FOCA*/\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n" << declaraVariaveisTemporarias() + $1.traducao << "\treturn 0;\n}" << endl; 
 			}
 			;
 
@@ -99,18 +117,21 @@ E 			: E TK_MAIS_MENOS E
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
 				$$.traducao = $1.traducao + $3.traducao;
-				if ($1.tipo == INT && $3.tipo == FLUT32) {
+				if ($1.tipo != $3.tipo) {
 					string varCast = "tmp" + proximaVariavelTemporaria();
 					$$.tipo = FLUT32;
-					$$.traducao += '\t' + varCast + " = (float) " + $1.label + ";\n" +
-					'\t' + $$.label + " = " + varCast + $2.traducao + $3.label + ";\n";
-				} else if ($1.tipo == FLUT32 && $3.tipo == INT) {
-					string varCast = "tmp" + proximaVariavelTemporaria();
-					$$.tipo = FLUT32;
-					$$.traducao += '\t' + varCast + " = (float) " + $3.label + ";\n" +
-					'\t' + $$.label + " = " + varCast + $2.traducao + $1.label + ";\n";
+					mapaTemporario[varCast] = { .id = varCast, .tipo = FLUT32 };
+					mapaTemporario[$$.label] = { .id = $$.label, .tipo = FLUT32 };
+					if ($1.tipo == INT && $3.tipo == FLUT32) {
+						$$.traducao += '\t' + varCast + " = (float) " + $1.label + ";\n" +
+						'\t' + $$.label + " = " + varCast + $2.traducao + $3.label + ";\n";
+					} else if ($1.tipo == FLUT32 && $3.tipo == INT) {
+						$$.traducao += '\t' + varCast + " = (float) " + $3.label + ";\n" +
+						'\t' + $$.label + " = " + varCast + $2.traducao + $1.label + ";\n";
+					}
 				} else {
 					$$.tipo = $1.tipo;
+					mapaTemporario[$$.label] = { .id = $$.label, .tipo = $1.tipo };
 					$$.traducao += '\t' + $$.label + " = " + $1.label + $2.traducao + $3.label + ";\n";
 				}
 			}
@@ -119,18 +140,21 @@ E 			: E TK_MAIS_MENOS E
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
 				$$.traducao = $1.traducao + $3.traducao;
-				if ($1.tipo == INT && $3.tipo == FLUT32) {
+				if ($1.tipo != $3.tipo) {
 					string varCast = "tmp" + proximaVariavelTemporaria();
 					$$.tipo = FLUT32;
-					$$.traducao += '\t' + varCast + " = (float) " + $1.label + ";\n" +
-					'\t' + $$.label + " = " + varCast + $2.traducao + $3.label + ";\n";
-				} else if ($1.tipo == FLUT32 && $3.tipo == INT) {
-					string varCast = "tmp" + proximaVariavelTemporaria();
-					$$.tipo = FLUT32;
-					$$.traducao += '\t' + varCast + " = (float) " + $3.label + ";\n" +
-					'\t' + $$.label + " = " + varCast + $2.traducao + $1.label + ";\n";
+					mapaTemporario[varCast] = { .id = varCast, .tipo = FLUT32 };
+					mapaTemporario[$$.label] = { .id = $$.label, .tipo = FLUT32 };
+					if ($1.tipo == INT && $3.tipo == FLUT32) {
+						$$.traducao += '\t' + varCast + " = (float) " + $1.label + ";\n" +
+						'\t' + $$.label + " = " + varCast + $2.traducao + $3.label + ";\n";
+					} else if ($1.tipo == FLUT32 && $3.tipo == INT) {
+						$$.traducao += '\t' + varCast + " = (float) " + $3.label + ";\n" +
+						'\t' + $$.label + " = " + varCast + $2.traducao + $1.label + ";\n";
+					}
 				} else {
 					$$.tipo = $1.tipo;
+					mapaTemporario[$$.label] = { .id = $$.label, .tipo = $1.tipo };
 					$$.traducao += '\t' + $$.label + " = " + $1.label + $2.traducao + $3.label + ";\n";
 				}
 			}
@@ -139,7 +163,8 @@ E 			: E TK_MAIS_MENOS E
 			{
 				$$.tipo = $1.tipo;
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = '\t' + decideTipo($1.tipo) + $$.label + " = " + $1.traducao + ";\n";
+				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+				$$.traducao = '\t' + $$.label + " = " + $1.traducao + ";\n";
 			}
 			|
 			TK_MAIS_MENOS E 
@@ -163,7 +188,8 @@ E 			: E TK_MAIS_MENOS E
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
 				$$.tipo = $1.tipo;
-				$$.traducao = $2.traducao + '\t' + $$.tipo + $$.label + " = ( " + decideTipo($1.tipo) + " ) " + $2.label + ";\n";
+				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+				$$.traducao = $2.traducao + '\t' + $$.label + " = ( " + decideTipo($1.tipo) + " ) " + $2.label + ";\n";
 			}
 			;
 
