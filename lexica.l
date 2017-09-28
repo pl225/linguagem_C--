@@ -26,6 +26,8 @@ Caractere "char"
 String "string"
 Vazio "vazio"
 
+Castint "(int)"
+Castflut32 "(flut32)"
 
 If "se"
 Else "senao"
@@ -89,6 +91,9 @@ Retorna "retorna"
 "main"		{return TK_MAIN;}
 
 "int"		{return TK_TIPO_INT;}
+
+{Castint} { yylval.tipo = INT; return TK_CAST; }
+{Castflut32} { yylval.tipo = FLUT32; return TK_CAST; }
 
 {INT}   {yylval.traducao = yytext; yylval.tipo = INT; return TK_NUM; }
 

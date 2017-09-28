@@ -61,7 +61,8 @@ extern int yydebug;
     TK_RELACIONAL = 271,
     TK_LOGICO = 272,
     TK_FIM = 273,
-    TK_ERROR = 274
+    TK_ERROR = 274,
+    TK_CAST = 275
   };
 #endif
 /* Tokens.  */
@@ -82,6 +83,7 @@ extern int yydebug;
 #define TK_LOGICO 272
 #define TK_FIM 273
 #define TK_ERROR 274
+#define TK_CAST 275
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

@@ -60,6 +60,7 @@ void yyerror(string);
 %left TK_MAIS_MENOS
 %left TK_MULTI_DIV
 %left TK_LOGICO TK_RELACIONAL
+%left TK_CAST
 
 %%
 
@@ -131,7 +132,15 @@ E 			: E TK_MAIS_MENOS E
 				$$.label = "tmp" + proximaVariavelTemporaria();
 				$$.traducao = '\t' + $$.label + " = " + $1.label + ";\n";
 			}
+			|
+			TK_CAST E
+			{
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				$$.tipo = decideTipo($1.tipo);
+				$$.traducao = $2.traducao + '\t' + $$.tipo + $$.label + " = ( " + $$.tipo + " ) " + $2.label + ";\n";
+			}
 			;
+			
 
 R			: E TK_RELACIONAL E
 			{

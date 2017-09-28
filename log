@@ -4,11 +4,9 @@
 #include<stdio.h>
 int main(void)
 {
-	float tmp1 = 4.8;
-	int tmp2 = 7;
-	tmp3 = tmp1+tmp2;
-	int tmp4 = 12;
-	int tmp5 = tmp3>tmp4;
-	int tmp6 = tmp5==0;
+	int tmp1 = 4;
+	float tmp2 = ( float  ) tmp1;
+	float tmp3 = 2.8;
+	tmp4 = tmp2+tmp3;
 	return 0;
 }
