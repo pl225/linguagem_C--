@@ -392,9 +392,9 @@ static yyconst flex_int16_t yy_accept[88] =
         0,    0,    0,    0,   22,   23,    0,   17,    7,   24,
        21,   24,   24,   24,   24,   24,   24,    8,   24,   23,
        20,   20,    0,    0,   18,   18,   24,   24,   24,   24,
-       10,   24,   24,    0,    0,   15,   16,   24,   24,    9,
-       24,    0,   11,   19,   24,   24,   24,    0,   13,   14,
-       24,    0,   24,   12,   24,   24,    0
+       12,   24,   24,    0,    0,   15,   16,   24,   24,    9,
+       24,    0,   10,   19,   24,   24,   24,    0,   13,   14,
+       24,    0,   24,   11,   24,   24,    0
     } ;
 
 static yyconst YY_CHAR yy_ec[256] =
@@ -860,37 +860,37 @@ YY_RULE_SETUP
 case 10:
 YY_RULE_SETUP
 #line 93 "lexica.l"
-{return TK_TIPO_INT;}
+{ yylval.tipo = INT; return TK_CAST; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 95 "lexica.l"
-{ yylval.tipo = INT; return TK_CAST; }
+#line 94 "lexica.l"
+{ yylval.tipo = FLUT32; return TK_CAST; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 96 "lexica.l"
-{ yylval.tipo = FLUT32; return TK_CAST; }
+{yylval.traducao = yytext; yylval.tipo = INT; return TK_TIPO_INT;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 98 "lexica.l"
-{yylval.traducao = yytext; return TK_TIPO_FLUT32; }
+{yylval.traducao = yytext; yylval.tipo = FLUT32; return TK_TIPO_FLUT32; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 100 "lexica.l"
-{yylval.traducao = yytext; return TK_TIPO_FLUT64; }
+{yylval.traducao = yytext; yylval.tipo = FLUT32; return TK_TIPO_FLUT64; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 102 "lexica.l"
-{yylval.traducao = yytext; return TK_TIPO_BOOL; }
+{yylval.traducao = yytext; yylval.tipo = BOOL; return TK_TIPO_BOOL; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 104 "lexica.l"
-{yylval.traducao = yytext; return TK_TIPO_CHAR; }
+{yylval.traducao = yytext; yylval.tipo = CHAR; return TK_TIPO_CHAR; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP

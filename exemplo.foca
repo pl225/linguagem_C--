@@ -1,3 +1,6 @@
 {
-	-4 + 7.4 -8 +1200;
+	int ola = 4;
+	char palavra = 't';
+	flut32 decimal = 23.567;
+	bool veracidade = falso;
 }

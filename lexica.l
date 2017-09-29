@@ -88,20 +88,20 @@ Retorna "retorna"
 {MaiorQue}|{MaiorOuIgualQue}|{MenorQue}|{MenorOuIgualQue}|{Diferente}|{Igual} { yylval.traducao = yytext; return TK_RELACIONAL; }
 {And}|{Or}|{Not} { yylval.traducao = yytext; return TK_LOGICO; }
 
-"main"		{return TK_MAIN;}
-
-"int"		{return TK_TIPO_INT;}
+"main"	{return TK_MAIN;}
 
 {Castint} { yylval.tipo = INT; return TK_CAST; }
 {Castflut32} { yylval.tipo = FLUT32; return TK_CAST; }
 
-{PontoFlutuante} {yylval.traducao = yytext; return TK_TIPO_FLUT32; }
+{Inteiro}		{yylval.traducao = yytext; yylval.tipo = INT; return TK_TIPO_INT;}
 
-{PontoFlutuanteP} {yylval.traducao = yytext; return TK_TIPO_FLUT64; }
+{PontoFlutuante} {yylval.traducao = yytext; yylval.tipo = FLUT32; return TK_TIPO_FLUT32; }
 
-{Booleano} {yylval.traducao = yytext; return TK_TIPO_BOOL; }
+{PontoFlutuanteP} {yylval.traducao = yytext; yylval.tipo = FLUT32; return TK_TIPO_FLUT64; }
 
-{Caractere} {yylval.traducao = yytext; return TK_TIPO_CHAR; }
+{Booleano} {yylval.traducao = yytext; yylval.tipo = BOOL; return TK_TIPO_BOOL; }
+
+{Caractere} {yylval.traducao = yytext; yylval.tipo = CHAR; return TK_TIPO_CHAR; }
 
 {INT}   {yylval.traducao = yytext; yylval.tipo = INT; return TK_NUM; }
 

@@ -4,27 +4,9 @@
 #include<stdio.h>
 int main(void)
 {
-	int  tmp1;
-	float  tmp10;
-	float  tmp11;
-	int  tmp2;
-	float  tmp3;
-	float  tmp4;
-	float  tmp5;
-	int  tmp6;
-	float  tmp7;
-	float  tmp8;
-	int  tmp9;
-	tmp1 = 4;
-	tmp2 = -tmp1;
-	tmp3 = 7.4;
-	tmp5 = (float) tmp2;
-	tmp4 = tmp5+tmp3;
-	tmp6 = 8;
-	tmp8 = (float) tmp6;
-	tmp7 = tmp8-tmp4;
-	tmp9 = 1200;
-	tmp11 = (float) tmp9;
-	tmp10 = tmp11+tmp7;
-	return 0;
+	int  ola = 4;
+	char  palavra = 't';
+	float  decimal = 23.567;
+	int  veracidade = falso;
+falso	return 0;
 }

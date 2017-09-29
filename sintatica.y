@@ -108,7 +108,6 @@ BLOCO		: '{' COMANDOS '}'
 
 COMANDOS	: COMANDO COMANDOS
 			{
-				$2.traducao = "";
 				$$.traducao = $1.traducao + $2.traducao;
 			}
 			|
@@ -121,8 +120,20 @@ COMANDO 	: E ';'
 
 DECLARACAO  : TK_TIPO_FLUT32 TK_ID '=' TK_NUM
 			{
-				$$.traducao = '\t' + $1.traducao + ' ' + $2.label + " = " + $4.traducao + ";\n";
+				$$.traducao = '\t' + decideTipo($1.tipo) + ' ' + $2.label + " = " + $4.traducao + ";\n";
 			}
+			| TK_TIPO_BOOL TK_ID '=' TK_BOOL
+      		{
+        		$$.traducao = '\t' + decideTipo($1.tipo) + ' ' + $2.label + " = " + $4.traducao + ";\n";
+      		}
+			| TK_TIPO_CHAR TK_ID '=' TK_CHAR
+      		{
+        		$$.traducao = '\t' + decideTipo($1.tipo) + ' ' + $2.label + " = " + $4.traducao + ";\n";
+      		}
+			| TK_TIPO_INT TK_ID '=' TK_NUM
+	      	{
+        		$$.traducao = '\t' + decideTipo($1.tipo) + ' ' + $2.label + " = " + $4.traducao + ";\n";
+      		}
 			;
 
 E 			: E TK_MAIS_MENOS E
