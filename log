@@ -37,5 +37,10 @@ int main(void)
 	tmp12 = tmp3+tmp10;
 	tmp13 = 4.7;
 	tmp14 = tmp12+tmp13;
-	return 0;
+	tmp15 = 5;
+	tmp16 = 8;
+	tmp17 = tmp15-tmp16;
+	tmp18 = 4;
+	tmp19 = tmp17-tmp18;
+4	return 0;
 }

@@ -99,17 +99,20 @@ BLOCO		: '{' COMANDOS '}'
 			;
 
 COMANDOS	: COMANDO COMANDOS
+			{
+				$$.traducao = $1.traducao + $2.traducao;
+			}
 			|
 			;
 
 COMANDO 	: E ';'
-			| ATRIBUICAO ';'
+			| DECLARACAO ';'
 			| L ';'
 			;
 
-ATRIBUICAO  : TK_TIPO_FLUT32 TK_ID '=' TK_NUM
+DECLARACAO  : TK_TIPO_FLUT32 TK_ID '=' TK_NUM
 			{
-				$$.traducao = '\t' + $1.traducao + ' ' + $2.label + " = " + $4.traducao + ";\n"; 
+				$$.traducao = '\t' + $1.traducao + ' ' + $2.label + " = " + $4.traducao + ";\n";
 			}
 			;
 
