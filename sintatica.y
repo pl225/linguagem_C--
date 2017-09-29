@@ -25,7 +25,15 @@ typedef struct
 	string tipo;	
 } variavelTemporaria;
 
+typedef struct 
+{
+	string id;
+	string tipo;
+	string temporario;
+} variavelDeclarada;
+
 typedef map<string, variavelTemporaria> mapT;
+typedef map<string, variavelDeclarada> mapV;
 
 static mapT mapaTemporario;
 
@@ -66,7 +74,7 @@ int yylex(void);
 void yyerror(string);
 %}
 
-%token TK_NUM
+%token TK_NUM TK_BOOL TK_CHAR
 %token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLUT32 TK_TIPO_FLUT64  TK_TIPO_BOOL
 %token TK_TIPO_CHAR TK_MAIS_MENOS TK_MULTI_DIV
 %token TK_BIN TK_HEX TK_OCT
@@ -106,6 +114,9 @@ COMANDOS	: COMANDO COMANDOS
 			;
 
 COMANDO 	: E ';'
+			{
+				$$.traducao = $1.traducao;
+			}
 			| DECLARACAO ';'
 			| L ';'
 			;
@@ -172,13 +183,17 @@ E 			: E TK_MAIS_MENOS E
 			|
 			TK_MAIS_MENOS E 
 			{
+				$$.tipo = $2.tipo;
 				$$.label = "tmp" + proximaVariavelTemporaria();
+				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				$$.traducao = $2.traducao + '\t' + $$.label + " = -" + $2.label + ";\n";
 			}
 			|
 			'(' E ')'
 			{
+				$$.tipo = $2.tipo;
 				$$.label = "tmp" + proximaVariavelTemporaria();
+				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				$$.traducao = $2.traducao + '\t' + $$.label + " = " + $2.label + ";\n";
 			}
 			| TK_ID 
@@ -200,13 +215,17 @@ E 			: E TK_MAIS_MENOS E
 R			: E TK_RELACIONAL E
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = $1.traducao + $3.traducao + '\t' + "int " +
+				$$.tipo = INT;
+				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+				$$.traducao = $1.traducao + $3.traducao + '\t' +
 				$$.label + " = " + $1.label + decideOperadorRelacional($2.traducao) + $3.label + ";\n";
 			}
-			| R TK_RELACIONAL TK_TIPO_BOOL 
+			| R TK_RELACIONAL TK_BOOL 
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = $1.traducao + '\t' + "int " + $$.label + " = " + $1.label + 
+				$$.tipo = INT;
+				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+				$$.traducao = $1.traducao + '\t' + $$.label + " = " + $1.label + 
 				"==" + decideValorBooleano($3.traducao) + ";\n";
 			}
 			;
@@ -214,14 +233,18 @@ R			: E TK_RELACIONAL E
 L 			: L TK_LOGICO L
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = $1.traducao + $3.traducao + '\t' + "int " + $$.label + " = " + $1.label + 
+				$$.tipo = INT;
+				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+				$$.traducao = $1.traducao + $3.traducao + '\t' + $$.label + " = " + $1.label + 
 				decideOperadorRelacional($2.traducao) + $3.label + ";\n";				
 			}
 			|
 			'(' L ')'
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = $2.traducao + '\t' + "int " + $$.label + " = " + $2.label + ";\n";
+				$$.tipo = INT;
+				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+				$$.traducao = $2.traducao + '\t' + $$.label + " = " + $2.label + ";\n";
 			}
 			|
 			R

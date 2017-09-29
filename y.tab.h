@@ -46,44 +46,48 @@ extern int yydebug;
   enum yytokentype
   {
     TK_NUM = 258,
-    TK_MAIN = 259,
-    TK_ID = 260,
-    TK_TIPO_INT = 261,
-    TK_TIPO_FLUT32 = 262,
-    TK_TIPO_FLUT64 = 263,
-    TK_TIPO_BOOL = 264,
-    TK_TIPO_CHAR = 265,
-    TK_MAIS_MENOS = 266,
-    TK_MULTI_DIV = 267,
-    TK_BIN = 268,
-    TK_HEX = 269,
-    TK_OCT = 270,
-    TK_RELACIONAL = 271,
-    TK_LOGICO = 272,
-    TK_FIM = 273,
-    TK_ERROR = 274,
-    TK_CAST = 275
+    TK_BOOL = 259,
+    TK_CHAR = 260,
+    TK_MAIN = 261,
+    TK_ID = 262,
+    TK_TIPO_INT = 263,
+    TK_TIPO_FLUT32 = 264,
+    TK_TIPO_FLUT64 = 265,
+    TK_TIPO_BOOL = 266,
+    TK_TIPO_CHAR = 267,
+    TK_MAIS_MENOS = 268,
+    TK_MULTI_DIV = 269,
+    TK_BIN = 270,
+    TK_HEX = 271,
+    TK_OCT = 272,
+    TK_RELACIONAL = 273,
+    TK_LOGICO = 274,
+    TK_FIM = 275,
+    TK_ERROR = 276,
+    TK_CAST = 277
   };
 #endif
 /* Tokens.  */
 #define TK_NUM 258
-#define TK_MAIN 259
-#define TK_ID 260
-#define TK_TIPO_INT 261
-#define TK_TIPO_FLUT32 262
-#define TK_TIPO_FLUT64 263
-#define TK_TIPO_BOOL 264
-#define TK_TIPO_CHAR 265
-#define TK_MAIS_MENOS 266
-#define TK_MULTI_DIV 267
-#define TK_BIN 268
-#define TK_HEX 269
-#define TK_OCT 270
-#define TK_RELACIONAL 271
-#define TK_LOGICO 272
-#define TK_FIM 273
-#define TK_ERROR 274
-#define TK_CAST 275
+#define TK_BOOL 259
+#define TK_CHAR 260
+#define TK_MAIN 261
+#define TK_ID 262
+#define TK_TIPO_INT 263
+#define TK_TIPO_FLUT32 264
+#define TK_TIPO_FLUT64 265
+#define TK_TIPO_BOOL 266
+#define TK_TIPO_CHAR 267
+#define TK_MAIS_MENOS 268
+#define TK_MULTI_DIV 269
+#define TK_BIN 270
+#define TK_HEX 271
+#define TK_OCT 272
+#define TK_RELACIONAL 273
+#define TK_LOGICO 274
+#define TK_FIM 275
+#define TK_ERROR 276
+#define TK_CAST 277
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
