@@ -4,9 +4,11 @@
 #include<stdio.h>
 int main(void)
 {
-	int  ola = 4;
-	char  palavra = 't';
-	float  decimal = 23.567;
-	int  veracidade = falso;
-falso	return 0;
+	int  tmp1;
+	int  tmp2;
+	int  tmp3;
+	tmp1 = 4;
+	tmp2 = 4;
+	tmp3 = tmp2+tmp1;
+	return 0;
 }

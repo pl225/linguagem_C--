@@ -36,6 +36,7 @@ typedef map<string, variavelTemporaria> mapT;
 typedef map<string, variavelDeclarada> mapV;
 
 static mapT mapaTemporario;
+static mapV mapaDeclarado;
 
 string proximaVariavelTemporaria () {
 	static int n = 0;
@@ -110,7 +111,10 @@ COMANDOS	: COMANDO COMANDOS
 			{
 				$$.traducao = $1.traducao + $2.traducao;
 			}
-			|
+			| 
+			{
+				$$.traducao = "";
+			}
 			;
 
 COMANDO 	: E ';'
@@ -120,21 +124,38 @@ COMANDO 	: E ';'
 
 DECLARACAO  : TK_TIPO_FLUT32 TK_ID '=' TK_NUM
 			{
-				$$.traducao = '\t' + decideTipo($1.tipo) + ' ' + $2.label + " = " + $4.traducao + ";\n";
+  				$$.label = "tmp" + proximaVariavelTemporaria();
+        		$$.tipo = $1.tipo;
+  				mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+  				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+				$$.traducao = '\t' + $$.label + " = " + $4.traducao + ";\n";
 			}
 			| TK_TIPO_BOOL TK_ID '=' TK_BOOL
       		{
-        		$$.traducao = '\t' + decideTipo($1.tipo) + ' ' + $2.label + " = " + $4.traducao + ";\n";
+        		$$.label = "tmp" + proximaVariavelTemporaria();
+        		$$.tipo = $1.tipo;
+  				mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+  				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+				$$.traducao = '\t' + $$.label + " = " + $4.traducao + ";\n";
       		}
 			| TK_TIPO_CHAR TK_ID '=' TK_CHAR
       		{
-        		$$.traducao = '\t' + decideTipo($1.tipo) + ' ' + $2.label + " = " + $4.traducao + ";\n";
+        		$$.label = "tmp" + proximaVariavelTemporaria();
+        		$$.tipo = $1.tipo;
+  				mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+  				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+				$$.traducao = '\t' + $$.label + " = " + $4.traducao + ";\n";
       		}
 			| TK_TIPO_INT TK_ID '=' TK_NUM
-	      	{
-        		$$.traducao = '\t' + decideTipo($1.tipo) + ' ' + $2.label + " = " + $4.traducao + ";\n";
+      		{
+        		$$.label = "tmp" + proximaVariavelTemporaria();
+        		$$.tipo = $1.tipo;
+  				mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+  				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+				$$.traducao = '\t' + $$.label + " = " + $4.traducao + ";\n";
       		}
 			;
+
 
 E 			: E TK_MAIS_MENOS E
 			{
@@ -207,8 +228,10 @@ E 			: E TK_MAIS_MENOS E
 			}
 			| TK_ID 
 			{
-				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = '\t' + $$.label + " = " + $1.label + ";\n";
+        		$$.tipo = $1.tipo;
+        		string var = mapaDeclarado[$1.label].temporario;
+        		$$.label = mapaTemporario[var].id;
+        		$$.traducao = "";
 			}
 			|
 			TK_CAST E
