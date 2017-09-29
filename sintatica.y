@@ -108,15 +108,13 @@ BLOCO		: '{' COMANDOS '}'
 
 COMANDOS	: COMANDO COMANDOS
 			{
+				$2.traducao = "";
 				$$.traducao = $1.traducao + $2.traducao;
 			}
 			|
 			;
 
 COMANDO 	: E ';'
-			{
-				$$.traducao = $1.traducao;
-			}
 			| DECLARACAO ';'
 			| L ';'
 			;
