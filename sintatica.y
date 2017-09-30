@@ -119,6 +119,7 @@ COMANDOS	: COMANDO COMANDOS
 
 COMANDO 	: E ';'
 			| DECLARACAO ';'
+			| ATRIBUICAO ';'
 			| L ';'
 			;
 
@@ -263,6 +264,28 @@ DECLARACAO_INT : ',' TK_ID DECLARACAO_VINT DECLARACAO_INT
 				|
 				{	$$.traducao = "";	}
 				;
+
+ATRIBUICAO	: TK_ID '=' TK_BOOL
+			{
+				$$.traducao = '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + " = " + $3.traducao + ";\n";
+			}
+			|
+			 TK_ID '=' TK_NUM
+			{
+				$$.traducao = '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + " = " + $3.traducao + ";\n";
+			}
+			|
+			 TK_ID '=' TK_CHAR
+			{
+				$$.traducao = '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + " = " + $3.traducao + ";\n";
+			} 
+			|
+			TK_ID '=' TK_ID
+			{
+				$$.traducao = '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + 
+				" = " + mapaTemporario[mapaDeclarado[$3.label].temporario].id + ";\n";
+			}
+			;
 
 E 			: E TK_MAIS_MENOS E
 			{

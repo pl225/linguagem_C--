@@ -7,18 +7,11 @@ int main(void)
 	float  tmp1;
 	float  tmp2;
 	float  tmp3;
-	char  tmp4;
-	char  tmp5;
-	int  tmp6;
-	int  tmp7;
-	int  tmp8;
-	int  tmp9;
 	tmp3 = 2;
 	tmp1 = 4;
 	tmp2 = 5;
-	tmp5 = 'k';
-	tmp4 = 'j';
-	tmp7 = 1;
-	tmp9 = 2;
+	tmp3 = tmp2;
+	tmp2 = 7;
+	tmp1 = tmp1;
 	return 0;
 }
