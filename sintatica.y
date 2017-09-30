@@ -130,9 +130,10 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				if ($3.tipo != "") {
-					$$.traducao = '\t' + $$.label + " = " + $3.traducao + ";\n";
+					$$.traducao = '\t' + $$.label + " = " + $3.traducao + ";\n" + $4.traducao;
+				} else {
+					$$.traducao = $4.traducao;
 				}
-				$$.traducao += $4.traducao;	
 			}
 			| TK_TIPO_BOOL TK_ID DECLARACAO_VBOOL DECLARACAO_BOOL
       		{
@@ -141,9 +142,10 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				if ($3.tipo != "") {
-					$$.traducao = '\t' + $$.label + " = " + decideValorBooleano($3.traducao) + ";\n";
+					$$.traducao = '\t' + $$.label + " = " + decideValorBooleano($3.traducao) + $4.traducao + ";\n";
+				} else {
+					$$.traducao = $4.traducao;	
 				}
-				$$.traducao += $4.traducao;	
       		}
 			| TK_TIPO_CHAR TK_ID DECLARACAO_VCHAR DECLARACAO_CHAR
       		{
@@ -152,9 +154,10 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				if ($3.tipo != "") {
-					$$.traducao = '\t' + $$.label + " = " + $3.traducao + ";\n";
+					$$.traducao = '\t' + $$.label + " = " + $3.traducao + $4.traducao + ";\n";
+				} else {
+					$$.traducao = $4.traducao;	
 				}
-				$$.traducao += $4.traducao;	
       		}
 			| TK_TIPO_INT TK_ID DECLARACAO_VINT DECLARACAO_INT
       		{
@@ -163,9 +166,10 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				if ($3.tipo != "") {
-					$$.traducao = '\t' + $$.label + " = " + $3.traducao + ";\n";
+					$$.traducao = '\t' + $$.label + " = " + $3.traducao + $4.traducao + ";\n";
+				} else {
+					$$.traducao = $4.traducao;	
 				}
-				$$.traducao += $4.traducao;	
       		}
 			;
 
@@ -270,20 +274,21 @@ ATRIBUICAO	: TK_ID '=' TK_BOOL
 				$$.traducao = '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + " = " + $3.traducao + ";\n";
 			}
 			|
-			 TK_ID '=' TK_NUM
-			{
-				$$.traducao = '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + " = " + $3.traducao + ";\n";
-			}
-			|
 			 TK_ID '=' TK_CHAR
 			{
 				$$.traducao = '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + " = " + $3.traducao + ";\n";
 			} 
 			|
-			TK_ID '=' TK_ID
+			TK_ID '=' E
 			{
-				$$.traducao = '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + 
-				" = " + mapaTemporario[mapaDeclarado[$3.label].temporario].id + ";\n";
+				$$.traducao = $3.traducao + '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + 
+				" = " + $3.label + ";\n";
+			}
+			|
+			TK_ID '=' L
+			{
+				$$.traducao = $3.traducao + '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + 
+				" = " + $3.label + ";\n";	
 			}
 			;
 

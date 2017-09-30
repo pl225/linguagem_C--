@@ -1,9 +1,8 @@
 {
 	flut32 ola = 2, oi = 5, ok = 4;
-	
+	bool b;
+	b = 4 == 5 e (2 > 7);
 	ola = oi;
 	oi = 7;
-	ok = ok;
-
-	9 == 7 e 2 ~= 3 ou (4 == 2 e 2 == 3);
+	ok = ok + 3 - 2.8;
 }	
