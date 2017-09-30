@@ -122,40 +122,147 @@ COMANDO 	: E ';'
 			| L ';'
 			;
 
-DECLARACAO  : TK_TIPO_FLUT32 TK_ID '=' TK_NUM
+DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 			{
-  				$$.label = "tmp" + proximaVariavelTemporaria();
-        		$$.tipo = $1.tipo;
-  				mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
-  				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
-				$$.traducao = '\t' + $$.label + " = " + $4.traducao + ";\n";
+				$$.label = "tmp" + proximaVariavelTemporaria();
+	        	$$.tipo = $1.tipo;
+	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+				if ($3.tipo != "") {
+					$$.traducao = '\t' + $$.label + " = " + $3.traducao + ";\n";
+				}
+				$$.traducao += $4.traducao;	
 			}
-			| TK_TIPO_BOOL TK_ID '=' TK_BOOL
+			| TK_TIPO_BOOL TK_ID DECLARACAO_VBOOL DECLARACAO_BOOL
       		{
         		$$.label = "tmp" + proximaVariavelTemporaria();
-        		$$.tipo = $1.tipo;
-  				mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
-  				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
-				$$.traducao = '\t' + $$.label + " = " + $4.traducao + ";\n";
+	        	$$.tipo = $1.tipo;
+	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+				if ($3.tipo != "") {
+					$$.traducao = '\t' + $$.label + " = " + decideValorBooleano($3.traducao) + ";\n";
+				}
+				$$.traducao += $4.traducao;	
       		}
-			| TK_TIPO_CHAR TK_ID '=' TK_CHAR
+			| TK_TIPO_CHAR TK_ID DECLARACAO_VCHAR DECLARACAO_CHAR
       		{
         		$$.label = "tmp" + proximaVariavelTemporaria();
-        		$$.tipo = $1.tipo;
-  				mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
-  				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
-				$$.traducao = '\t' + $$.label + " = " + $4.traducao + ";\n";
+	        	$$.tipo = $1.tipo;
+	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+				if ($3.tipo != "") {
+					$$.traducao = '\t' + $$.label + " = " + $3.traducao + ";\n";
+				}
+				$$.traducao += $4.traducao;	
       		}
-			| TK_TIPO_INT TK_ID '=' TK_NUM
+			| TK_TIPO_INT TK_ID DECLARACAO_VINT DECLARACAO_INT
       		{
         		$$.label = "tmp" + proximaVariavelTemporaria();
-        		$$.tipo = $1.tipo;
-  				mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
-  				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
-				$$.traducao = '\t' + $$.label + " = " + $4.traducao + ";\n";
+	        	$$.tipo = $1.tipo;
+	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+				if ($3.tipo != "") {
+					$$.traducao = '\t' + $$.label + " = " + $3.traducao + ";\n";
+				}
+				$$.traducao += $4.traducao;	
       		}
 			;
 
+DECLARACAO_VF32: '=' TK_NUM
+				 {
+				 	$$ = $2;
+				 }
+				 |
+				 { $$.traducao = ""; $$.tipo = ""; $$.label = ""; }
+				 ;
+
+DECLARACAO_F32 : ',' TK_ID DECLARACAO_VF32 DECLARACAO_F32
+				{
+					$$.label = "tmp" + proximaVariavelTemporaria();
+		        	$$.tipo = FLUT32;
+		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+		  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+					if ($3.tipo != "") {
+						$$.traducao = $4.traducao + '\t' + $$.label + " = " + $3.traducao + ";\n";
+					} else {
+						$$.traducao = $4.traducao;
+					}
+				}
+				|
+				{	$$.traducao = "";	}
+				;
+
+DECLARACAO_VBOOL: '=' TK_BOOL
+				 {
+				 	$$ = $2;
+				 }
+				 |
+				 { $$.traducao = ""; $$.tipo = ""; $$.label = ""; }
+				 ;
+				 
+DECLARACAO_BOOL : ',' TK_ID DECLARACAO_VBOOL DECLARACAO_BOOL
+				{
+					$$.label = "tmp" + proximaVariavelTemporaria();
+		        	$$.tipo = BOOL;
+		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+		  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+					if ($3.tipo != "") {
+						$$.traducao = $4.traducao + '\t' + $$.label + " = " + decideValorBooleano($3.traducao) + ";\n";
+					} else {
+						$$.traducao = $4.traducao;
+					}
+				}
+				|
+				{	$$.traducao = "";	}
+				;
+
+DECLARACAO_VCHAR: '=' TK_CHAR
+				 {
+				 	$$ = $2;
+				 }
+				 |
+				 { $$.traducao = ""; $$.tipo = ""; $$.label = ""; }
+				 ;
+				 
+DECLARACAO_CHAR : ',' TK_ID DECLARACAO_VCHAR DECLARACAO_CHAR
+				{
+					$$.label = "tmp" + proximaVariavelTemporaria();
+		        	$$.tipo = CHAR;
+		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+		  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+					if ($3.tipo != "") {
+						$$.traducao = $4.traducao + '\t' + $$.label + " = " + $3.traducao + ";\n";
+					} else {
+						$$.traducao = $4.traducao;
+					}
+				}
+				|
+				{	$$.traducao = "";	}
+				;
+
+DECLARACAO_VINT: '=' TK_NUM
+				 {
+				 	$$ = $2;
+				 }
+				 |
+				 { $$.traducao = ""; $$.tipo = ""; $$.label = ""; }
+				 ;
+				 
+DECLARACAO_INT : ',' TK_ID DECLARACAO_VINT DECLARACAO_INT
+				{
+					$$.label = "tmp" + proximaVariavelTemporaria();
+		        	$$.tipo = INT;
+		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+		  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+					if ($3.tipo != "") {
+						$$.traducao = $4.traducao + '\t' + $$.label + " = " + $3.traducao + ";\n";
+					} else {
+						$$.traducao = $4.traducao;
+					}
+				}
+				|
+				{	$$.traducao = "";	}
+				;
 
 E 			: E TK_MAIS_MENOS E
 			{

@@ -1,4 +1,6 @@
 {
-	int ola = 4;
-	4 + ola;
+	flut32 ola = 2, oi = 5, ok = 4;
+	char m = 'k', n= 'j'; 
+	bool t = verdadeiro, v;
+	int k = 2, g;
 }
