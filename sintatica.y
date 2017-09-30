@@ -47,7 +47,7 @@ string proximaVariavelTemporaria () {
 string decideTipo (string tipo) {
 	if (tipo == INT) return "int ";
 	else if (tipo == FLUT32) return "float ";
-	else if (tipo == BOOL) return "int ";
+	else if (tipo == BOOL) return "bool ";
 	else if (tipo == CHAR) return "char ";
 }
 
@@ -60,8 +60,8 @@ string decideOperadorRelacional (string op) {
 }
 
 string decideValorBooleano (string b) {
-	if (b == "falso") return "0";
-	else if (b == "verdadeiro") return "1";
+	if (b == "falso") return "false";
+	else if (b == "verdadeiro") return "true";
 }
 
 string declaraVariaveisTemporarias () {
@@ -377,7 +377,7 @@ E 			: E TK_MAIS_MENOS E
 R			: E TK_RELACIONAL E
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.tipo = INT;
+				$$.tipo = BOOL;
 				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				$$.traducao = $1.traducao + $3.traducao + '\t' +
 				$$.label + " = " + $1.label + decideOperadorRelacional($2.traducao) + $3.label + ";\n";
@@ -385,7 +385,7 @@ R			: E TK_RELACIONAL E
 			| R TK_RELACIONAL TK_BOOL 
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.tipo = INT;
+				$$.tipo = BOOL;
 				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				$$.traducao = $1.traducao + '\t' + $$.label + " = " + $1.label + 
 				"==" + decideValorBooleano($3.traducao) + ";\n";
@@ -395,7 +395,7 @@ R			: E TK_RELACIONAL E
 L 			: L TK_LOGICO L
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.tipo = INT;
+				$$.tipo = BOOL;
 				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				$$.traducao = $1.traducao + $3.traducao + '\t' + $$.label + " = " + $1.label + 
 				decideOperadorRelacional($2.traducao) + $3.label + ";\n";				
@@ -404,7 +404,7 @@ L 			: L TK_LOGICO L
 			'(' L ')'
 			{
 				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.tipo = INT;
+				$$.tipo = BOOL;
 				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				$$.traducao = $2.traducao + '\t' + $$.label + " = " + $2.label + ";\n";
 			}

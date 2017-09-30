@@ -112,7 +112,7 @@ string proximaVariavelTemporaria () {
 string decideTipo (string tipo) {
 	if (tipo == INT) return "int ";
 	else if (tipo == FLUT32) return "float ";
-	else if (tipo == BOOL) return "int ";
+	else if (tipo == BOOL) return "bool ";
 	else if (tipo == CHAR) return "char ";
 }
 
@@ -125,8 +125,8 @@ string decideOperadorRelacional (string op) {
 }
 
 string decideValorBooleano (string b) {
-	if (b == "falso") return "0";
-	else if (b == "verdadeiro") return "1";
+	if (b == "falso") return "false";
+	else if (b == "verdadeiro") return "true";
 }
 
 string declaraVariaveisTemporarias () {
@@ -1754,7 +1754,7 @@ yyreduce:
 #line 378 "sintatica.y" /* yacc.c:1646  */
     {
 				(yyval).label = "tmp" + proximaVariavelTemporaria();
-				(yyval).tipo = INT;
+				(yyval).tipo = BOOL;
 				mapaTemporario[(yyval).label] = { .id = (yyval).label, .tipo = (yyval).tipo };
 				(yyval).traducao = (yyvsp[-2]).traducao + (yyvsp[0]).traducao + '\t' +
 				(yyval).label + " = " + (yyvsp[-2]).label + decideOperadorRelacional((yyvsp[-1]).traducao) + (yyvsp[0]).label + ";\n";
@@ -1766,7 +1766,7 @@ yyreduce:
 #line 386 "sintatica.y" /* yacc.c:1646  */
     {
 				(yyval).label = "tmp" + proximaVariavelTemporaria();
-				(yyval).tipo = INT;
+				(yyval).tipo = BOOL;
 				mapaTemporario[(yyval).label] = { .id = (yyval).label, .tipo = (yyval).tipo };
 				(yyval).traducao = (yyvsp[-2]).traducao + '\t' + (yyval).label + " = " + (yyvsp[-2]).label + 
 				"==" + decideValorBooleano((yyvsp[0]).traducao) + ";\n";
@@ -1778,7 +1778,7 @@ yyreduce:
 #line 396 "sintatica.y" /* yacc.c:1646  */
     {
 				(yyval).label = "tmp" + proximaVariavelTemporaria();
-				(yyval).tipo = INT;
+				(yyval).tipo = BOOL;
 				mapaTemporario[(yyval).label] = { .id = (yyval).label, .tipo = (yyval).tipo };
 				(yyval).traducao = (yyvsp[-2]).traducao + (yyvsp[0]).traducao + '\t' + (yyval).label + " = " + (yyvsp[-2]).label + 
 				decideOperadorRelacional((yyvsp[-1]).traducao) + (yyvsp[0]).label + ";\n";				
@@ -1790,7 +1790,7 @@ yyreduce:
 #line 405 "sintatica.y" /* yacc.c:1646  */
     {
 				(yyval).label = "tmp" + proximaVariavelTemporaria();
-				(yyval).tipo = INT;
+				(yyval).tipo = BOOL;
 				mapaTemporario[(yyval).label] = { .id = (yyval).label, .tipo = (yyval).tipo };
 				(yyval).traducao = (yyvsp[-1]).traducao + '\t' + (yyval).label + " = " + (yyvsp[-1]).label + ";\n";
 			}

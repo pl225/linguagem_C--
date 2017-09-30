@@ -5,13 +5,45 @@
 int main(void)
 {
 	float  tmp1;
+	bool  tmp10;
+	int  tmp11;
+	int  tmp12;
+	bool  tmp13;
+	int  tmp14;
+	int  tmp15;
+	bool  tmp16;
+	bool  tmp17;
+	bool  tmp18;
+	bool  tmp19;
 	float  tmp2;
 	float  tmp3;
+	int  tmp4;
+	int  tmp5;
+	bool  tmp6;
+	int  tmp7;
+	int  tmp8;
+	bool  tmp9;
 	tmp3 = 2;
 	tmp1 = 4;
 	tmp2 = 5;
 	tmp3 = tmp2;
 	tmp2 = 7;
 	tmp1 = tmp1;
+	tmp4 = 9;
+	tmp5 = 7;
+	tmp6 = tmp4==tmp5;
+	tmp7 = 2;
+	tmp8 = 3;
+	tmp9 = tmp7 != tmp8;
+	tmp10 = tmp6 && tmp9;
+	tmp11 = 4;
+	tmp12 = 2;
+	tmp13 = tmp11==tmp12;
+	tmp14 = 2;
+	tmp15 = 3;
+	tmp16 = tmp14==tmp15;
+	tmp17 = tmp13 && tmp16;
+	tmp18 = tmp17;
+	tmp19 = tmp10 || tmp18;
 	return 0;
 }
