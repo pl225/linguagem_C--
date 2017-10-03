@@ -80,6 +80,12 @@ void verificaVariavelNaoDeclarada (string s) {
 	}
 }
 
+void verificaVariavelJaDeclarada (string s) {
+	if (mapaDeclarado.find(s) != mapaDeclarado.end()) {
+		yyerror("A variável "+ s + " já foi declarada.");					
+	}
+}
+
 %}
 
 %token TK_NUM TK_BOOL TK_CHAR
@@ -132,6 +138,7 @@ COMANDO 	: E ';'
 
 DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 			{
+				verificaVariavelJaDeclarada($2.label);
 				$$.label = "tmp" + proximaVariavelTemporaria();
 	        	$$.tipo = $1.tipo;
 	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
@@ -144,6 +151,7 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 			}
 			| TK_TIPO_BOOL TK_ID DECLARACAO_VBOOL DECLARACAO_BOOL
       		{
+      			verificaVariavelJaDeclarada($2.label);
         		$$.label = "tmp" + proximaVariavelTemporaria();
 	        	$$.tipo = $1.tipo;
 	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
@@ -156,6 +164,7 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
       		}
 			| TK_TIPO_CHAR TK_ID DECLARACAO_VCHAR DECLARACAO_CHAR
       		{
+      			verificaVariavelJaDeclarada($2.label);
         		$$.label = "tmp" + proximaVariavelTemporaria();
 	        	$$.tipo = $1.tipo;
 	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
@@ -168,6 +177,7 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
       		}
 			| TK_TIPO_INT TK_ID DECLARACAO_VINT DECLARACAO_INT
       		{
+      			verificaVariavelJaDeclarada($2.label);
         		$$.label = "tmp" + proximaVariavelTemporaria();
 	        	$$.tipo = $1.tipo;
 	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
@@ -190,6 +200,7 @@ DECLARACAO_VF32: '=' E
 
 DECLARACAO_F32 : ',' TK_ID DECLARACAO_VF32 DECLARACAO_F32
 				{
+					verificaVariavelJaDeclarada($2.label);
 					$$.label = "tmp" + proximaVariavelTemporaria();
 		        	$$.tipo = FLUT32;
 		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
@@ -214,6 +225,7 @@ DECLARACAO_VBOOL: '=' TK_BOOL
 				 
 DECLARACAO_BOOL : ',' TK_ID DECLARACAO_VBOOL DECLARACAO_BOOL
 				{
+					verificaVariavelJaDeclarada($2.label);
 					$$.label = "tmp" + proximaVariavelTemporaria();
 		        	$$.tipo = BOOL;
 		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
@@ -238,6 +250,7 @@ DECLARACAO_VCHAR: '=' TK_CHAR
 				 
 DECLARACAO_CHAR : ',' TK_ID DECLARACAO_VCHAR DECLARACAO_CHAR
 				{
+					verificaVariavelJaDeclarada($2.label);
 					$$.label = "tmp" + proximaVariavelTemporaria();
 		        	$$.tipo = CHAR;
 		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
@@ -262,6 +275,7 @@ DECLARACAO_VINT: '=' E
 				 
 DECLARACAO_INT : ',' TK_ID DECLARACAO_VINT DECLARACAO_INT
 				{
+					verificaVariavelJaDeclarada($2.label);
 					$$.label = "tmp" + proximaVariavelTemporaria();
 		        	$$.tipo = INT;
 		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
