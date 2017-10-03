@@ -86,6 +86,20 @@ void verificaVariavelJaDeclarada (string s) {
 	}
 }
 
+void defineTiposCompativeis (string s1, string s2) {
+	bool v = false;
+	if (s1 == BOOL && s2 != BOOL)
+		v = true;
+	if (s1 == CHAR && s2 != CHAR)
+		v = true;
+	if (s1 == INT && s2 != INT && s2 != FLUT32)
+		v = true;
+	if (s1 == FLUT32 && s2 != INT && s2 != FLUT32)
+		v = true;
+	if (v)
+		yyerror("As variáveis " + s1 + " e " + s2 + " não são de tipos compatíveis.");
+}
+
 %}
 
 %token TK_NUM TK_BOOL TK_CHAR
@@ -305,13 +319,31 @@ ATRIBUICAO	: TK_ID '=' TK_BOOL
 			TK_ID '=' E
 			{
 				verificaVariavelNaoDeclarada($1.label);
-				$$.traducao = $3.traducao + '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + 
-				" = " + $3.label + ";\n";
+				defineTiposCompativeis($1.tipo, $3.tipo);
+				if ($1.tipo != $3.tipo) {
+					string varCast = "tmp" + proximaVariavelTemporaria();
+
+					if ($1.tipo == INT) {
+						$$.tipo = INT;
+						mapaTemporario[varCast] = { .id = varCast, .tipo = INT };
+						$$.traducao = $3.traducao + '\t' + varCast + " = (int) " + $3.label + ";\n" +
+						'\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + " = " + varCast + ";\n";
+					} else {
+						$$.tipo = FLUT32;
+						mapaTemporario[varCast] = { .id = varCast, .tipo = FLUT32 };
+						$$.traducao = $3.traducao + '\t' + varCast + " = (float) " + $3.label + ";\n" +
+						'\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + " = " + varCast + ";\n";
+					}
+				} else {
+					$$.traducao = $3.traducao + '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + 
+					" = " + $3.label + ";\n";
+				}
 			}
 			|
 			TK_ID '=' L
 			{
 				verificaVariavelNaoDeclarada($1.label);
+				defineTiposCompativeis($1.tipo, $3.tipo);
 				$$.traducao = $3.traducao + '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + 
 				" = " + $3.label + ";\n";	
 			}
