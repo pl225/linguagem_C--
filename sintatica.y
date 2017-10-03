@@ -278,22 +278,26 @@ DECLARACAO_INT : ',' TK_ID DECLARACAO_VINT DECLARACAO_INT
 
 ATRIBUICAO	: TK_ID '=' TK_BOOL
 			{
+				verificaVariavelNaoDeclarada($1.label);
 				$$.traducao = '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + " = " + $3.traducao + ";\n";
 			}
 			|
 			 TK_ID '=' TK_CHAR
 			{
+				verificaVariavelNaoDeclarada($1.label);
 				$$.traducao = '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + " = " + $3.traducao + ";\n";
 			} 
 			|
 			TK_ID '=' E
 			{
+				verificaVariavelNaoDeclarada($1.label);
 				$$.traducao = $3.traducao + '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + 
 				" = " + $3.label + ";\n";
 			}
 			|
 			TK_ID '=' L
 			{
+				verificaVariavelNaoDeclarada($1.label);
 				$$.traducao = $3.traducao + '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + 
 				" = " + $3.label + ";\n";	
 			}

@@ -1,8 +1,8 @@
 {
-	flut32 ola = 2, oi = foca, ok = 4;
+	flut32 ola = 2, oi = 3, ok = 4;
 	bool b;
 	b = 4 == 5 e (2 > 7);
-	ola = oi;
+	ola = vv;
 	oi = 7;
 	ok = ok + 3 - 2.8;
 }
