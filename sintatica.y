@@ -73,6 +73,13 @@ string declaraVariaveisTemporarias () {
 
 int yylex(void);
 void yyerror(string);
+
+void verificaVariavelNaoDeclarada (string s) {
+	if (mapaDeclarado.find(s) == mapaDeclarado.end()) {
+		yyerror("A variável "+ s + " não foi declarada.");					
+	}
+}
+
 %}
 
 %token TK_NUM TK_BOOL TK_CHAR
@@ -130,7 +137,7 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				if ($3.tipo != "") {
-					$$.traducao = '\t' + $$.label + " = " + $3.traducao + ";\n" + $4.traducao;
+					$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
 				} else {
 					$$.traducao = $4.traducao;
 				}
@@ -166,14 +173,14 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				if ($3.tipo != "") {
-					$$.traducao = '\t' + $$.label + " = " + $3.traducao + $4.traducao + ";\n";
+					$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + $4.traducao + ";\n";
 				} else {
 					$$.traducao = $4.traducao;	
 				}
       		}
 			;
 
-DECLARACAO_VF32: '=' TK_NUM
+DECLARACAO_VF32: '=' E
 				 {
 				 	$$ = $2;
 				 }
@@ -188,7 +195,7 @@ DECLARACAO_F32 : ',' TK_ID DECLARACAO_VF32 DECLARACAO_F32
 		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 		  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 					if ($3.tipo != "") {
-						$$.traducao = $4.traducao + '\t' + $$.label + " = " + $3.traducao + ";\n";
+						$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
 					} else {
 						$$.traducao = $4.traducao;
 					}
@@ -245,7 +252,7 @@ DECLARACAO_CHAR : ',' TK_ID DECLARACAO_VCHAR DECLARACAO_CHAR
 				{	$$.traducao = "";	}
 				;
 
-DECLARACAO_VINT: '=' TK_NUM
+DECLARACAO_VINT: '=' E
 				 {
 				 	$$ = $2;
 				 }
@@ -260,7 +267,7 @@ DECLARACAO_INT : ',' TK_ID DECLARACAO_VINT DECLARACAO_INT
 		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 		  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 					if ($3.tipo != "") {
-						$$.traducao = $4.traducao + '\t' + $$.label + " = " + $3.traducao + ";\n";
+						$$.traducao = $3.traducao + $4.traducao + '\t' + $$.label + " = " + $3.label + ";\n";
 					} else {
 						$$.traducao = $4.traducao;
 					}
@@ -363,9 +370,10 @@ E 			: E TK_MAIS_MENOS E
 			}
 			| TK_ID 
 			{
-        		$$.tipo = $1.tipo;
+				verificaVariavelNaoDeclarada($1.label);
         		string var = mapaDeclarado[$1.label].temporario;
         		$$.label = mapaTemporario[var].id;
+        		$$.tipo = mapaTemporario[var].tipo;
         		$$.traducao = "";
 			}
 			|
