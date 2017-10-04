@@ -152,13 +152,21 @@ COMANDO 	: E ';'
 
 DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 			{
+				if ($3.tipo != "") defineTiposCompativeis($1.tipo, $3.tipo);
 				verificaVariavelJaDeclarada($2.label);
 				$$.label = "tmp" + proximaVariavelTemporaria();
 	        	$$.tipo = $1.tipo;
 	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				if ($3.tipo != "") {
-					$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
+					if ($3.tipo == INT) {
+						string varCast = "tmp" + proximaVariavelTemporaria();
+						mapaTemporario[varCast] = { .id = varCast, .tipo = FLUT32 };
+						$$.traducao = $3.traducao + '\t' + varCast + " = (float) " + $3.label + ";\n" +
+						'\t' + $$.label + " = " + varCast + ";\n" + $4.traducao;
+					} else {
+						$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
+					}
 				} else {
 					$$.traducao = $4.traducao;
 				}
@@ -191,13 +199,21 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
       		}
 			| TK_TIPO_INT TK_ID DECLARACAO_VINT DECLARACAO_INT
       		{
+      			if ($3.tipo != "") defineTiposCompativeis($1.tipo, $3.tipo);
       			verificaVariavelJaDeclarada($2.label);
         		$$.label = "tmp" + proximaVariavelTemporaria();
 	        	$$.tipo = $1.tipo;
 	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				if ($3.tipo != "") {
-					$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + $4.traducao + ";\n";
+					if ($3.tipo == FLUT32) {
+						string varCast = "tmp" + proximaVariavelTemporaria();
+						mapaTemporario[varCast] = { .id = varCast, .tipo = INT };
+						$$.traducao = $3.traducao + '\t' + varCast + " = (int) " + $3.label + ";\n" +
+						'\t' + $$.label + " = " + varCast + ";\n" + $4.traducao;
+					} else {
+						$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
+					}
 				} else {
 					$$.traducao = $4.traducao;	
 				}
@@ -214,13 +230,21 @@ DECLARACAO_VF32: '=' E
 
 DECLARACAO_F32 : ',' TK_ID DECLARACAO_VF32 DECLARACAO_F32
 				{
+					if ($3.tipo != "") defineTiposCompativeis(FLUT32, $3.tipo);
 					verificaVariavelJaDeclarada($2.label);
 					$$.label = "tmp" + proximaVariavelTemporaria();
 		        	$$.tipo = FLUT32;
 		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 		  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 					if ($3.tipo != "") {
-						$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
+						if ($3.tipo == INT) {
+							string varCast = "tmp" + proximaVariavelTemporaria();
+							mapaTemporario[varCast] = { .id = varCast, .tipo = FLUT32 };
+							$$.traducao = $3.traducao + '\t' + varCast + " = (float) " + $3.label + ";\n" +
+							'\t' + $$.label + " = " + varCast + ";\n" + $4.traducao;
+						} else {
+							$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
+						}
 					} else {
 						$$.traducao = $4.traducao;
 					}
@@ -289,13 +313,21 @@ DECLARACAO_VINT: '=' E
 				 
 DECLARACAO_INT : ',' TK_ID DECLARACAO_VINT DECLARACAO_INT
 				{
+					if ($3.tipo != "") defineTiposCompativeis(INT, $3.tipo);
 					verificaVariavelJaDeclarada($2.label);
 					$$.label = "tmp" + proximaVariavelTemporaria();
 		        	$$.tipo = INT;
 		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 		  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 					if ($3.tipo != "") {
-						$$.traducao = $3.traducao + $4.traducao + '\t' + $$.label + " = " + $3.label + ";\n";
+						if ($3.tipo == FLUT32) {
+							string varCast = "tmp" + proximaVariavelTemporaria();
+							mapaTemporario[varCast] = { .id = varCast, .tipo = INT };
+							$$.traducao = $3.traducao + '\t' + varCast + " = (int) " + $3.label + ";\n" +
+							'\t' + $$.label + " = " + varCast + ";\n" + $4.traducao;
+						} else {
+							$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
+						}
 					} else {
 						$$.traducao = $4.traducao;
 					}

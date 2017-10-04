@@ -1,7 +1,8 @@
 {
-	flut32 ola = 2 + 7 - 2 * 4;
+	flut32 ola = 2 + 7 - 2 * 4 ;
 	int oi, a;
 	bool b;
+	b = a;
 	oi = a + b;
 	oi = ola;
 }
