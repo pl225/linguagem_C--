@@ -351,6 +351,7 @@ ATRIBUICAO	: TK_ID '=' TK_BOOL
 			TK_ID '=' E
 			{
 				verificaVariavelNaoDeclarada($1.label);
+				$1.tipo = mapaTemporario[mapaDeclarado[$1.label].temporario].tipo;
 				defineTiposCompativeis($1.tipo, $3.tipo);
 				if ($1.tipo != $3.tipo) {
 					string varCast = "tmp" + proximaVariavelTemporaria();
@@ -360,7 +361,7 @@ ATRIBUICAO	: TK_ID '=' TK_BOOL
 						mapaTemporario[varCast] = { .id = varCast, .tipo = INT };
 						$$.traducao = $3.traducao + '\t' + varCast + " = (int) " + $3.label + ";\n" +
 						'\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + " = " + varCast + ";\n";
-					} else {
+					} else if ($1.tipo == FLUT32){
 						$$.tipo = FLUT32;
 						mapaTemporario[varCast] = { .id = varCast, .tipo = FLUT32 };
 						$$.traducao = $3.traducao + '\t' + varCast + " = (float) " + $3.label + ";\n" +
