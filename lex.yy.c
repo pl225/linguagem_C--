@@ -880,7 +880,7 @@ YY_RULE_SETUP
 case 14:
 YY_RULE_SETUP
 #line 100 "lexica.l"
-{yylval.traducao = yytext; yylval.tipo = FLUT32; return TK_TIPO_FLUT64; }
+{yylval.traducao = yytext; yylval.tipo = FLUT32; return TK_TIPO_FLUT32; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
@@ -931,7 +931,7 @@ YY_RULE_SETUP
 case 24:
 YY_RULE_SETUP
 #line 120 "lexica.l"
-{ yylval.label = yytext; return TK_ID; } 
+{ yylval.label = yytext; yylval.tipo = ""; yylval.traducao = ""; return TK_ID; } 
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
@@ -1945,5 +1945,6 @@ void yyfree (void * ptr )
 #define YYTABLES_NAME "yytables"
 
 #line 124 "lexica.l"
+
 
 

@@ -97,7 +97,7 @@ Retorna "retorna"
 
 {PontoFlutuante} {yylval.traducao = yytext; yylval.tipo = FLUT32; return TK_TIPO_FLUT32; }
 
-{PontoFlutuanteP} {yylval.traducao = yytext; yylval.tipo = FLUT32; return TK_TIPO_FLUT64; }
+{PontoFlutuanteP} {yylval.traducao = yytext; yylval.tipo = FLUT32; return TK_TIPO_FLUT32; }
 
 {Booleano} {yylval.traducao = yytext; yylval.tipo = BOOL; return TK_TIPO_BOOL; }
 
@@ -117,7 +117,7 @@ Retorna "retorna"
 
 {HEX} {yylval.traducao = yytext; return TK_HEX; }
 
-{ID} { yylval.label = yytext; return TK_ID; } 
+{ID} { yylval.label = yytext; yylval.tipo = ""; yylval.traducao = ""; return TK_ID; } 
 
 .			{ *yytext; }
 

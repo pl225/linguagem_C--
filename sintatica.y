@@ -118,13 +118,9 @@ void defineTiposCompativeis (string s1, string s2) {
 
 %%
 
-S 			: TK_TIPO_INT TK_MAIN '(' ')' BLOCO
+S 			: BLOCO
 			{
-				cout << "/*Compilador FOCA*/\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n" << $5.traducao << "\treturn 0;\n}" << endl; 
-			}
-			| BLOCO
-			{
-				cout << "/*Compilador FOCA*/\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n" << declaraVariaveisTemporarias() + $1.traducao << "\treturn 0;\n}" << endl; 
+				cout << "/*Compilador FAEN*/\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n" << declaraVariaveisTemporarias() + $1.traducao << "\treturn 0;\n}" << endl; 
 			}
 			;
 
@@ -172,29 +168,43 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 				}
 			}
 			| TK_TIPO_BOOL TK_ID DECLARACAO_VBOOL DECLARACAO_BOOL
-      		{
-      			verificaVariavelJaDeclarada($2.label);
-        		$$.label = "tmp" + proximaVariavelTemporaria();
-	        	$$.tipo = $1.tipo;
+			{
+				verificaVariavelJaDeclarada($2.label);
+				$$.label = "tmp" + proximaVariavelTemporaria();
+	        	$$.tipo = BOOL;
 	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
-				if ($3.tipo != "") {
-					$$.traducao = '\t' + $$.label + " = " + decideValorBooleano($3.traducao) + $4.traducao + ";\n";
-				} else {
-					$$.traducao = $4.traducao;	
+				if ($3.tipo != "" && $3.label == "") {
+					$$.traducao = $4.traducao + '\t' + $$.label + " = " + decideValorBooleano($3.traducao) + ";\n";
+				} 
+				else if ($3.label != "" && $3.tipo == "") {
+					verificaVariavelJaDeclarada($3.label);
+					defineTiposCompativeis(BOOL, mapaDeclarado[$3.label].tipo);
+					$$.traducao = $4.traducao + '\t' + $$.label + " = " + mapaTemporario[mapaDeclarado[$3.label].temporario].id + ";\n";
 				}
-      		}
+				else if ($3.label != "" && $3.tipo != ""){
+					$$.traducao = $4.traducao + $3.traducao + 
+					'\t' + $$.label + " = " + $3.label + ";\n";
+				}
+				else {
+					$$.traducao = $4.traducao;
+				}
+			}
 			| TK_TIPO_CHAR TK_ID DECLARACAO_VCHAR DECLARACAO_CHAR
       		{
       			verificaVariavelJaDeclarada($2.label);
-        		$$.label = "tmp" + proximaVariavelTemporaria();
-	        	$$.tipo = $1.tipo;
+				$$.label = "tmp" + proximaVariavelTemporaria();
+	        	$$.tipo = CHAR;
 	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
-				if ($3.tipo != "") {
-					$$.traducao = '\t' + $$.label + " = " + $3.traducao + $4.traducao + ";\n";
+				if ($3.tipo != "") { // caracter puro com tipo
+					$$.traducao = $4.traducao + '\t' + $$.label + " = " + $3.traducao + ";\n";
+				} else if ($3.label != "") { // variavel
+					verificaVariavelNaoDeclarada($3.label);
+					defineTiposCompativeis(CHAR, mapaDeclarado[$3.label].tipo);
+					$$.traducao = $4.traducao + '\t' + $$.label + " = " + mapaTemporario[mapaDeclarado[$3.label].temporario].id + ";\n";
 				} else {
-					$$.traducao = $4.traducao;	
+					$$.traducao = $4.traducao;
 				}
       		}
 			| TK_TIPO_INT TK_ID DECLARACAO_VINT DECLARACAO_INT
@@ -258,6 +268,16 @@ DECLARACAO_VBOOL: '=' TK_BOOL
 				 	$$ = $2;
 				 }
 				 |
+				 '=' TK_ID 
+				 {
+				 	$$ = $2;
+				 }
+				 |
+				 '=' L
+				 {
+				 	$$ = $2;
+				 }
+				 |
 				 { $$.traducao = ""; $$.tipo = ""; $$.label = ""; }
 				 ;
 				 
@@ -268,9 +288,19 @@ DECLARACAO_BOOL : ',' TK_ID DECLARACAO_VBOOL DECLARACAO_BOOL
 		        	$$.tipo = BOOL;
 		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 		  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
-					if ($3.tipo != "") {
+					if ($3.tipo != "" && $3.label == "") {
 						$$.traducao = $4.traducao + '\t' + $$.label + " = " + decideValorBooleano($3.traducao) + ";\n";
-					} else {
+					} 
+					else if ($3.label != "" && $3.tipo == ""){
+						verificaVariavelJaDeclarada($3.label);
+						defineTiposCompativeis(BOOL, mapaDeclarado[$3.label].tipo);
+						$$.traducao = $4.traducao + '\t' + $$.label + " = " + mapaTemporario[mapaDeclarado[$3.label].temporario].id + ";\n";
+					}
+					else if ($3.label != "" && $3.tipo != ""){
+						$$.traducao = $4.traducao + $3.traducao + 
+						'\t' + $$.label + " = " + $3.label + ";\n";
+					}
+					else {
 						$$.traducao = $4.traducao;
 					}
 				}
@@ -279,6 +309,11 @@ DECLARACAO_BOOL : ',' TK_ID DECLARACAO_VBOOL DECLARACAO_BOOL
 				;
 
 DECLARACAO_VCHAR: '=' TK_CHAR
+				 {
+				 	$$ = $2;
+				 }
+				 |
+				 '=' TK_ID 
 				 {
 				 	$$ = $2;
 				 }
@@ -293,8 +328,12 @@ DECLARACAO_CHAR : ',' TK_ID DECLARACAO_VCHAR DECLARACAO_CHAR
 		        	$$.tipo = CHAR;
 		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 		  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
-					if ($3.tipo != "") {
+					if ($3.tipo != "") { // caracter puro com tipo
 						$$.traducao = $4.traducao + '\t' + $$.label + " = " + $3.traducao + ";\n";
+					} else if ($3.label != "") { // variavel
+						verificaVariavelNaoDeclarada($3.label);
+						defineTiposCompativeis(CHAR, mapaDeclarado[$3.label].tipo);
+						$$.traducao = $4.traducao + '\t' + $$.label + " = " + mapaTemporario[mapaDeclarado[$3.label].temporario].id + ";\n";
 					} else {
 						$$.traducao = $4.traducao;
 					}
