@@ -1,8 +1,4 @@
 {
-	flut32 ola = 2 + 7 - 2 * 4 ;
-	char k = 'b', z;
-	int oi, a;
-	bool b;
-	oi = a;
-	oi = ola;
+	bool b = 4 > 7 e 3 == 5;
+	int a = b;
 }

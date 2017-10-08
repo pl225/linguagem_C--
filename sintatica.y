@@ -47,7 +47,7 @@ string proximaVariavelTemporaria () {
 string decideTipo (string tipo) {
 	if (tipo == INT) return "int ";
 	else if (tipo == FLUT32) return "float ";
-	else if (tipo == BOOL) return "bool ";
+	else if (tipo == BOOL) return "int ";
 	else if (tipo == CHAR) return "char ";
 }
 
