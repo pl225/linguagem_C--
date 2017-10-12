@@ -595,6 +595,7 @@ ENQUANTO	: TK_WHILE '(' L ')' BLOCO_ITERACAO BLOCO
 				"\tif (" + varWhile + ") goto " + pilhaContexto.top().rotuloFim + ";\n" +
 				$6.traducao + "\tgoto " + pilhaContexto.top().rotuloInicio + ";\n" +
 				'\t' + pilhaContexto.top().rotuloFim + ":\n";
+				pilhaContexto.pop();
 			}
 
 BLOCO_ITERACAO:

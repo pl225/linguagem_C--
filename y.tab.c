@@ -596,7 +596,7 @@ static const yytype_uint16 yyrline[] =
      273,   295,   298,   303,   308,   313,   316,   340,   343,   348,
      353,   356,   374,   377,   382,   385,   407,   410,   416,   422,
      447,   456,   479,   502,   510,   518,   525,   535,   545,   553,
-     563,   572,   580,   583,   589,   601,   606,   614
+     563,   572,   580,   583,   589,   602,   607,   615
 };
 #endif
 
@@ -2013,43 +2013,44 @@ yyreduce:
 				"\tif (" + varWhile + ") goto " + pilhaContexto.top().rotuloFim + ";\n" +
 				(yyvsp[0]).traducao + "\tgoto " + pilhaContexto.top().rotuloInicio + ";\n" +
 				'\t' + pilhaContexto.top().rotuloFim + ":\n";
+				pilhaContexto.pop();
 			}
-#line 2018 "y.tab.c" /* yacc.c:1646  */
+#line 2019 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 601 "sintatica.y" /* yacc.c:1646  */
+#line 602 "sintatica.y" /* yacc.c:1646  */
     {
 				pilhaContexto.push({ .quebravel = true, .mapaVariaveis = controiMapaVariaveis(),
 					.rotuloInicio = proximoRotulo(), .rotuloFim = proximoRotulo()});
 			}
-#line 2027 "y.tab.c" /* yacc.c:1646  */
+#line 2028 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 607 "sintatica.y" /* yacc.c:1646  */
+#line 608 "sintatica.y" /* yacc.c:1646  */
     {
 				if (pilhaContexto.top().quebravel)
 					(yyval).traducao = "\tgoto " + pilhaContexto.top().rotuloFim + ";\n";
 				else
 					yyerror("Este bloco não é quebrável.");
 			}
-#line 2038 "y.tab.c" /* yacc.c:1646  */
+#line 2039 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 615 "sintatica.y" /* yacc.c:1646  */
+#line 616 "sintatica.y" /* yacc.c:1646  */
     {
 				if (pilhaContexto.top().quebravel)
 					(yyval).traducao = "\tgoto " + pilhaContexto.top().rotuloInicio + ";\n";
 				else
 					yyerror("Este bloco não é quebrável.");
 			}
-#line 2049 "y.tab.c" /* yacc.c:1646  */
+#line 2050 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2053 "y.tab.c" /* yacc.c:1646  */
+#line 2054 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2277,7 +2278,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 623 "sintatica.y" /* yacc.c:1906  */
+#line 624 "sintatica.y" /* yacc.c:1906  */
 
 
 #include "lex.yy.c"
