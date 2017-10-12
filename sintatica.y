@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include <stack>
 
 #define YYSTYPE atributos
 #define INT "0"
@@ -35,8 +36,23 @@ typedef struct
 typedef map<string, variavelTemporaria> mapT;
 typedef map<string, variavelDeclarada> mapV;
 
+typedef struct 
+{
+	bool quebravel;
+	mapV mapaVariaveis;
+	string rotuloInicio;
+	string rotuloFim;
+} contextoBloco;
+
+static stack<contextoBloco> pilhaContexto;
+
 static mapT mapaTemporario;
 static mapV mapaDeclarado;
+
+mapV controiMapaVariaveis () {
+	mapV m;
+	return m;
+}
 
 string proximaVariavelTemporaria () {
 	static int n = 0;
@@ -114,7 +130,7 @@ void defineTiposCompativeis (string s1, string s2) {
 %token TK_BIN TK_HEX TK_OCT
 %token TK_RELACIONAL TK_LOGICO
 %token TK_FIM TK_ERROR
-%token TK_IF TK_WHILE
+%token TK_IF TK_WHILE TK_BREAK TK_CONTINUE
 
 %start S
 
@@ -125,11 +141,17 @@ void defineTiposCompativeis (string s1, string s2) {
 
 %%
 
-S 			: BLOCO
+S 			: PILHA_GLOBAL BLOCO
 			{
-				cout << "/*Compilador FAEN*/\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n" << declaraVariaveisTemporarias() + $1.traducao << "\treturn 0;\n}" << endl; 
+				cout << "/*Compilador FAEN*/\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n" << declaraVariaveisTemporarias() + $2.traducao << "\treturn 0;\n}" << endl; 
 			}
 			;
+
+PILHA_GLOBAL: 
+			{
+				pilhaContexto.push({ .quebravel = false, .mapaVariaveis = controiMapaVariaveis(),
+					.rotuloInicio = proximoRotulo(), .rotuloFim = proximoRotulo()});
+			}
 
 BLOCO		: '{' COMANDOS '}'
 			{
@@ -153,6 +175,7 @@ COMANDO 	: E ';'
 			| L ';'
 			| SE
 			| ENQUANTO
+			| LOOP_CONTROLE ';'
 			;
 
 DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
@@ -563,19 +586,38 @@ SE  		: TK_IF '(' L ')' BLOCO
 			}
 
 
-ENQUANTO	: TK_WHILE '(' L ')' BLOCO
+ENQUANTO	: TK_WHILE '(' L ')' BLOCO_ITERACAO BLOCO
 			{
-				string labelWhileBegin = proximoRotulo();
-				string labelWhileFim = proximoRotulo();
 				string varWhile = "tmp" + proximaVariavelTemporaria();
 				mapaTemporario[varWhile] = { .id = varWhile, .tipo = BOOL };
-				$$.traducao = $3.traducao +	'\t' + labelWhileBegin + ":\n" +
+				$$.traducao = $3.traducao +	'\t' + pilhaContexto.top().rotuloInicio + ":\n" +
 				"\t" + varWhile + " = !" + $3.label + ";\n" +
-				"\tif (" + varWhile + ") goto " + labelWhileFim + ";\n" +
-				$5.traducao + "\tgoto " + labelWhileBegin + ";\n" +
-				'\t' + labelWhileFim + ":\n";
+				"\tif (" + varWhile + ") goto " + pilhaContexto.top().rotuloFim + ";\n" +
+				$6.traducao + "\tgoto " + pilhaContexto.top().rotuloInicio + ";\n" +
+				'\t' + pilhaContexto.top().rotuloFim + ":\n";
 			}
 
+BLOCO_ITERACAO:
+			{
+				pilhaContexto.push({ .quebravel = true, .mapaVariaveis = controiMapaVariaveis(),
+					.rotuloInicio = proximoRotulo(), .rotuloFim = proximoRotulo()});
+			}
+
+LOOP_CONTROLE: TK_BREAK 
+			{
+				if (pilhaContexto.top().quebravel)
+					$$.traducao = "\tgoto " + pilhaContexto.top().rotuloFim + ";\n";
+				else
+					yyerror("Este bloco não é quebrável.");
+			}
+			|
+			TK_CONTINUE
+			{
+				if (pilhaContexto.top().quebravel)
+					$$.traducao = "\tgoto " + pilhaContexto.top().rotuloInicio + ";\n";
+				else
+					yyerror("Este bloco não é quebrável.");
+			}
 
 
 %%

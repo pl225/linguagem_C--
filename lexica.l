@@ -94,6 +94,9 @@ Retorna "retorna"
 
 "main"	{return TK_MAIN;}
 
+{Break} { return TK_BREAK; }
+{Continue} { return TK_CONTINUE; }
+
 {Castint} { yylval.tipo = INT; return TK_CAST; }
 {Castflut32} { yylval.tipo = FLUT32; return TK_CAST; }
 

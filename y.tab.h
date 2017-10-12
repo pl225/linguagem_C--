@@ -66,7 +66,9 @@ extern int yydebug;
     TK_ERROR = 276,
     TK_IF = 277,
     TK_WHILE = 278,
-    TK_CAST = 279
+    TK_BREAK = 279,
+    TK_CONTINUE = 280,
+    TK_CAST = 281
   };
 #endif
 /* Tokens.  */
@@ -91,7 +93,9 @@ extern int yydebug;
 #define TK_ERROR 276
 #define TK_IF 277
 #define TK_WHILE 278
-#define TK_CAST 279
+#define TK_BREAK 279
+#define TK_CONTINUE 280
+#define TK_CAST 281
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
