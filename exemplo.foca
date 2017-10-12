@@ -1,4 +1,6 @@
 {
-	bool b = 4 > 7 e 3 == 5;
-	int a = b;
+	enquanto (4 > 7) {
+		bool b = 7 == 2;
+		int a = 4 * 7.8;
+	}
 }

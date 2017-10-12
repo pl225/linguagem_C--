@@ -44,6 +44,12 @@ string proximaVariavelTemporaria () {
 	return to_string(n);
 }
 
+string proximoRotulo () {
+	static int m = 0;
+	m++;
+	return "rotulo_" + to_string(m);
+}
+
 string decideTipo (string tipo) {
 	if (tipo == INT) return "int ";
 	else if (tipo == FLUT32) return "float ";
@@ -108,6 +114,7 @@ void defineTiposCompativeis (string s1, string s2) {
 %token TK_BIN TK_HEX TK_OCT
 %token TK_RELACIONAL TK_LOGICO
 %token TK_FIM TK_ERROR
+%token TK_IF TK_WHILE
 
 %start S
 
@@ -144,6 +151,8 @@ COMANDO 	: E ';'
 			| DECLARACAO ';'
 			| ATRIBUICAO ';'
 			| L ';'
+			| SE
+			| ENQUANTO
 			;
 
 DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
@@ -492,6 +501,7 @@ E 			: E TK_MAIS_MENOS E
 			}
 			| TK_ID 
 			{
+
 				verificaVariavelNaoDeclarada($1.label);
         		string var = mapaDeclarado[$1.label].temporario;
         		$$.label = mapaTemporario[var].id;
@@ -546,6 +556,27 @@ L 			: L TK_LOGICO L
 			|
 			R
 			;
+
+SE  		: TK_IF '(' L ')' BLOCO
+			{
+				cout << "haha" << endl;
+			}
+
+
+ENQUANTO	: TK_WHILE '(' L ')' BLOCO
+			{
+				string labelWhileBegin = proximoRotulo();
+				string labelWhileFim = proximoRotulo();
+				string varWhile = "tmp" + proximaVariavelTemporaria();
+				mapaTemporario[varWhile] = { .id = varWhile, .tipo = BOOL };
+				$$.traducao = $3.traducao +	'\t' + labelWhileBegin + ":\n" +
+				"\t" + varWhile + " = !" + $3.label + ";\n" +
+				"\tif (" + varWhile + ") goto " + labelWhileFim + ";\n" +
+				$5.traducao + "\tgoto " + labelWhileBegin + ";\n" +
+				'\t' + labelWhileFim + ":\n";
+			}
+
+
 
 %%
 

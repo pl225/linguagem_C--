@@ -1,1 +1,40 @@
-As variáveis 0 e 2 não são de tipos compatíveis.
+/*Compilador FAEN*/
+#include <iostream>
+#include<string.h>
+#include<stdio.h>
+int main(void)
+{
+	int  tmp1;
+	float  tmp10;
+	float  tmp11;
+	int  tmp12;
+	int  tmp13;
+	int  tmp14;
+	int  tmp2;
+	int  tmp3;
+	int  tmp4;
+	int  tmp5;
+	int  tmp6;
+	int  tmp7;
+	int  tmp8;
+	float  tmp9;
+	tmp1 = 4;
+	tmp2 = 7;
+	tmp3 = tmp1>tmp2;
+	rotulo_1:
+	tmp14 = !tmp3;
+	if (tmp14) goto rotulo_2;
+	tmp4 = 7;
+	tmp5 = 2;
+	tmp6 = tmp4==tmp5;
+	tmp7 = tmp6;
+	tmp8 = 4;
+	tmp9 = 7.8;
+	tmp11 = (float) tmp8;
+	tmp10 = tmp11*tmp9;
+	tmp13 = (int) tmp10;
+	tmp12 = tmp13;
+	goto rotulo_1;
+	rotulo_2:
+	return 0;
+}
