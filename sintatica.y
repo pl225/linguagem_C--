@@ -88,8 +88,9 @@ string decideValorBooleano (string b) {
 
 string declaraVariaveisTemporarias () {
 	string s = "";
-	for (mapT::iterator it = mapaTemporario.begin(); it!=mapaTemporario.end(); ++it)
+	for (mapT::iterator it = mapaTemporario.begin(); it!=mapaTemporario.end(); ++it) {
     	s += '\t' + decideTipo(it->second.tipo) + ' ' + it->second.id + ";\n";
+	}
     return s;
 }
 
@@ -97,9 +98,29 @@ int yylex(void);
 void yyerror(string);
 
 void verificaVariavelNaoDeclarada (string s) {
-	if (mapaDeclarado.find(s) == mapaDeclarado.end()) {
+	stack<contextoBloco> p = pilhaContexto;
+	bool v = true;
+	while (not p.empty()){
+		if (p.top().mapaVariaveis.find(s) != p.top().mapaVariaveis.end()) {
+			v = false;
+			break;
+		}
+	    p.pop( );
+	}
+	if (v) {
 		yyerror("A variável "+ s + " não foi declarada.");					
 	}
+}
+
+mapV buscaMapa (string s) {
+	stack<contextoBloco> p = pilhaContexto;
+	while (not p.empty()){
+		if (p.top().mapaVariaveis.find(s) != p.top().mapaVariaveis.end()) {
+			return p.top().mapaVariaveis;
+		}
+	    p.pop();
+	}
+	yyerror("A variável "+ s + " não foi declarada.");						
 }
 
 void verificaVariavelJaDeclarada (string s) {
@@ -210,9 +231,9 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 					$$.traducao = $4.traducao + '\t' + $$.label + " = " + decideValorBooleano($3.traducao) + ";\n";
 				} 
 				else if ($3.label != "" && $3.tipo == "") {
-					verificaVariavelJaDeclarada($3.label);
-					defineTiposCompativeis(BOOL, mapaDeclarado[$3.label].tipo);
-					$$.traducao = $4.traducao + '\t' + $$.label + " = " + mapaTemporario[mapaDeclarado[$3.label].temporario].id + ";\n";
+					mapV mapa = buscaMapa($3.label);
+					defineTiposCompativeis(BOOL, pilhaContexto.top().mapaVariaveis[$3.label].tipo);
+					$$.traducao = $4.traducao + '\t' + $$.label + " = " + mapaTemporario[mapa[$3.label].temporario].id + ";\n";
 				}
 				else if ($3.label != "" && $3.tipo != ""){
 					$$.traducao = $4.traducao + $3.traducao + 
@@ -232,9 +253,9 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 				if ($3.tipo != "") { // caracter puro com tipo
 					$$.traducao = $4.traducao + '\t' + $$.label + " = " + $3.traducao + ";\n";
 				} else if ($3.label != "") { // variavel
-					verificaVariavelNaoDeclarada($3.label);
-					defineTiposCompativeis(CHAR, mapaDeclarado[$3.label].tipo);
-					$$.traducao = $4.traducao + '\t' + $$.label + " = " + mapaTemporario[mapaDeclarado[$3.label].temporario].id + ";\n";
+					mapV mapa = buscaMapa($3.label);
+					defineTiposCompativeis(CHAR, mapa[$3.label].tipo);
+					$$.traducao = $4.traducao + '\t' + $$.label + " = " + mapaTemporario[mapa[$3.label].temporario].id + ";\n";
 				} else {
 					$$.traducao = $4.traducao;
 				}
@@ -324,9 +345,9 @@ DECLARACAO_BOOL : ',' TK_ID DECLARACAO_VBOOL DECLARACAO_BOOL
 						$$.traducao = $4.traducao + '\t' + $$.label + " = " + decideValorBooleano($3.traducao) + ";\n";
 					} 
 					else if ($3.label != "" && $3.tipo == ""){
-						verificaVariavelJaDeclarada($3.label);
-						defineTiposCompativeis(BOOL, mapaDeclarado[$3.label].tipo);
-						$$.traducao = $4.traducao + '\t' + $$.label + " = " + mapaTemporario[mapaDeclarado[$3.label].temporario].id + ";\n";
+						mapV mapa = buscaMapa($3.label);
+						defineTiposCompativeis(BOOL,mapa[$3.label].tipo);
+						$$.traducao = $4.traducao + '\t' + $$.label + " = " + mapaTemporario[mapa[$3.label].temporario].id + ";\n";
 					}
 					else if ($3.label != "" && $3.tipo != ""){
 						$$.traducao = $4.traducao + $3.traducao + 
@@ -363,9 +384,9 @@ DECLARACAO_CHAR : ',' TK_ID DECLARACAO_VCHAR DECLARACAO_CHAR
 					if ($3.tipo != "") { // caracter puro com tipo
 						$$.traducao = $4.traducao + '\t' + $$.label + " = " + $3.traducao + ";\n";
 					} else if ($3.label != "") { // variavel
-						verificaVariavelNaoDeclarada($3.label);
-						defineTiposCompativeis(CHAR, mapaDeclarado[$3.label].tipo);
-						$$.traducao = $4.traducao + '\t' + $$.label + " = " + mapaTemporario[mapaDeclarado[$3.label].temporario].id + ";\n";
+						mapV mapa = buscaMapa($3.label);
+						defineTiposCompativeis(CHAR, mapa[$3.label].tipo);
+						$$.traducao = $4.traducao + '\t' + $$.label + " = " + mapaTemporario[mapa[$3.label].temporario].id + ";\n";
 					} else {
 						$$.traducao = $4.traducao;
 					}
@@ -409,20 +430,20 @@ DECLARACAO_INT : ',' TK_ID DECLARACAO_VINT DECLARACAO_INT
 
 ATRIBUICAO	: TK_ID '=' TK_BOOL
 			{
-				verificaVariavelNaoDeclarada($1.label);
-				$$.traducao = '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + " = " + $3.traducao + ";\n";
+				mapV mapa = buscaMapa($1.label);
+				$$.traducao = '\t' + mapaTemporario[mapa[$1.label].temporario].id + " = " + $3.traducao + ";\n";
 			}
 			|
 			 TK_ID '=' TK_CHAR
 			{
-				verificaVariavelNaoDeclarada($1.label);
-				$$.traducao = '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + " = " + $3.traducao + ";\n";
+				mapV mapa = buscaMapa($1.label);
+				$$.traducao = '\t' + mapaTemporario[mapa[$1.label].temporario].id + " = " + $3.traducao + ";\n";
 			} 
 			|
 			TK_ID '=' E
 			{
-				verificaVariavelNaoDeclarada($1.label);
-				$1.tipo = mapaTemporario[mapaDeclarado[$1.label].temporario].tipo;
+				mapV mapa = buscaMapa($1.label);
+				$1.tipo = mapaTemporario[mapa[$1.label].temporario].tipo;
 				defineTiposCompativeis($1.tipo, $3.tipo);
 				if ($1.tipo != $3.tipo) {
 					string varCast = "tmp" + proximaVariavelTemporaria();
@@ -431,24 +452,24 @@ ATRIBUICAO	: TK_ID '=' TK_BOOL
 						$$.tipo = INT;
 						mapaTemporario[varCast] = { .id = varCast, .tipo = INT };
 						$$.traducao = $3.traducao + '\t' + varCast + " = (int) " + $3.label + ";\n" +
-						'\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + " = " + varCast + ";\n";
+						'\t' + mapaTemporario[mapa[$1.label].temporario].id + " = " + varCast + ";\n";
 					} else if ($1.tipo == FLUT32){
 						$$.tipo = FLUT32;
 						mapaTemporario[varCast] = { .id = varCast, .tipo = FLUT32 };
 						$$.traducao = $3.traducao + '\t' + varCast + " = (float) " + $3.label + ";\n" +
-						'\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + " = " + varCast + ";\n";
+						'\t' + mapaTemporario[mapa[$1.label].temporario].id + " = " + varCast + ";\n";
 					}
 				} else {
-					$$.traducao = $3.traducao + '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + 
+					$$.traducao = $3.traducao + '\t' + mapaTemporario[mapa[$1.label].temporario].id + 
 					" = " + $3.label + ";\n";
 				}
 			}
 			|
 			TK_ID '=' L
 			{
-				verificaVariavelNaoDeclarada($1.label);
+				mapV mapa = buscaMapa($1.label);
 				defineTiposCompativeis($1.tipo, $3.tipo);
-				$$.traducao = $3.traducao + '\t' + mapaTemporario[mapaDeclarado[$1.label].temporario].id + 
+				$$.traducao = $3.traducao + '\t' + mapaTemporario[mapa[$1.label].temporario].id + 
 				" = " + $3.label + ";\n";	
 			}
 			;
@@ -524,9 +545,8 @@ E 			: E TK_MAIS_MENOS E
 			}
 			| TK_ID 
 			{
-
-				verificaVariavelNaoDeclarada($1.label);
-        		string var = mapaDeclarado[$1.label].temporario;
+				mapV mapa = buscaMapa($1.label);
+        		string var = mapa[$1.label].temporario;
         		$$.label = mapaTemporario[var].id;
         		$$.tipo = mapaTemporario[var].tipo;
         		$$.traducao = "";

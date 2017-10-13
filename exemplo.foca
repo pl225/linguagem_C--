@@ -3,4 +3,9 @@
 	char k = 'k', g;
 	int j = 32.5, l = 5;
 	bool t = falso, m = verdadeiro;
+
+	a = 60 + 7.5;
+	j = j + 12;
+
+	m = (5 > 7) e 7 ~= 44;
 }
