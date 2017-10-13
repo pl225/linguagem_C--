@@ -938,7 +938,7 @@ YY_RULE_SETUP
 case 23:
 YY_RULE_SETUP
 #line 117 "lexica.l"
-{yylval.traducao = yytext; yylval.tipo = BOOL; return TK_BOOL; }
+{yylval.traducao = yytext; yylval.tipo = BOOL; yylval.label = ""; return TK_BOOL; }
 	YY_BREAK
 case 24:
 /* rule 24 can match eol */

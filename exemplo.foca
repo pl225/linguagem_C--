@@ -1,7 +1,6 @@
 {
-	int i = 0;
-	enquanto (i < 5) {
-		i = i + 1;
-		pare;
-	}
+	flut32 i = 0, a = 44 + 7;
+	char k = 'k', g;
+	int j = 32.5, l = 5;
+	bool t = falso, m = verdadeiro;
 }

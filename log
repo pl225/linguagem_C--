@@ -1,1 +1,41 @@
-Este bloco não é quebrável.
+/*Compilador FAEN*/
+#include <iostream>
+#include<string.h>
+#include<stdio.h>
+int main(void)
+{
+	int  tmp1;
+	char  tmp10;
+	float  tmp11;
+	int  tmp12;
+	int  tmp13;
+	int  tmp14;
+	int  tmp15;
+	int  tmp16;
+	int  tmp17;
+	int  tmp2;
+	int  tmp3;
+	int  tmp4;
+	float  tmp5;
+	float  tmp6;
+	float  tmp7;
+	float  tmp8;
+	char  tmp9;
+	tmp1 = 0;
+	tmp8 = (float) tmp1;
+	tmp7 = tmp8;
+	tmp2 = 44;
+	tmp3 = 7;
+	tmp4 = tmp2+tmp3;
+	tmp6 = (float) tmp4;
+	tmp5 = tmp6;
+	tmp10 = 'k';
+	tmp11 = 32.5;
+	tmp15 = (int) tmp11;
+	tmp14 = tmp15;
+	tmp12 = 5;
+	tmp13 = tmp12;
+	tmp16 = true;
+	tmp17 = false;
+	return 0;
+}

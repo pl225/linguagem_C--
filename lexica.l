@@ -114,7 +114,7 @@ Retorna "retorna"
 
 {FLOAT} { yylval.traducao = yytext; yylval.tipo = FLUT32; return TK_NUM; }
 
-{True}|{False} {yylval.traducao = yytext; yylval.tipo = BOOL; return TK_BOOL; }
+{True}|{False} {yylval.traducao = yytext; yylval.tipo = BOOL; yylval.label = ""; return TK_BOOL; }
 
 {CHAR} {yylval.traducao = yytext; yylval.tipo = CHAR; return TK_CHAR; }
 

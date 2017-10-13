@@ -103,7 +103,7 @@ void verificaVariavelNaoDeclarada (string s) {
 }
 
 void verificaVariavelJaDeclarada (string s) {
-	if (mapaDeclarado.find(s) != mapaDeclarado.end()) {
+	if (pilhaContexto.top().mapaVariaveis.find(s) != pilhaContexto.top().mapaVariaveis.end()) {
 		yyerror("A variável "+ s + " já foi declarada.");					
 	}
 }
@@ -184,7 +184,7 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 				verificaVariavelJaDeclarada($2.label);
 				$$.label = "tmp" + proximaVariavelTemporaria();
 	        	$$.tipo = $1.tipo;
-	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+	  			pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				if ($3.tipo != "") {
 					if ($3.tipo == INT) {
@@ -204,7 +204,7 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 				verificaVariavelJaDeclarada($2.label);
 				$$.label = "tmp" + proximaVariavelTemporaria();
 	        	$$.tipo = BOOL;
-	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+	  			pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				if ($3.tipo != "" && $3.label == "") {
 					$$.traducao = $4.traducao + '\t' + $$.label + " = " + decideValorBooleano($3.traducao) + ";\n";
@@ -227,7 +227,7 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
       			verificaVariavelJaDeclarada($2.label);
 				$$.label = "tmp" + proximaVariavelTemporaria();
 	        	$$.tipo = CHAR;
-	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+	  			pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				if ($3.tipo != "") { // caracter puro com tipo
 					$$.traducao = $4.traducao + '\t' + $$.label + " = " + $3.traducao + ";\n";
@@ -245,7 +245,7 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
       			verificaVariavelJaDeclarada($2.label);
         		$$.label = "tmp" + proximaVariavelTemporaria();
 	        	$$.tipo = $1.tipo;
-	  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+	  			pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				if ($3.tipo != "") {
 					if ($3.tipo == FLUT32) {
@@ -276,7 +276,7 @@ DECLARACAO_F32 : ',' TK_ID DECLARACAO_VF32 DECLARACAO_F32
 					verificaVariavelJaDeclarada($2.label);
 					$$.label = "tmp" + proximaVariavelTemporaria();
 		        	$$.tipo = FLUT32;
-		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+		  			pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 		  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 					if ($3.tipo != "") {
 						if ($3.tipo == INT) {
@@ -318,7 +318,7 @@ DECLARACAO_BOOL : ',' TK_ID DECLARACAO_VBOOL DECLARACAO_BOOL
 					verificaVariavelJaDeclarada($2.label);
 					$$.label = "tmp" + proximaVariavelTemporaria();
 		        	$$.tipo = BOOL;
-		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+		  			pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 		  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 					if ($3.tipo != "" && $3.label == "") {
 						$$.traducao = $4.traducao + '\t' + $$.label + " = " + decideValorBooleano($3.traducao) + ";\n";
@@ -358,7 +358,7 @@ DECLARACAO_CHAR : ',' TK_ID DECLARACAO_VCHAR DECLARACAO_CHAR
 					verificaVariavelJaDeclarada($2.label);
 					$$.label = "tmp" + proximaVariavelTemporaria();
 		        	$$.tipo = CHAR;
-		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+		  			pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 		  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 					if ($3.tipo != "") { // caracter puro com tipo
 						$$.traducao = $4.traducao + '\t' + $$.label + " = " + $3.traducao + ";\n";
@@ -388,7 +388,7 @@ DECLARACAO_INT : ',' TK_ID DECLARACAO_VINT DECLARACAO_INT
 					verificaVariavelJaDeclarada($2.label);
 					$$.label = "tmp" + proximaVariavelTemporaria();
 		        	$$.tipo = INT;
-		  			mapaDeclarado[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+		  			pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 		  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 					if ($3.tipo != "") {
 						if ($3.tipo == FLUT32) {
