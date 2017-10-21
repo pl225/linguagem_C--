@@ -88,6 +88,7 @@ Retorna "retorna"
 {If} { return TK_IF; }
 
 {While} { return TK_WHILE; }
+{Do} { return TK_DO; }
 
 {MaiorQue}|{MaiorOuIgualQue}|{MenorQue}|{MenorOuIgualQue}|{Diferente}|{Igual} { yylval.traducao = yytext; return TK_RELACIONAL; }
 {And}|{Or}|{Not} { yylval.traducao = yytext; return TK_LOGICO; }

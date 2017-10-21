@@ -151,7 +151,7 @@ void defineTiposCompativeis (string s1, string s2) {
 %token TK_BIN TK_HEX TK_OCT
 %token TK_RELACIONAL TK_LOGICO
 %token TK_FIM TK_ERROR
-%token TK_IF TK_WHILE TK_BREAK TK_CONTINUE
+%token TK_IF TK_WHILE TK_BREAK TK_CONTINUE TK_DO
 
 %start S
 
@@ -197,6 +197,7 @@ COMANDO 	: E ';'
 			| SE
 			| ENQUANTO
 			| LOOP_CONTROLE ';'
+			| REPITA ';'
 			;
 
 DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
@@ -610,13 +611,26 @@ ENQUANTO	: TK_WHILE '(' L ')' BLOCO_ITERACAO BLOCO
 			{
 				string varWhile = "tmp" + proximaVariavelTemporaria();
 				mapaTemporario[varWhile] = { .id = varWhile, .tipo = BOOL };
-				$$.traducao = $3.traducao +	'\t' + pilhaContexto.top().rotuloInicio + ":\n" +
+				$$.traducao = '\t' + pilhaContexto.top().rotuloInicio + ":\n" +	$3.traducao +
 				"\t" + varWhile + " = !" + $3.label + ";\n" +
 				"\tif (" + varWhile + ") goto " + pilhaContexto.top().rotuloFim + ";\n" +
 				$6.traducao + "\tgoto " + pilhaContexto.top().rotuloInicio + ";\n" +
 				'\t' + pilhaContexto.top().rotuloFim + ":\n";
 				pilhaContexto.pop();
 			}
+
+REPITA		: TK_DO BLOCO_ITERACAO BLOCO TK_WHILE '(' L ')'
+			{
+				string varDoWhile = "tmp" + proximaVariavelTemporaria();
+				mapaTemporario[varDoWhile] = { .id = varDoWhile, .tipo = BOOL };
+				$$.traducao = '\t' + pilhaContexto.top().rotuloInicio + ":\n" + $3.traducao +
+				$6.traducao + '\t' + varDoWhile + " = !" + $6.label + ";\n" + 
+				"\tif (" + varDoWhile + ") goto " + pilhaContexto.top().rotuloFim + ";\n" +
+				"\tgoto " + pilhaContexto.top().rotuloInicio + ";\n" +
+				'\t' + pilhaContexto.top().rotuloFim + ":\n";
+				pilhaContexto.pop();
+			}
+
 
 BLOCO_ITERACAO:
 			{

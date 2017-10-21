@@ -29,7 +29,17 @@ int main(void)
 	int  tmp3;
 	int  tmp30;
 	int  tmp31;
+	int  tmp32;
+	int  tmp33;
+	int  tmp34;
+	int  tmp35;
+	int  tmp36;
+	int  tmp37;
+	int  tmp38;
+	int  tmp39;
 	int  tmp4;
+	int  tmp40;
+	int  tmp41;
 	float  tmp5;
 	float  tmp6;
 	float  tmp7;
@@ -68,5 +78,25 @@ int main(void)
 	tmp30 = tmp28 != tmp29;
 	tmp31 = tmp27 && tmp30;
 	tmp16 = tmp31;
+	rotulo_3:
+	tmp32 = 10;
+	tmp33 = tmp14<tmp32;
+	tmp36 = !tmp33;
+	if (tmp36) goto rotulo_4;
+	tmp34 = 3;
+	tmp35 = tmp14+tmp34;
+	tmp14 = tmp35;
+	goto rotulo_3;
+	rotulo_4:
+	rotulo_5:
+	tmp37 = 3;
+	tmp38 = tmp14+tmp37;
+	tmp14 = tmp38;
+	tmp39 = 10;
+	tmp40 = tmp14<tmp39;
+	tmp41 = !tmp40;
+	if (tmp41) goto rotulo_6;
+	goto rotulo_5;
+	rotulo_6:
 	return 0;
 }

@@ -8,4 +8,12 @@
 	j = j + 12;
 
 	m = (5 > 7) e 7 ~= 44;
+
+	enquanto (j < 10) {
+		j = j + 3;
+	}
+
+	faca {
+		j = j + 3;
+	} enquanto (j < 10);
 }
