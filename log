@@ -40,6 +40,14 @@ int main(void)
 	int  tmp4;
 	int  tmp40;
 	int  tmp41;
+	int  tmp42;
+	int  tmp43;
+	int  tmp44;
+	int  tmp45;
+	int  tmp46;
+	float  tmp47;
+	float  tmp48;
+	int  tmp49;
 	float  tmp5;
 	float  tmp6;
 	float  tmp7;
@@ -98,5 +106,21 @@ int main(void)
 	if (tmp41) goto rotulo_6;
 	goto rotulo_5;
 	rotulo_6:
+	tmp42 = 0;
+	tmp14 = tmp42;
+	rotulo_7:
+	tmp43 = 10;
+	tmp44 = tmp14<tmp43;
+	tmp49 = !tmp44;
+	if (tmp49) goto rotulo_8;
+	tmp47 = 2.0;
+	tmp48 = tmp5+tmp47;
+	tmp5 = tmp48;
+	goto rotulo_8;
+	tmp45 = 1;
+	tmp46 = tmp14+tmp45;
+	tmp14 = tmp46;
+	goto rotulo_7;
+	rotulo_8:
 	return 0;
 }

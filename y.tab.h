@@ -69,7 +69,9 @@ extern int yydebug;
     TK_BREAK = 279,
     TK_CONTINUE = 280,
     TK_DO = 281,
-    TK_CAST = 282
+    TK_FOR = 282,
+    TK_OP_ABREV = 283,
+    TK_CAST = 284
   };
 #endif
 /* Tokens.  */
@@ -97,7 +99,9 @@ extern int yydebug;
 #define TK_BREAK 279
 #define TK_CONTINUE 280
 #define TK_DO 281
-#define TK_CAST 282
+#define TK_FOR 282
+#define TK_OP_ABREV 283
+#define TK_CAST 284
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

@@ -16,4 +16,9 @@
 	faca {
 		j = j + 3;
 	} enquanto (j < 10);
+
+	para (j = 0; j < 10; j = j + 1) {
+		a = a + 2.0;
+		pare;
+	}
 }

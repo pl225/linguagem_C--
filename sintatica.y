@@ -151,7 +151,8 @@ void defineTiposCompativeis (string s1, string s2) {
 %token TK_BIN TK_HEX TK_OCT
 %token TK_RELACIONAL TK_LOGICO
 %token TK_FIM TK_ERROR
-%token TK_IF TK_WHILE TK_BREAK TK_CONTINUE TK_DO
+%token TK_IF TK_WHILE TK_BREAK TK_CONTINUE TK_DO TK_FOR
+%token TK_OP_ABREV
 
 %start S
 
@@ -198,6 +199,7 @@ COMANDO 	: E ';'
 			| ENQUANTO
 			| LOOP_CONTROLE ';'
 			| REPITA ';'
+			| PARA
 			;
 
 DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
@@ -630,6 +632,29 @@ REPITA		: TK_DO BLOCO_ITERACAO BLOCO TK_WHILE '(' L ')'
 				'\t' + pilhaContexto.top().rotuloFim + ":\n";
 				pilhaContexto.pop();
 			}
+
+PARA		: TK_FOR BLOCO_ITERACAO '(' PARA_ATRIBUICAO ';' L ';' PARA_INCREMENTO ')' BLOCO
+			{
+				string varFor = "tmp" + proximaVariavelTemporaria();
+				mapaTemporario[varFor] = { .id = varFor, .tipo = BOOL };
+				$$.traducao = $4.traducao + '\t' + pilhaContexto.top().rotuloInicio + ":\n" +
+				$6.traducao + '\t' + varFor + " = !" + $6.label + ";\n" +
+				"\tif (" + varFor + ") goto " + pilhaContexto.top().rotuloFim + ";\n" +
+				$10.traducao + $8.traducao + "\tgoto " + pilhaContexto.top().rotuloInicio + ";\n"+
+				'\t' + pilhaContexto.top().rotuloFim + ":\n";
+				pilhaContexto.pop();
+			}
+
+
+PARA_ATRIBUICAO: ATRIBUICAO
+				{
+					$$.traducao = $1.traducao;
+				}
+
+PARA_INCREMENTO: ATRIBUICAO
+				{
+					$$.traducao = $1.traducao;
+				}
 
 
 BLOCO_ITERACAO:
