@@ -65,8 +65,8 @@ int main(void)
 	tmp14 = tmp15;
 	tmp12 = 5;
 	tmp13 = tmp12;
-	tmp16 = true;
-	tmp17 = false;
+	tmp16 = 1;
+	tmp17 = 0;
 	tmp18 = 60;
 	tmp19 = 7.5;
 	tmp21 = (float) tmp18;

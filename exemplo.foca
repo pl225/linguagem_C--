@@ -12,7 +12,7 @@
 	enquanto (j < 10) {
 		j = j + 3;
 	}
-
+	
 	faca {
 		j = j + 3;
 	} enquanto (j < 10);

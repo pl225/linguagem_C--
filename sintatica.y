@@ -82,8 +82,8 @@ string decideOperadorRelacional (string op) {
 }
 
 string decideValorBooleano (string b) {
-	if (b == "falso") return "false";
-	else if (b == "verdadeiro") return "true";
+	if (b == "falso") return "0";
+	else if (b == "verdadeiro") return "1";
 }
 
 string declaraVariaveisTemporarias () {
@@ -121,6 +121,17 @@ mapV buscaMapa (string s) {
 	    p.pop();
 	}
 	yyerror("A variável "+ s + " não foi declarada.");						
+}
+
+contextoBloco controlarLaco () {
+	stack<contextoBloco> p = pilhaContexto;
+	while (not p.empty()){
+		if (p.top().quebravel) {
+			return p.top();
+		}
+	    p.pop();
+	}
+	yyerror("Este bloco não permite controle de laços.");							
 }
 
 void verificaVariavelJaDeclarada (string s) {
@@ -675,18 +686,14 @@ BLOCO_ITERACAO:
 
 LOOP_CONTROLE: TK_BREAK 
 			{
-				if (pilhaContexto.top().quebravel)
-					$$.traducao = "\tgoto " + pilhaContexto.top().rotuloFim + ";\n";
-				else
-					yyerror("Este bloco não é quebrável.");
+				contextoBloco cb = controlarLaco();
+				$$.traducao = "\tgoto " + cb.rotuloFim + ";\n";
 			}
 			|
 			TK_CONTINUE
 			{
-				if (pilhaContexto.top().quebravel)
-					$$.traducao = "\tgoto " + pilhaContexto.top().rotuloInicio + ";\n";
-				else
-					yyerror("Este bloco não é quebrável.");
+				contextoBloco cb = controlarLaco();
+				$$.traducao = "\tgoto " + cb.rotuloInicio + ";\n";
 			}
 
 
