@@ -152,7 +152,7 @@ void defineTiposCompativeis (string s1, string s2) {
 %token TK_RELACIONAL TK_LOGICO
 %token TK_FIM TK_ERROR
 %token TK_IF TK_WHILE TK_BREAK TK_CONTINUE TK_DO TK_FOR
-%token TK_OP_ABREV
+%token TK_OP_ABREV TK_OP_1
 
 %start S
 
@@ -474,6 +474,16 @@ ATRIBUICAO	: TK_ID '=' TK_BOOL
 				defineTiposCompativeis($1.tipo, $3.tipo);
 				$$.traducao = $3.traducao + '\t' + mapaTemporario[mapa[$1.label].temporario].id + 
 				" = " + $3.label + ";\n";	
+			}
+			|
+			TK_ID TK_OP_1
+			{
+				mapV mapa = buscaMapa($1.label);
+				defineTiposCompativeis($1.tipo, INT);
+				string mais1 = mapaTemporario[mapa[$1.label].temporario].tipo == INT ? " 1;\n" : " 1.0;\n";
+				string op = $2.traducao == "++" ? " +" : " -";
+				$$.traducao = '\t' + mapaTemporario[mapa[$1.label].temporario].id +
+				" = " + mapaTemporario[mapa[$1.label].temporario].id + op + mais1;
 			}
 			;
 
