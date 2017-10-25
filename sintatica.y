@@ -163,7 +163,7 @@ void defineTiposCompativeis (string s1, string s2) {
 %token TK_RELACIONAL TK_LOGICO
 %token TK_FIM TK_ERROR
 %token TK_IF TK_WHILE TK_BREAK TK_CONTINUE TK_DO TK_FOR
-%token TK_OP_ABREV TK_OP_1
+%token TK_OP_ABREV TK_OP_1 TK_ELSE
 
 %start S
 
@@ -624,9 +624,52 @@ L 			: L TK_LOGICO L
 			R
 			;
 
-SE  		: TK_IF '(' L ')' BLOCO
+SE  		: TK_IF '(' L ')' BLOCO_IF BLOCO
+			{         
+ 				string varIf = "tmp" + proximaVariavelTemporaria();
+ 				string rotuloFim = proximoRotulo();
+				mapaTemporario[varIf] = { .id = varIf, .tipo = BOOL };
+				$$.traducao = $3.traducao +	"\t" + varIf + " = !" + $3.label + ";\n" +
+				"\tif (" + varIf + ") goto " + rotuloFim + ";\n" +
+				$6.traducao + '\t' + rotuloFim + ":\n";
+				pilhaContexto.pop();
+			} 
+			| TK_IF '(' L ')' BLOCO_IF BLOCO TK_ELSE SE
 			{
-				cout << "haha" << endl;
+				string varIf = "tmp" + proximaVariavelTemporaria();
+    		    string rotuloFimIf = proximoRotulo();
+    		    string rotuloFimIfElse = proximoRotulo();
+				mapaTemporario[varIf] = { .id = varIf, .tipo = BOOL };
+				$$.traducao = $3.traducao +	"\t" + varIf + " = !" + $3.label + ";\n" +
+				"\tif (" + varIf + ") goto " + rotuloFimIf + ";\n" + 
+				$6.traducao + "\tgoto " + rotuloFimIfElse + ";\n" +
+				'\t' + rotuloFimIf + ":\n" + $8.traducao + '\t' + rotuloFimIfElse + ":\n";
+				pilhaContexto.pop();
+			}
+    	    | TK_IF '(' L ')' BLOCO_IF BLOCO TK_ELSE BLOCO_ELSE BLOCO
+   			{
+    		    string varIf = "tmp" + proximaVariavelTemporaria();
+    		    string rotuloFimIf = proximoRotulo();
+    		    string rotuloFimIfElse = proximoRotulo();
+				mapaTemporario[varIf] = { .id = varIf, .tipo = BOOL };
+				$$.traducao = $3.traducao +	"\t" + varIf + " = !" + $3.label + ";\n" +
+				"\tif (" + varIf + ") goto " + rotuloFimIf + ";\n" + 
+				$6.traducao + "\tgoto " + rotuloFimIfElse + ";\n" +
+				'\t' + rotuloFimIf + ":\n" + $9.traducao + '\t' + rotuloFimIfElse + ":\n";
+				pilhaContexto.pop();
+			}
+
+BLOCO_IF	: 
+			{
+       			pilhaContexto.push({ .quebravel = false, .mapaVariaveis = controiMapaVariaveis(),
+      			.rotuloInicio = "", .rotuloFim = ""});
+      		}
+
+BLOCO_ELSE	:
+			{
+				pilhaContexto.pop();
+				pilhaContexto.push({ .quebravel = false, .mapaVariaveis = controiMapaVariaveis(),
+      				.rotuloInicio = "", .rotuloFim = ""});	
 			}
 
 

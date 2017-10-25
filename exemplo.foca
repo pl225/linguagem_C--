@@ -1,24 +1,13 @@
 {
-	flut32 i = 0, a = 44 + 7;
-	char k = 'k', g;
-	int j = 32.5, l = 5;
-	bool t = falso, m = verdadeiro;
+	int j = 1;
 
-	a = 60 + 7.5;
-	j = j + 12;
-
-	m = (5 > 7) e 7 ~= 44;
-
-	enquanto (j < 10) {
-		j = j + 3;
-	}
-	
-	faca {
-		j = j + 3;
-	} enquanto (j < 10);
-
-	para (j = 0; j < 10; j++) {
-		a = a + 2.0;
-		pare;
+	se ( j>10 ) {
+		int a = 3;
+	} senao se (j < 10) {
+		int a = 5;
+	} senao se (j < 7) {
+		int a = 13;
+	} senao {
+		int a = 4;
 	}
 }

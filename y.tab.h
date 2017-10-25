@@ -72,7 +72,8 @@ extern int yydebug;
     TK_FOR = 282,
     TK_OP_ABREV = 283,
     TK_OP_1 = 284,
-    TK_CAST = 285
+    TK_ELSE = 285,
+    TK_CAST = 286
   };
 #endif
 /* Tokens.  */
@@ -103,7 +104,8 @@ extern int yydebug;
 #define TK_FOR 282
 #define TK_OP_ABREV 283
 #define TK_OP_1 284
-#define TK_CAST 285
+#define TK_ELSE 285
+#define TK_CAST 286
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

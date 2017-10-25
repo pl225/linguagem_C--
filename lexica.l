@@ -86,6 +86,7 @@ Retorna "retorna"
 {Atribui} { return *yytext; }
 
 {If} { return TK_IF; }
+{Else} { return TK_ELSE; }
 
 {While} { return TK_WHILE; }
 {Do} { return TK_DO; }

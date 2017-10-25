@@ -5,8 +5,8 @@
 int main(void)
 {
 	int  tmp1;
-	char  tmp10;
-	float  tmp11;
+	int  tmp10;
+	int  tmp11;
 	int  tmp12;
 	int  tmp13;
 	int  tmp14;
@@ -14,109 +14,45 @@ int main(void)
 	int  tmp16;
 	int  tmp17;
 	int  tmp18;
-	float  tmp19;
+	int  tmp19;
 	int  tmp2;
-	float  tmp20;
-	float  tmp21;
-	int  tmp22;
-	int  tmp23;
-	int  tmp24;
-	int  tmp25;
-	int  tmp26;
-	int  tmp27;
-	int  tmp28;
-	int  tmp29;
 	int  tmp3;
-	int  tmp30;
-	int  tmp31;
-	int  tmp32;
-	int  tmp33;
-	int  tmp34;
-	int  tmp35;
-	int  tmp36;
-	int  tmp37;
-	int  tmp38;
-	int  tmp39;
 	int  tmp4;
-	int  tmp40;
-	int  tmp41;
-	int  tmp42;
-	int  tmp43;
-	int  tmp44;
-	float  tmp45;
-	float  tmp46;
-	int  tmp47;
-	float  tmp5;
-	float  tmp6;
-	float  tmp7;
-	float  tmp8;
-	char  tmp9;
-	tmp1 = 0;
-	tmp8 = (float) tmp1;
-	tmp7 = tmp8;
-	tmp2 = 44;
-	tmp3 = 7;
-	tmp4 = tmp2+tmp3;
-	tmp6 = (float) tmp4;
-	tmp5 = tmp6;
-	tmp10 = 'k';
-	tmp11 = 32.5;
-	tmp15 = (int) tmp11;
-	tmp14 = tmp15;
-	tmp12 = 5;
-	tmp13 = tmp12;
-	tmp16 = 1;
-	tmp17 = 0;
-	tmp18 = 60;
-	tmp19 = 7.5;
-	tmp21 = (float) tmp18;
-	tmp20 = tmp21+tmp19;
-	tmp5 = tmp20;
-	tmp22 = 12;
-	tmp23 = tmp14+tmp22;
-	tmp14 = tmp23;
-	tmp24 = 5;
-	tmp25 = 7;
-	tmp26 = tmp24>tmp25;
-	tmp27 = tmp26;
-	tmp28 = 7;
-	tmp29 = 44;
-	tmp30 = tmp28 != tmp29;
-	tmp31 = tmp27 && tmp30;
-	tmp16 = tmp31;
-	rotulo_3:
-	tmp32 = 10;
-	tmp33 = tmp14<tmp32;
-	tmp36 = !tmp33;
-	if (tmp36) goto rotulo_4;
-	tmp34 = 3;
-	tmp35 = tmp14+tmp34;
-	tmp14 = tmp35;
-	goto rotulo_3;
-	rotulo_4:
-	rotulo_5:
-	tmp37 = 3;
-	tmp38 = tmp14+tmp37;
-	tmp14 = tmp38;
-	tmp39 = 10;
-	tmp40 = tmp14<tmp39;
-	tmp41 = !tmp40;
-	if (tmp41) goto rotulo_6;
-	goto rotulo_5;
-	rotulo_6:
-	tmp42 = 0;
-	tmp14 = tmp42;
-	rotulo_7:
-	tmp43 = 10;
-	tmp44 = tmp14<tmp43;
-	tmp47 = !tmp44;
-	if (tmp47) goto rotulo_8;
-	tmp45 = 2.0;
-	tmp46 = tmp5+tmp45;
-	tmp5 = tmp46;
+	int  tmp5;
+	int  tmp6;
+	int  tmp7;
+	int  tmp8;
+	int  tmp9;
+	tmp1 = 1;
+	tmp2 = tmp1;
+	tmp3 = 10;
+	tmp4 = tmp2>tmp3;
+	tmp19 = !tmp4;
+	if (tmp19) goto rotulo_7;
+	tmp5 = 3;
+	tmp6 = tmp5;
 	goto rotulo_8;
-	tmp14 = tmp14 + 1;
-	goto rotulo_7;
+	rotulo_7:
+	tmp7 = 10;
+	tmp8 = tmp2<tmp7;
+	tmp18 = !tmp8;
+	if (tmp18) goto rotulo_5;
+	tmp9 = 5;
+	tmp10 = tmp9;
+	goto rotulo_6;
+	rotulo_5:
+	tmp11 = 7;
+	tmp12 = tmp2<tmp11;
+	tmp17 = !tmp12;
+	if (tmp17) goto rotulo_3;
+	tmp13 = 13;
+	tmp14 = tmp13;
+	goto rotulo_4;
+	rotulo_3:
+	tmp15 = 4;
+	tmp16 = tmp15;
+	rotulo_4:
+	rotulo_6:
 	rotulo_8:
 	return 0;
 }
