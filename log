@@ -2,19 +2,12 @@
 #include <iostream>
 #include<string.h>
 #include<stdio.h>
+using namespace std;
 int main(void)
 {
 	int  tmp1;
 	int  tmp10;
 	int  tmp11;
-	int  tmp12;
-	int  tmp13;
-	int  tmp14;
-	int  tmp15;
-	int  tmp16;
-	int  tmp17;
-	int  tmp18;
-	int  tmp19;
 	int  tmp2;
 	int  tmp3;
 	int  tmp4;
@@ -25,34 +18,25 @@ int main(void)
 	int  tmp9;
 	tmp1 = 1;
 	tmp2 = tmp1;
-	tmp3 = 10;
-	tmp4 = tmp2>tmp3;
-	tmp19 = !tmp4;
-	if (tmp19) goto rotulo_7;
-	tmp5 = 3;
-	tmp6 = tmp5;
-	goto rotulo_8;
-	rotulo_7:
-	tmp7 = 10;
-	tmp8 = tmp2<tmp7;
-	tmp18 = !tmp8;
-	if (tmp18) goto rotulo_5;
-	tmp9 = 5;
-	tmp10 = tmp9;
-	goto rotulo_6;
-	rotulo_5:
-	tmp11 = 7;
-	tmp12 = tmp2<tmp11;
-	tmp17 = !tmp12;
-	if (tmp17) goto rotulo_3;
-	tmp13 = 13;
-	tmp14 = tmp13;
-	goto rotulo_4;
-	rotulo_3:
-	tmp15 = 4;
-	tmp16 = tmp15;
+	tmp3 = tmp2;
+	tmp4 = 2;
+	if (tmp4 != tmp3) goto rotulo_4;
+	tmp5 = 1;
+	tmp6 = tmp2-tmp5;
+	tmp2 = tmp6;
 	rotulo_4:
+	tmp7 = 1;
+	if (tmp7 != tmp3) goto rotulo_5;
+	tmp2 = tmp2 + 1;
+	goto rotulo_3;
+	rotulo_5:
+	tmp8 = 4;
+	tmp9 = tmp2>tmp8;
+	tmp11 = !tmp9;
+	if (tmp11) goto rotulo_6;
+	tmp10 = 3;
+	tmp2 = tmp10;
 	rotulo_6:
-	rotulo_8:
+	goto rotulo_3:
 	return 0;
 }

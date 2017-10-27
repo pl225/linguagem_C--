@@ -163,7 +163,7 @@ void defineTiposCompativeis (string s1, string s2) {
 %token TK_RELACIONAL TK_LOGICO
 %token TK_FIM TK_ERROR
 %token TK_IF TK_WHILE TK_BREAK TK_CONTINUE TK_DO TK_FOR
-%token TK_OP_ABREV TK_OP_1 TK_ELSE
+%token TK_OP_ABREV TK_OP_1 TK_ELSE TK_SWITCH TK_CASE TK_DEFAULT
 
 %start S
 
@@ -176,7 +176,7 @@ void defineTiposCompativeis (string s1, string s2) {
 
 S 			: PILHA_GLOBAL BLOCO
 			{
-				cout << "/*Compilador FAEN*/\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nint main(void)\n{\n" << declaraVariaveisTemporarias() + $2.traducao << "\treturn 0;\n}" << endl; 
+				cout << "/*Compilador FAEN*/\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nusing namespace std;\nint main(void)\n{\n" << declaraVariaveisTemporarias() + $2.traducao << "\treturn 0;\n}" << endl; 
 			}
 			;
 
@@ -211,6 +211,7 @@ COMANDO 	: E ';'
 			| LOOP_CONTROLE ';'
 			| REPITA ';'
 			| PARA
+			| ESCOLHA
 			;
 
 DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
@@ -490,7 +491,7 @@ ATRIBUICAO	: TK_ID '=' TK_BOOL
 			TK_ID TK_OP_1
 			{
 				mapV mapa = buscaMapa($1.label);
-				defineTiposCompativeis($1.tipo, INT);
+				defineTiposCompativeis(mapa[$1.label].tipo, INT);
 				string mais1 = mapaTemporario[mapa[$1.label].temporario].tipo == INT ? " 1;\n" : " 1.0;\n";
 				string op = $2.traducao == "++" ? " +" : " -";
 				$$.traducao = '\t' + mapaTemporario[mapa[$1.label].temporario].id +
@@ -719,6 +720,80 @@ PARA_INCREMENTO: ATRIBUICAO
 				{
 					$$.traducao = $1.traducao;
 				}
+
+ESCOLHA		: TK_SWITCH '(' TK_ID ')' BLOCO_CASE '{' CASOS '}'
+			{
+				mapV mapa = buscaMapa($3.label); 
+  				mapaTemporario[pilhaContexto.top().rotuloInicio] = {.id = pilhaContexto.top().rotuloInicio, .tipo = mapa[$3.label].tipo};
+  				$$.traducao = '\t' + pilhaContexto.top().rotuloInicio + " = " + mapa[$3.label].temporario + ";\n" + 
+  					$7.traducao + "\tgoto " + pilhaContexto.top().rotuloFim + ":\n";
+  				pilhaContexto.pop();
+			}
+			;
+
+BLOCO_CASE	: 
+			{
+				pilhaContexto.push({ .quebravel = true, .mapaVariaveis = controiMapaVariaveis(),
+            	    .rotuloInicio = "tmp" + proximaVariavelTemporaria(), .rotuloFim = proximoRotulo()}); // rotulo inicio esta sendo igual a variavel temporaria que se refere a variavel de entrada do switch
+			}
+			;
+
+CASOS 		: CASO CASOS
+			{
+				$$.traducao = $1.traducao + $2.traducao;
+			}	
+			| 
+        	DEFAULT
+			{
+				$$.traducao = $1.traducao;
+			}
+			| CASO
+      		{
+        		$$.traducao = $1.traducao;
+      		}
+			;
+
+
+CASO 		: TK_CASE VALOR_CASE ':' COMANDOS
+			{  			
+  				string rotulo = proximoRotulo();
+  				$$.traducao = $2.traducao + "\tif (" + $2.label + " != " + pilhaContexto.top().rotuloInicio + ") goto " + rotulo + ";\n"
+            	+ $4.traducao + '\t' + rotulo + ":\n";  
+			} 
+			;
+
+VALOR_CASE	: TK_NUM
+			{
+                $$.tipo = $1.tipo;
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+				$$.traducao = '\t' + $$.label + " = " + $1.traducao + ";\n";
+			}
+			|
+            TK_CHAR
+            {
+              	$$.tipo = $1.tipo;
+                $$.label = "tmp" + proximaVariavelTemporaria();
+                mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+                $$.traducao = '\t' + $$.label + " = " + $1.traducao + ";\n";
+            }
+			|
+            TK_ID
+            {
+                mapV mapa = buscaMapa($1.label);
+        		string var = mapa[$1.label].temporario;
+        		$$.label = mapaTemporario[var].id;
+        		$$.tipo = mapaTemporario[var].tipo;
+        		$$.traducao = "";
+            }
+			;
+
+DEFAULT 	: TK_DEFAULT ':' COMANDOS
+			{
+				$$.traducao = $3.traducao;
+			}
+			;
+
 
 
 BLOCO_ITERACAO:

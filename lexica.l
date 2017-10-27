@@ -25,6 +25,7 @@ Booleano "bool"
 Caractere "char"
 String "string"
 Vazio "vazio"
+Padrao "padrao"
 
 Castint "(int)"
 Castflut32 "(flut32)"
@@ -81,9 +82,13 @@ Retorna "retorna"
 {Soma}|{Subtracao} { yylval.traducao = yytext; return TK_MAIS_MENOS; }
 {Divisao}|{Multiplicacao} { yylval.traducao = yytext; return TK_MULTI_DIV; }
 
-[(){}[\];,]	{ return *yytext; }
+[(){}[\];,:]	{ return *yytext; }
 
 {Atribui} { return *yytext; }
+
+{Switch} { return TK_SWITCH; }
+{Case} { return TK_CASE; }
+{Padrao} { return TK_DEFAULT; }
 
 {If} { return TK_IF; }
 {Else} { return TK_ELSE; }
