@@ -160,6 +160,15 @@ void defineTiposCompativeis (string s1, string s2) {
 		yyerror("As variáveis " + s1 + " e " + s2 + " não são de tipos compatíveis.");
 }
 
+string liberarStrings () {
+	string s = "";
+	for (mapT::iterator it = mapaTemporario.begin(); it!=mapaTemporario.end(); ++it) {
+		if (it->second.tipo == CHARS) 
+    		s += "\tif (" + it->second.tamanho + " > 0) free(" + it->second.id + ");\n";
+	}
+    return s;
+}
+
 %}
 
 %token TK_NUM TK_BOOL TK_CHAR TK_STRING
@@ -186,7 +195,7 @@ S 			: PILHA_GLOBAL BLOCO
 			{
 				cout << "/*Compilador FAEN*/" << endl;
 				cout << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\n#include<stdlib.h>\n#define SIZE_STR 10\nusing namespace std;" << endl;
-				cout << "int main(void)\n{\n" << declaraVariaveisTemporarias() + $2.traducao << "\treturn 0;\n}" << endl; 
+				cout << "int main(void)\n{\n" << declaraVariaveisTemporarias() + $2.traducao + liberarStrings() << "\treturn 0;\n}" << endl; 
 			}
 			;
 
@@ -822,7 +831,7 @@ ESCOLHA		: TK_SWITCH '(' TK_ID ')' BLOCO_CASE '{' CASOS '}'
 				mapV mapa = buscaMapa($3.label); 
   				mapaTemporario[pilhaContexto.top().rotuloInicio] = {.id = pilhaContexto.top().rotuloInicio, .tipo = mapa[$3.label].tipo};
   				$$.traducao = '\t' + pilhaContexto.top().rotuloInicio + " = " + mapa[$3.label].temporario + ";\n" + 
-  					$7.traducao + "\tgoto " + pilhaContexto.top().rotuloFim + ":\n";
+  					$7.traducao + '\t' + pilhaContexto.top().rotuloFim + ":\n";
   				pilhaContexto.pop();
 			}
 			;

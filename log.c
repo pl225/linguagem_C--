@@ -31,6 +31,9 @@ int main(void)
 	int  tmp29;
 	char * tmp3;
 	char  tmp30;
+	int  tmp31;
+	int  tmp32;
+	int  tmp33;
 	int  tmp4;
 	char * tmp5;
 	int  tmp6;
@@ -100,6 +103,30 @@ int main(void)
 	rotulo_4:
 	tmp16 = tmp16 + 1;
 	tmp15[tmp16] = '\0';
-	cout << tmp15 << endl;
+	tmp31 = tmp21;
+	tmp32 = 45;
+	if (tmp32 != tmp31) goto rotulo_6;
+	cout << tmp17 << endl;
+	goto rotulo_5;
+	rotulo_6:
+	tmp33 = 778;
+	if (tmp33 != tmp31) goto rotulo_7;
+	cout << tmp21 << endl;
+	goto rotulo_5;
+	rotulo_7:
+	cout << tmp26 << endl;
+	goto rotulo_5;
+	rotulo_5:
+	if (tmp2 > 0) free(tmp1);
+	if (tmp12 > 0) free(tmp11);
+	if (tmp14 > 0) free(tmp13);
+	if (tmp16 > 0) free(tmp15);
+	if (tmp18 > 0) free(tmp17);
+	if (tmp25 > 0) free(tmp24);
+	if (tmp27 > 0) free(tmp26);
+	if (tmp4 > 0) free(tmp3);
+	if (tmp6 > 0) free(tmp5);
+	if (tmp8 > 0) free(tmp7);
+	if (tmp10 > 0) free(tmp9);
 	return 0;
 }

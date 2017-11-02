@@ -14,5 +14,16 @@
 	escreva(b);
 
 	leia(b);
-	escreva(b);
+
+	escolha(z) {
+		caso 45:
+				escreva(a);
+				pare;
+		caso 778:
+				escreva(z);
+				pare; 
+		padrao:
+				escreva(f);
+				pare;
+	}
 }
