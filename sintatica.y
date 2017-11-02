@@ -10,6 +10,7 @@
 #define FLUT32 "1"
 #define BOOL "2"
 #define CHAR "3"
+#define CHARS "4"
 
 using namespace std;
 
@@ -156,14 +157,15 @@ void defineTiposCompativeis (string s1, string s2) {
 
 %}
 
-%token TK_NUM TK_BOOL TK_CHAR
-%token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLUT32 TK_TIPO_FLUT64  TK_TIPO_BOOL
+%token TK_NUM TK_BOOL TK_CHAR TK_STRING
+%token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLUT32 TK_TIPO_FLUT64  TK_TIPO_BOOL TK_TIPO_STRING
 %token TK_TIPO_CHAR TK_MAIS_MENOS TK_MULTI_DIV
 %token TK_BIN TK_HEX TK_OCT
 %token TK_RELACIONAL TK_LOGICO
 %token TK_FIM TK_ERROR
 %token TK_IF TK_WHILE TK_BREAK TK_CONTINUE TK_DO TK_FOR
 %token TK_OP_ABREV TK_OP_1 TK_ELSE TK_SWITCH TK_CASE TK_DEFAULT
+%token TK_PRINT TK_SCAN
 
 %start S
 
@@ -212,6 +214,8 @@ COMANDO 	: E ';'
 			| REPITA ';'
 			| PARA
 			| ESCOLHA
+			| PRINT ';'
+			| SCAN ';'
 			;
 
 DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
@@ -794,7 +798,18 @@ DEFAULT 	: TK_DEFAULT ':' COMANDOS
 			}
 			;
 
+PRINT 		: TK_PRINT '(' TK_ID ')'
+			{
+				mapV mapa = buscaMapa($3.label);
+				$$.traducao = "\tcout << " + mapa[$3.label].temporario + " << endl;\n";
+			} 
+			;
 
+SCAN 		: TK_SCAN '(' TK_ID ')'
+			{
+				mapV mapa = buscaMapa($3.label);
+			}
+			;
 
 BLOCO_ITERACAO:
 			{

@@ -11,6 +11,7 @@ BIN [b][0-1]+
 HEX [0x]([A-F]|[0-9])*
 FLOAT [1-9][0-9]*[\.][0-9]+|0[\.][0-9]+
 CHAR \'(\\.|[^'])\'
+STRING \"([^\"\n]|\\\")*\"
 
 True "verdadeiro"
 False "falso"
@@ -23,7 +24,7 @@ PontoFlutuante "flut32"
 PontoFlutuanteP "flut64"
 Booleano "bool"
 Caractere "char"
-String "string"
+Caracteres "chars"
 Vazio "vazio"
 Padrao "padrao"
 
@@ -42,6 +43,8 @@ Break "pare"
 Continue "continue"
 Goto "vapara"
 
+PRINT "escreva"
+SCAN "leia"
 
 Soma "+"
 Subtracao "-"
@@ -103,6 +106,9 @@ Retorna "retorna"
 {MaiorQue}|{MaiorOuIgualQue}|{MenorQue}|{MenorOuIgualQue}|{Diferente}|{Igual} { yylval.traducao = yytext; return TK_RELACIONAL; }
 {And}|{Or}|{Not} { yylval.traducao = yytext; return TK_LOGICO; }
 
+{PRINT} { return TK_PRINT; }
+{SCAN} { return TK_SCAN; }
+
 "main"	{return TK_MAIN;}
 
 {Break} { return TK_BREAK; }
@@ -121,7 +127,11 @@ Retorna "retorna"
 
 {Caractere} {yylval.traducao = yytext; yylval.tipo = CHAR; return TK_TIPO_CHAR; }
 
+{Caracteres} {yylval.traducao = yytext; yylval.tipo = CHARS; return TK_TIPO_STRING; }
+
 {INT}   {yylval.traducao = yytext; yylval.tipo = INT; return TK_NUM; }
+
+{STRING} {yylval.traducao = yytext; yylval.tipo = CHARS; return TK_STRING; }
 
 {FLOAT} { yylval.traducao = yytext; yylval.tipo = FLUT32; return TK_NUM; }
 

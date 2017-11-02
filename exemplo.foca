@@ -1,12 +1,11 @@
 {
 	int j = 1;
 
-	escolha(j) {
-		caso 2: j = j - 1;
-		caso 1: j++;
-				pare;
-		padrao: se (j > 4) {
-			j = 3;
-		}
+	se (j > 0) {
+		int j = 2;
+		escreva(j);
+	} senao {
+		escreva(j);
 	}
+	escreva(j);
 }

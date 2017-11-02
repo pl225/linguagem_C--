@@ -4,4 +4,4 @@ all:
 		yacc -d sintatica.y
 		g++ -std=c++0x -o glf y.tab.c -lfl
 
-		./glf < exemplo.foca | tee log
+		./glf < exemplo.foca | tee log.c
