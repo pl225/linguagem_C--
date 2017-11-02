@@ -131,7 +131,7 @@ Retorna "retorna"
 
 {INT}   {yylval.traducao = yytext; yylval.tipo = INT; return TK_NUM; }
 
-{STRING} {yylval.traducao = yytext; yylval.tipo = CHARS; return TK_STRING; }
+{STRING} { yylval.traducao = yytext; yylval.tipo = CHARS; return TK_STRING; }
 
 {FLOAT} { yylval.traducao = yytext; yylval.tipo = FLUT32; return TK_NUM; }
 
@@ -146,6 +146,8 @@ Retorna "retorna"
 {HEX} {yylval.traducao = yytext; return TK_HEX; }
 
 {ID} { yylval.label = yytext; yylval.tipo = ""; yylval.traducao = ""; return TK_ID; } 
+
+"." { return TK_CONCATENACAO; }
 
 .			{ *yytext; }
 

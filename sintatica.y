@@ -11,6 +11,7 @@
 #define BOOL "2"
 #define CHAR "3"
 #define CHARS "4"
+#define SIZE_STR 10
 
 using namespace std;
 
@@ -24,7 +25,8 @@ struct atributos
 typedef struct
 {
 	string id;
-	string tipo;	
+	string tipo;
+	string tamanho;
 } variavelTemporaria;
 
 typedef struct 
@@ -72,6 +74,7 @@ string decideTipo (string tipo) {
 	else if (tipo == FLUT32) return "float ";
 	else if (tipo == BOOL) return "int ";
 	else if (tipo == CHAR) return "char ";
+	else if (tipo == CHARS) return "char *";
 }
 
 string decideOperadorRelacional (string op) {
@@ -151,6 +154,8 @@ void defineTiposCompativeis (string s1, string s2) {
 		v = true;
 	if (s1 == FLUT32 && s2 != INT && s2 != FLUT32)
 		v = true;
+	if (s1 == CHARS && s2 != CHARS)
+		v = true;
 	if (v)
 		yyerror("As variáveis " + s1 + " e " + s2 + " não são de tipos compatíveis.");
 }
@@ -159,7 +164,7 @@ void defineTiposCompativeis (string s1, string s2) {
 
 %token TK_NUM TK_BOOL TK_CHAR TK_STRING
 %token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLUT32 TK_TIPO_FLUT64  TK_TIPO_BOOL TK_TIPO_STRING
-%token TK_TIPO_CHAR TK_MAIS_MENOS TK_MULTI_DIV
+%token TK_TIPO_CHAR TK_MAIS_MENOS TK_MULTI_DIV TK_CONCATENACAO
 %token TK_BIN TK_HEX TK_OCT
 %token TK_RELACIONAL TK_LOGICO
 %token TK_FIM TK_ERROR
@@ -169,6 +174,7 @@ void defineTiposCompativeis (string s1, string s2) {
 
 %start S
 
+%left TK_CONCATENACAO
 %left TK_MAIS_MENOS
 %left TK_MULTI_DIV
 %left TK_LOGICO TK_RELACIONAL
@@ -178,7 +184,7 @@ void defineTiposCompativeis (string s1, string s2) {
 
 S 			: PILHA_GLOBAL BLOCO
 			{
-				cout << "/*Compilador FAEN*/\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\nusing namespace std;\nint main(void)\n{\n" << declaraVariaveisTemporarias() + $2.traducao << "\treturn 0;\n}" << endl; 
+				cout << "/*Compilador FAEN*/\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\n#include<stdlib.h>\nusing namespace std;\nint main(void)\n{\n" << declaraVariaveisTemporarias() + $2.traducao << "\treturn 0;\n}" << endl; 
 			}
 			;
 
@@ -277,6 +283,26 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 					$$.traducao = $4.traducao + '\t' + $$.label + " = " + mapaTemporario[mapa[$3.label].temporario].id + ";\n";
 				} else {
 					$$.traducao = $4.traducao;
+				}
+      		}
+      		| TK_TIPO_STRING TK_ID DECLARACAO_VSTRING DECLARACAO_STRING
+      		{
+      			if ($3.tipo != "") defineTiposCompativeis($1.tipo, $3.tipo);
+      			verificaVariavelJaDeclarada($2.label);
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				string tamanhoString = "tmp" + proximaVariavelTemporaria();
+				$$.tipo = $1.tipo;
+				pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo, .tamanho = tamanhoString };
+				mapaTemporario[tamanhoString] = { .id = tamanhoString, .tipo = INT };
+
+				if ($3.tipo != "") {
+					$$.traducao = $3.traducao + 
+						'\t' + tamanhoString + " = " + mapaTemporario[$3.label].tamanho + ";\n" +
+						'\t' + $$.label + " = (char*) malloc(" + tamanhoString + ");\n" + 
+						"\tstrcat(" + $$.label + ", " + $3.label + ");\n" + $4.traducao;						
+				} else {
+					$$.traducao = '\t' + tamanhoString + " = 0;\n" + $4.traducao;
 				}
       		}
 			| TK_TIPO_INT TK_ID DECLARACAO_VINT DECLARACAO_INT
@@ -413,6 +439,36 @@ DECLARACAO_CHAR : ',' TK_ID DECLARACAO_VCHAR DECLARACAO_CHAR
 				|
 				{	$$.traducao = "";	}
 				;
+
+DECLARACAO_VSTRING : '=' STR
+					{
+						$$ = $2;
+					}
+					|
+					{	$$.traducao = ""; $$.tipo = ""; $$.label = "";	}
+
+DECLARACAO_STRING  : ',' TK_ID DECLARACAO_VSTRING DECLARACAO_STRING
+					{
+						if ($3.tipo != "") defineTiposCompativeis(CHARS, $3.tipo);
+		      			verificaVariavelJaDeclarada($2.label);
+						$$.label = "tmp" + proximaVariavelTemporaria();
+						string tamanhoString = "tmp" + proximaVariavelTemporaria();
+						$$.tipo = CHARS;
+						pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+						mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo, .tamanho = tamanhoString };
+						mapaTemporario[tamanhoString] = { .id = tamanhoString, .tipo = INT };
+
+						if ($3.tipo != "") {
+							$$.traducao = $3.traducao + '\t' + tamanhoString + " = " + mapaTemporario[$3.label].tamanho + ";\n" +
+								'\t' + $$.label + " = (char*) malloc(" + tamanhoString + ");\n" + 
+								"\tstrcat(" + $$.label + ", " + $3.label + ");\n" + $4.traducao;						
+						} else {
+							$$.traducao = '\t' + tamanhoString + " = 0;\n" + $4.traducao;
+						}
+					}
+					|
+					{	$$.traducao = "";	}
+					;
 
 DECLARACAO_VINT: '=' E
 				 {
@@ -628,6 +684,40 @@ L 			: L TK_LOGICO L
 			|
 			R
 			;
+
+STR 		: STR TK_CONCATENACAO STR
+			{
+				defineTiposCompativeis($1.label, $3.label);
+				$$.tipo = $1.tipo;
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				string tamanhoString = "tmp" + proximaVariavelTemporaria();
+				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo, .tamanho = tamanhoString };
+				mapaTemporario[tamanhoString] = { .id = tamanhoString, .tipo = INT };
+				$$.traducao = $1.traducao + $3.traducao + 
+					'\t' + tamanhoString + " = " + mapaTemporario[$1.label].tamanho + " + " +
+				 	mapaTemporario[$3.label].tamanho + ";\n" + '\t' + tamanhoString + " = " + tamanhoString + " + 1;\n" +
+					'\t' + $$.label + " = (char*) malloc(" + tamanhoString + ");\n" + 
+					"\tstrcat(" + $$.label + ", " + $1.label + ");\n" + "\tstrcat(" + $$.label + ", " + $3.label + ");\n";
+			}
+			| TK_ID
+			{
+				mapV mapa = buscaMapa($1.label);
+        		string var = mapa[$1.label].temporario;
+        		$$.label = mapaTemporario[var].id;
+        		$$.tipo = mapaTemporario[var].tipo;
+        		$$.traducao = "";
+			}
+			| TK_STRING
+			{
+				$$.tipo = $1.tipo;
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				string tamanhoString = "tmp" + proximaVariavelTemporaria();
+				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo, .tamanho = tamanhoString };
+				mapaTemporario[tamanhoString] = { .id = tamanhoString, .tipo = INT };
+				$$.traducao = '\t' + tamanhoString + " = " + to_string($1.traducao.length() - 2) + " + 1;\n" +
+					'\t' + $$.label + " = (char*) malloc(" + tamanhoString + ");\n" + 
+					"\tstrcat(" + $$.label + ", " + $1.traducao + ");\n";
+			}
 
 SE  		: TK_IF '(' L ')' BLOCO_IF BLOCO
 			{         

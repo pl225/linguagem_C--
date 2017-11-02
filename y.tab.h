@@ -59,28 +59,29 @@ extern int yydebug;
     TK_TIPO_CHAR = 269,
     TK_MAIS_MENOS = 270,
     TK_MULTI_DIV = 271,
-    TK_BIN = 272,
-    TK_HEX = 273,
-    TK_OCT = 274,
-    TK_RELACIONAL = 275,
-    TK_LOGICO = 276,
-    TK_FIM = 277,
-    TK_ERROR = 278,
-    TK_IF = 279,
-    TK_WHILE = 280,
-    TK_BREAK = 281,
-    TK_CONTINUE = 282,
-    TK_DO = 283,
-    TK_FOR = 284,
-    TK_OP_ABREV = 285,
-    TK_OP_1 = 286,
-    TK_ELSE = 287,
-    TK_SWITCH = 288,
-    TK_CASE = 289,
-    TK_DEFAULT = 290,
-    TK_PRINT = 291,
-    TK_SCAN = 292,
-    TK_CAST = 293
+    TK_CONCATENACAO = 272,
+    TK_BIN = 273,
+    TK_HEX = 274,
+    TK_OCT = 275,
+    TK_RELACIONAL = 276,
+    TK_LOGICO = 277,
+    TK_FIM = 278,
+    TK_ERROR = 279,
+    TK_IF = 280,
+    TK_WHILE = 281,
+    TK_BREAK = 282,
+    TK_CONTINUE = 283,
+    TK_DO = 284,
+    TK_FOR = 285,
+    TK_OP_ABREV = 286,
+    TK_OP_1 = 287,
+    TK_ELSE = 288,
+    TK_SWITCH = 289,
+    TK_CASE = 290,
+    TK_DEFAULT = 291,
+    TK_PRINT = 292,
+    TK_SCAN = 293,
+    TK_CAST = 294
   };
 #endif
 /* Tokens.  */
@@ -98,28 +99,29 @@ extern int yydebug;
 #define TK_TIPO_CHAR 269
 #define TK_MAIS_MENOS 270
 #define TK_MULTI_DIV 271
-#define TK_BIN 272
-#define TK_HEX 273
-#define TK_OCT 274
-#define TK_RELACIONAL 275
-#define TK_LOGICO 276
-#define TK_FIM 277
-#define TK_ERROR 278
-#define TK_IF 279
-#define TK_WHILE 280
-#define TK_BREAK 281
-#define TK_CONTINUE 282
-#define TK_DO 283
-#define TK_FOR 284
-#define TK_OP_ABREV 285
-#define TK_OP_1 286
-#define TK_ELSE 287
-#define TK_SWITCH 288
-#define TK_CASE 289
-#define TK_DEFAULT 290
-#define TK_PRINT 291
-#define TK_SCAN 292
-#define TK_CAST 293
+#define TK_CONCATENACAO 272
+#define TK_BIN 273
+#define TK_HEX 274
+#define TK_OCT 275
+#define TK_RELACIONAL 276
+#define TK_LOGICO 277
+#define TK_FIM 278
+#define TK_ERROR 279
+#define TK_IF 280
+#define TK_WHILE 281
+#define TK_BREAK 282
+#define TK_CONTINUE 283
+#define TK_DO 284
+#define TK_FOR 285
+#define TK_OP_ABREV 286
+#define TK_OP_1 287
+#define TK_ELSE 288
+#define TK_SWITCH 289
+#define TK_CASE 290
+#define TK_DEFAULT 291
+#define TK_PRINT 292
+#define TK_SCAN 293
+#define TK_CAST 294
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

@@ -1,11 +1,14 @@
 {
-	int j = 1;
+	chars a = "kkkk"."aaaa", b, c, d = "matheus";
+	int z = 777, zz;
+	flut32 gh = 44.4;
+	chars f = a.d;
+	bool m = falso, n = verdadeiro;
 
-	se (j > 0) {
-		int j = 2;
-		escreva(j);
-	} senao {
-		escreva(j);
-	}
-	escreva(j);
+	escreva(a);
+	escreva(d);
+	escreva(f);
+	escreva(z);
+	escreva(gh);
+	escreva(m);
 }
