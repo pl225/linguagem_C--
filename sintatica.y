@@ -184,7 +184,9 @@ void defineTiposCompativeis (string s1, string s2) {
 
 S 			: PILHA_GLOBAL BLOCO
 			{
-				cout << "/*Compilador FAEN*/\n" << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\n#include<stdlib.h>\nusing namespace std;\nint main(void)\n{\n" << declaraVariaveisTemporarias() + $2.traducao << "\treturn 0;\n}" << endl; 
+				cout << "/*Compilador FAEN*/" << endl;
+				cout << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\n#include<stdlib.h>\n#define SIZE_STR 10\nusing namespace std;" << endl;
+				cout << "int main(void)\n{\n" << declaraVariaveisTemporarias() + $2.traducao << "\treturn 0;\n}" << endl; 
 			}
 			;
 
@@ -898,6 +900,29 @@ PRINT 		: TK_PRINT '(' TK_ID ')'
 SCAN 		: TK_SCAN '(' TK_ID ')'
 			{
 				mapV mapa = buscaMapa($3.label);
+				if (mapa[$3.label].tipo == CHARS) {
+					string rotuloInicio = proximoRotulo();
+					string rotuloFim = proximoRotulo();
+					string tamanho = mapaTemporario[mapa[$3.label].temporario].tamanho;
+					string id = mapaTemporario[mapa[$3.label].temporario].id;
+					string tmpChar = "tmp" + proximaVariavelTemporaria();
+					mapaTemporario[tmpChar] = { .id = tmpChar, .tipo = CHAR };
+
+					$$.traducao = "\tif (" + tamanho + " > 0)" + " free(" + id + ");\n" +
+						'\t' + id + " = (char*) malloc(SIZE_STR);\n" +
+						'\t' + tamanho + " = 0;\n" + '\t' + rotuloInicio + ":\n" +
+						'\t' + tmpChar + " = getchar();\n" + 
+						"\tif(" + tmpChar + " == \'\\0\' || " + tmpChar + " == \'\\n\') goto " + rotuloFim + ";\n" +
+						'\t' + id + '[' + tamanho + "] = " + tmpChar + ";\n" +
+						'\t' + tamanho + " = " + tamanho + " + 1;\n" +
+						"\tif(" + tamanho + " < SIZE_STR) goto " + rotuloInicio + ";\n" +
+						'\t' + tamanho + " = " + tamanho + " + SIZE_STR;\n" +
+						'\t' + id + " = (char*) realloc(" + id + ", " + tamanho + ");\n" + 
+						"\tgoto " + rotuloInicio + ";\n" + '\t' + rotuloFim + ":\n" +
+						'\t' + tamanho + " = " + tamanho + " + 1;\n" +
+						'\t' + id + '[' + tamanho + "] = \'\\0\';\n";
+
+				} // elses para outros tipos
 			}
 			;
 

@@ -3,6 +3,7 @@
 #include<string.h>
 #include<stdio.h>
 #include<stdlib.h>
+#define SIZE_STR 10
 using namespace std;
 int main(void)
 {
@@ -14,19 +15,22 @@ int main(void)
 	int  tmp14;
 	char * tmp15;
 	int  tmp16;
-	int  tmp17;
+	char * tmp17;
 	int  tmp18;
 	int  tmp19;
 	int  tmp2;
-	float  tmp20;
-	float  tmp21;
-	char * tmp22;
-	int  tmp23;
+	int  tmp20;
+	int  tmp21;
+	float  tmp22;
+	float  tmp23;
 	char * tmp24;
 	int  tmp25;
-	int  tmp26;
+	char * tmp26;
 	int  tmp27;
+	int  tmp28;
+	int  tmp29;
 	char * tmp3;
+	char  tmp30;
 	int  tmp4;
 	char * tmp5;
 	int  tmp6;
@@ -44,36 +48,58 @@ int main(void)
 	tmp5 = (char*) malloc(tmp6);
 	strcat(tmp5, tmp1);
 	strcat(tmp5, tmp3);
-	tmp16 = tmp6;
-	tmp15 = (char*) malloc(tmp16);
-	strcat(tmp15, tmp5);
-	tmp14 = 0;
-	tmp12 = 0;
-	tmp8 = 7 + 1;
+	tmp18 = tmp6;
+	tmp17 = (char*) malloc(tmp18);
+	strcat(tmp17, tmp5);
+	tmp8 = 6 + 1;
 	tmp7 = (char*) malloc(tmp8);
-	strcat(tmp7, "matheus");
-	tmp10 = tmp8;
+	strcat(tmp7, "arvore");
+	tmp16 = tmp8;
+	tmp15 = (char*) malloc(tmp16);
+	strcat(tmp15, tmp7);
+	tmp14 = 0;
+	tmp10 = 7 + 1;
 	tmp9 = (char*) malloc(tmp10);
-	strcat(tmp9, tmp7);
-	tmp17 = 777;
-	tmp19 = tmp17;
-	tmp20 = 44.4;
-	tmp21 = tmp20;
-	tmp23 = tmp16 + tmp10;
-	tmp23 = tmp23 + 1;
-	tmp22 = (char*) malloc(tmp23);
-	strcat(tmp22, tmp15);
-	strcat(tmp22, tmp9);
-	tmp25 = tmp23;
+	strcat(tmp9, "matheus");
+	tmp12 = tmp10;
+	tmp11 = (char*) malloc(tmp12);
+	strcat(tmp11, tmp9);
+	tmp19 = 777;
+	tmp21 = tmp19;
+	tmp22 = 44.4;
+	tmp23 = tmp22;
+	tmp25 = tmp18 + tmp12;
+	tmp25 = tmp25 + 1;
 	tmp24 = (char*) malloc(tmp25);
-	strcat(tmp24, tmp22);
-	tmp26 = 1;
-	tmp27 = 0;
-	cout << tmp15 << endl;
-	cout << tmp9 << endl;
-	cout << tmp24 << endl;
-	cout << tmp19 << endl;
+	strcat(tmp24, tmp17);
+	strcat(tmp24, tmp11);
+	tmp27 = tmp25;
+	tmp26 = (char*) malloc(tmp27);
+	strcat(tmp26, tmp24);
+	tmp28 = 1;
+	tmp29 = 0;
+	cout << tmp17 << endl;
+	cout << tmp11 << endl;
+	cout << tmp26 << endl;
 	cout << tmp21 << endl;
-	cout << tmp27 << endl;
+	cout << tmp23 << endl;
+	cout << tmp29 << endl;
+	cout << tmp15 << endl;
+	if (tmp16 > 0) free(tmp15);
+	tmp15 = (char*) malloc(SIZE_STR);
+	tmp16 = 0;
+	rotulo_3:
+	tmp30 = getchar();
+	if(tmp30 == '\0' || tmp30 == '\n') goto rotulo_4;
+	tmp15[tmp16] = tmp30;
+	tmp16 = tmp16 + 1;
+	if(tmp16 < SIZE_STR) goto rotulo_3;
+	tmp16 = tmp16 + SIZE_STR;
+	tmp15 = (char*) realloc(tmp15, tmp16);
+	goto rotulo_3;
+	rotulo_4:
+	tmp16 = tmp16 + 1;
+	tmp15[tmp16] = '\0';
+	cout << tmp15 << endl;
 	return 0;
 }

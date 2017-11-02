@@ -1,5 +1,5 @@
 {
-	chars a = "kkkk"."aaaa", b, c, d = "matheus";
+	chars a = "kkkk"."aaaa", b = "arvore", c, d = "matheus";
 	int z = 777, zz;
 	flut32 gh = 44.4;
 	chars f = a.d;
@@ -11,4 +11,8 @@
 	escreva(z);
 	escreva(gh);
 	escreva(m);
+	escreva(b);
+
+	leia(b);
+	escreva(b);
 }
