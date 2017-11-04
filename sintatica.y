@@ -729,6 +729,7 @@ STR 		: STR TK_CONCATENACAO STR
 					'\t' + $$.label + " = (char*) malloc(" + tamanhoString + ");\n" + 
 					"\tstrcat(" + $$.label + ", " + $1.traducao + ");\n";
 			}
+			;
 
 SE  		: TK_IF '(' L ')' BLOCO_IF BLOCO
 			{         
@@ -826,20 +827,21 @@ PARA_INCREMENTO: ATRIBUICAO
 					$$.traducao = $1.traducao;
 				}
 
-ESCOLHA		: TK_SWITCH '(' TK_ID ')' BLOCO_CASE '{' CASOS '}'
+ESCOLHA		: TK_SWITCH '(' BLOCO_CASE ')' '{' CASOS '}'
 			{
-				mapV mapa = buscaMapa($3.label); 
-  				mapaTemporario[pilhaContexto.top().rotuloInicio] = {.id = pilhaContexto.top().rotuloInicio, .tipo = mapa[$3.label].tipo};
-  				$$.traducao = '\t' + pilhaContexto.top().rotuloInicio + " = " + mapa[$3.label].temporario + ";\n" + 
-  					$7.traducao + '\t' + pilhaContexto.top().rotuloFim + ":\n";
+  				$$.traducao = $3.traducao + $6.traducao + '\t' + pilhaContexto.top().rotuloFim + ":\n";
   				pilhaContexto.pop();
 			}
 			;
 
-BLOCO_CASE	: 
+BLOCO_CASE	: TK_ID
 			{
+				mapV mapa = buscaMapa($1.label); 
+				string var = "tmp" + proximaVariavelTemporaria();
+  				mapaTemporario[var] = {.id = var, .tipo = mapa[$1.label].tipo};
+  				$$.traducao = '\t' + var + " = " + mapa[$1.label].temporario + ";\n";
 				pilhaContexto.push({ .quebravel = true, .mapaVariaveis = controiMapaVariaveis(),
-            	    .rotuloInicio = "tmp" + proximaVariavelTemporaria(), .rotuloFim = proximoRotulo()}); // rotulo inicio esta sendo igual a variavel temporaria que se refere a variavel de entrada do switch
+            	    .rotuloInicio = var, .rotuloFim = proximoRotulo()}); // rotulo inicio esta sendo igual a variavel temporaria que se refere a variavel de entrada do switch
 			}
 			;
 
@@ -861,6 +863,7 @@ CASOS 		: CASO CASOS
 
 CASO 		: TK_CASE VALOR_CASE ':' COMANDOS
 			{  			
+				defineTiposCompativeis($2.tipo, mapaTemporario[pilhaContexto.top().rotuloInicio].tipo);
   				string rotulo = proximoRotulo();
   				$$.traducao = $2.traducao + "\tif (" + $2.label + " != " + pilhaContexto.top().rotuloInicio + ") goto " + rotulo + ";\n"
             	+ $4.traducao + '\t' + rotulo + ":\n";  

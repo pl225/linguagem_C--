@@ -26,4 +26,16 @@
 				escreva(f);
 				pare;
 	}
+
+	para (z = 0; z < 10; z++) {
+		se (z == 2 ou z == 4 ou z == 7) {
+			escreva(z);
+		} senao se (z == 1 ou z == 3) {
+			escreva(gh);
+		} senao se (z == 4) {
+			escreva(b);
+		} senao {
+			escreva(f);
+		}
+	}
 }
