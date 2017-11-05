@@ -673,8 +673,8 @@ static const yytype_uint16 yyrline[] =
      554,   562,   573,   596,   619,   627,   635,   642,   651,   661,
      669,   679,   688,   696,   699,   713,   721,   734,   744,   756,
      770,   776,   783,   795,   807,   820,   825,   830,   837,   848,
-     853,   857,   864,   873,   881,   889,   899,   905,   912,   942,
-     947,   953
+     853,   857,   864,   873,   881,   889,   899,   905,   912,   950,
+     955,   961
 };
 #endif
 
@@ -2512,40 +2512,48 @@ yyreduce:
 						'\t' + tamanho + " = " + tamanho + " + 1;\n" +
 						'\t' + id + '[' + tamanho + "] = \'\\0\';\n";
 
-				} // elses para outros tipos
+				} else if(mapa[(yyvsp[-1]).label].tipo == CHAR) {
+					(yyval).traducao = "\tscanf(\"%c\", &" + mapa[(yyvsp[-1]).label].temporario + ");\n";
+				} else if(mapa[(yyvsp[-1]).label].tipo == FLUT32) {
+					(yyval).traducao = "\tscanf(\"%f\", &" + mapa[(yyvsp[-1]).label].temporario + ");\n";
+				} else if(mapa[(yyvsp[-1]).label].tipo == INT) {
+					(yyval).traducao = "\tscanf(\"%d\", &" + mapa[(yyvsp[-1]).label].temporario + ");\n";
+				}
+
+				(yyval).traducao += "\tsetbuf(stdin, NULL);\n";
 			}
-#line 2518 "y.tab.c" /* yacc.c:1646  */
+#line 2526 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 89:
-#line 942 "sintatica.y" /* yacc.c:1646  */
+#line 950 "sintatica.y" /* yacc.c:1646  */
     {
 				pilhaContexto.push({ .quebravel = true, .mapaVariaveis = controiMapaVariaveis(),
 					.rotuloInicio = proximoRotulo(), .rotuloFim = proximoRotulo()});
 			}
-#line 2527 "y.tab.c" /* yacc.c:1646  */
+#line 2535 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 90:
-#line 948 "sintatica.y" /* yacc.c:1646  */
+#line 956 "sintatica.y" /* yacc.c:1646  */
     {
 				contextoBloco cb = controlarLaco();
 				(yyval).traducao = "\tgoto " + cb.rotuloFim + ";\n";
 			}
-#line 2536 "y.tab.c" /* yacc.c:1646  */
+#line 2544 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 91:
-#line 954 "sintatica.y" /* yacc.c:1646  */
+#line 962 "sintatica.y" /* yacc.c:1646  */
     {
 				contextoBloco cb = controlarLaco();
 				(yyval).traducao = "\tgoto " + cb.rotuloInicio + ";\n";
 			}
-#line 2545 "y.tab.c" /* yacc.c:1646  */
+#line 2553 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2549 "y.tab.c" /* yacc.c:1646  */
+#line 2557 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2773,7 +2781,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 960 "sintatica.y" /* yacc.c:1906  */
+#line 968 "sintatica.y" /* yacc.c:1906  */
 
 
 #include "lex.yy.c"

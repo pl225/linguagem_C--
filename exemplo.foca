@@ -3,6 +3,7 @@
 	int z = 777, zz;
 	flut32 gh = 44.4;
 	chars f = a.d;
+	char nat;
 	bool m = falso, n = verdadeiro;
 
 	escreva(a);
@@ -13,7 +14,10 @@
 	escreva(m);
 	escreva(b);
 
+	leia(gh);
 	leia(b);
+	leia(zz);
+	leia(nat);
 
 	escolha(z) {
 		caso 45:

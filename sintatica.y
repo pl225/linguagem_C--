@@ -934,7 +934,15 @@ SCAN 		: TK_SCAN '(' TK_ID ')'
 						'\t' + tamanho + " = " + tamanho + " + 1;\n" +
 						'\t' + id + '[' + tamanho + "] = \'\\0\';\n";
 
-				} // elses para outros tipos
+				} else if(mapa[$3.label].tipo == CHAR) {
+					$$.traducao = "\tscanf(\"%c\", &" + mapa[$3.label].temporario + ");\n";
+				} else if(mapa[$3.label].tipo == FLUT32) {
+					$$.traducao = "\tscanf(\"%f\", &" + mapa[$3.label].temporario + ");\n";
+				} else if(mapa[$3.label].tipo == INT) {
+					$$.traducao = "\tscanf(\"%d\", &" + mapa[$3.label].temporario + ");\n";
+				}
+
+				$$.traducao += "\tsetbuf(stdin, NULL);\n";
 			}
 			;
 
