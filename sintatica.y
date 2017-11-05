@@ -907,6 +907,22 @@ PRINT 		: TK_PRINT '(' TK_ID ')'
 				mapV mapa = buscaMapa($3.label);
 				$$.traducao = "\tcout << " + mapa[$3.label].temporario + " << endl;\n";
 			} 
+			| TK_PRINT '(' TK_NUM ')'
+			{
+				$$.tipo = $3.tipo;
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				mapaTemporario[$$.label] = {.id = $$.label, .tipo = $$.tipo};
+				$$.traducao = '\t' + $$.label + " = " + $3.traducao + ";\n" +
+					"\tcout << " + $$.label + " << endl;\n";
+			}	
+			| TK_PRINT '(' TK_CHAR ')'
+			{
+				$$.tipo = CHAR;
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				mapaTemporario[$$.label] = {.id = $$.label, .tipo = $$.tipo};
+				$$.traducao = '\t' + $$.label + " = " + $3.traducao + ";\n" +
+					"\tcout << " + $$.label + " << endl;\n";
+			}
 			;
 
 SCAN 		: TK_SCAN '(' TK_ID ')'

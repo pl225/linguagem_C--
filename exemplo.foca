@@ -13,6 +13,8 @@
 	escreva(gh);
 	escreva(m);
 	escreva(b);
+	escreva(9999);
+	escreva('b');
 
 	leia(gh);
 	leia(b);
