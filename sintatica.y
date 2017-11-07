@@ -689,11 +689,18 @@ E 			: E TK_MAIS_MENOS E
 
 R			: E TK_RELACIONAL E
 			{
+				defineTiposCompativeis($1.tipo, $3.tipo);
 				$$.label = "tmp" + proximaVariavelTemporaria();
 				$$.tipo = BOOL;
 				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
-				$$.traducao = $1.traducao + $3.traducao + '\t' +
-				$$.label + " = " + $1.label + decideOperadorRelacional($2.traducao) + $3.label + ";\n";
+				if ($1.tipo != CHARS) {
+					$$.traducao = $1.traducao + $3.traducao + '\t' +
+						$$.label + " = " + $1.label + decideOperadorRelacional($2.traducao) + $3.label + ";\n";
+				} else if ($1.tipo == CHARS) {
+					$$.traducao = $1.traducao + $3.traducao + '\t' +
+						$$.label + " = strcmp(" + $1.label + ", " + $3.label + ");\n" +
+						'\t' + $$.label + " = " + $$.label + decideOperadorRelacional($2.traducao) + " 0;\n";
+				}
 			}
 			| R TK_RELACIONAL TK_BOOL 
 			{

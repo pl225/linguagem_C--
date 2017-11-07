@@ -21,6 +21,12 @@
 	leia(zz);
 	leia(nat);
 
+	se (a > b) {
+		escreva(a);
+	} senao {
+		escreva(b);
+	}
+
 	escolha(z) {
 		caso 45:
 				escreva(a);

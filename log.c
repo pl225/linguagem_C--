@@ -61,7 +61,9 @@ int main(void)
 	int  tmp56;
 	int  tmp57;
 	int  tmp58;
+	int  tmp59;
 	int  tmp6;
+	int  tmp60;
 	char * tmp7;
 	int  tmp8;
 	char * tmp9;
@@ -139,64 +141,73 @@ int main(void)
 	setbuf(stdin, NULL);
 	scanf("%c", &tmp28);
 	setbuf(stdin, NULL);
-	tmp34 = tmp21;
-	tmp35 = 45;
-	if (tmp35 != tmp34) goto rotulo_6;
+	tmp34 = strcmp(tmp17, tmp15);
+	tmp34 = tmp34> 0;
+	tmp35 = !tmp34;
+	if (tmp35) goto rotulo_5;
 	cout << tmp17 << endl;
-	goto rotulo_5;
-	rotulo_6:
-	tmp36 = 778;
-	if (tmp36 != tmp34) goto rotulo_7;
-	cout << tmp21 << endl;
-	goto rotulo_5;
-	rotulo_7:
-	cout << tmp26 << endl;
-	goto rotulo_5;
+	goto rotulo_6;
 	rotulo_5:
-	tmp37 = 0;
-	tmp21 = tmp37;
+	cout << tmp15 << endl;
+	rotulo_6:
+	tmp36 = tmp21;
+	tmp37 = 45;
+	if (tmp37 != tmp36) goto rotulo_8;
+	cout << tmp17 << endl;
+	goto rotulo_7;
 	rotulo_8:
-	tmp38 = 10;
-	tmp39 = tmp21<tmp38;
-	tmp58 = !tmp39;
-	if (tmp58) goto rotulo_9;
-	tmp40 = 2;
-	tmp41 = tmp21==tmp40;
-	tmp42 = 4;
-	tmp43 = tmp21==tmp42;
-	tmp44 = tmp41 || tmp43;
-	tmp45 = 7;
-	tmp46 = tmp21==tmp45;
-	tmp47 = tmp44 || tmp46;
-	tmp57 = !tmp47;
-	if (tmp57) goto rotulo_14;
+	tmp38 = 778;
+	if (tmp38 != tmp36) goto rotulo_9;
 	cout << tmp21 << endl;
+	goto rotulo_7;
+	rotulo_9:
+	cout << tmp26 << endl;
+	goto rotulo_7;
+	rotulo_7:
+	tmp39 = 0;
+	tmp21 = tmp39;
+	rotulo_10:
+	tmp40 = 10;
+	tmp41 = tmp21<tmp40;
+	tmp60 = !tmp41;
+	if (tmp60) goto rotulo_11;
+	tmp42 = 2;
+	tmp43 = tmp21==tmp42;
+	tmp44 = 4;
+	tmp45 = tmp21==tmp44;
+	tmp46 = tmp43 || tmp45;
+	tmp47 = 7;
+	tmp48 = tmp21==tmp47;
+	tmp49 = tmp46 || tmp48;
+	tmp59 = !tmp49;
+	if (tmp59) goto rotulo_16;
+	cout << tmp21 << endl;
+	goto rotulo_17;
+	rotulo_16:
+	tmp50 = 1;
+	tmp51 = tmp21==tmp50;
+	tmp52 = 3;
+	tmp53 = tmp21==tmp52;
+	tmp54 = tmp51 || tmp53;
+	tmp58 = !tmp54;
+	if (tmp58) goto rotulo_14;
+	cout << tmp23 << endl;
 	goto rotulo_15;
 	rotulo_14:
-	tmp48 = 1;
-	tmp49 = tmp21==tmp48;
-	tmp50 = 3;
-	tmp51 = tmp21==tmp50;
-	tmp52 = tmp49 || tmp51;
-	tmp56 = !tmp52;
-	if (tmp56) goto rotulo_12;
-	cout << tmp23 << endl;
+	tmp55 = 4;
+	tmp56 = tmp21==tmp55;
+	tmp57 = !tmp56;
+	if (tmp57) goto rotulo_12;
+	cout << tmp15 << endl;
 	goto rotulo_13;
 	rotulo_12:
-	tmp53 = 4;
-	tmp54 = tmp21==tmp53;
-	tmp55 = !tmp54;
-	if (tmp55) goto rotulo_10;
-	cout << tmp15 << endl;
-	goto rotulo_11;
-	rotulo_10:
 	cout << tmp26 << endl;
-	rotulo_11:
 	rotulo_13:
 	rotulo_15:
+	rotulo_17:
 	tmp21 = tmp21 + 1;
-	goto rotulo_8;
-	rotulo_9:
+	goto rotulo_10;
+	rotulo_11:
 	if (tmp2 > 0) free(tmp1);
 	if (tmp12 > 0) free(tmp11);
 	if (tmp14 > 0) free(tmp13);
