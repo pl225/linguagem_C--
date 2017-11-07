@@ -221,10 +221,8 @@ COMANDOS	: COMANDO COMANDOS
 			}
 			;
 
-COMANDO 	: E ';'
-			| DECLARACAO ';'
+COMANDO 	: DECLARACAO ';'
 			| ATRIBUICAO ';'
-			| L ';'
 			| SE
 			| ENQUANTO
 			| LOOP_CONTROLE ';'
@@ -451,7 +449,7 @@ DECLARACAO_CHAR : ',' TK_ID DECLARACAO_VCHAR DECLARACAO_CHAR
 				{	$$.traducao = "";	}
 				;
 
-DECLARACAO_VSTRING : '=' STR
+DECLARACAO_VSTRING : '=' E
 					{
 						$$ = $2;
 					}
@@ -544,6 +542,9 @@ ATRIBUICAO	: TK_ID '=' TK_BOOL
 						mapaTemporario[varCast] = { .id = varCast, .tipo = FLUT32 };
 						$$.traducao = $3.traducao + '\t' + varCast + " = (float) " + $3.label + ";\n" +
 						'\t' + mapaTemporario[mapa[$1.label].temporario].id + " = " + varCast + ";\n";
+					} else {
+						$$.traducao = $3.traducao + '\t' + mapaTemporario[mapa[$1.label].temporario].id + 
+							" = " + $3.label + ";\n";	
 					}
 				} else {
 					$$.traducao = $3.traducao + '\t' + mapaTemporario[mapa[$1.label].temporario].id + 
@@ -572,6 +573,7 @@ ATRIBUICAO	: TK_ID '=' TK_BOOL
 
 E 			: E TK_MAIS_MENOS E
 			{
+				defineTiposCompativeis($1.tipo, $3.tipo);
 				$$.label = "tmp" + proximaVariavelTemporaria();
 				$$.traducao = $1.traducao + $3.traducao;
 				if ($1.tipo != $3.tipo) {
@@ -595,6 +597,7 @@ E 			: E TK_MAIS_MENOS E
 			|
 			E TK_MULTI_DIV E
 			{
+				defineTiposCompativeis($1.tipo, $3.tipo);
 				$$.label = "tmp" + proximaVariavelTemporaria();
 				$$.traducao = $1.traducao + $3.traducao;
 				if ($1.tipo != $3.tipo) {
@@ -614,6 +617,32 @@ E 			: E TK_MAIS_MENOS E
 					mapaTemporario[$$.label] = { .id = $$.label, .tipo = $1.tipo };
 					$$.traducao += '\t' + $$.label + " = " + $1.label + $2.traducao + $3.label + ";\n";
 				}
+			}
+			|
+			E TK_CONCATENACAO E
+			{
+				defineTiposCompativeis($1.tipo, $3.tipo);
+				$$.tipo = $1.tipo;
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				string tamanhoString = "tmp" + proximaVariavelTemporaria();
+				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo, .tamanho = tamanhoString };
+				mapaTemporario[tamanhoString] = { .id = tamanhoString, .tipo = INT };
+				$$.traducao = $1.traducao + $3.traducao + 
+					'\t' + tamanhoString + " = " + mapaTemporario[$1.label].tamanho + " + " +
+				 	mapaTemporario[$3.label].tamanho + ";\n" + '\t' + tamanhoString + " = " + tamanhoString + " + 1;\n" +
+					'\t' + $$.label + " = (char*) malloc(" + tamanhoString + ");\n" + 
+					"\tstrcat(" + $$.label + ", " + $1.label + ");\n" + "\tstrcat(" + $$.label + ", " + $3.label + ");\n";
+			}
+			| TK_STRING
+			{
+				$$.tipo = $1.tipo;
+				$$.label = "tmp" + proximaVariavelTemporaria();
+				string tamanhoString = "tmp" + proximaVariavelTemporaria();
+				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo, .tamanho = tamanhoString };
+				mapaTemporario[tamanhoString] = { .id = tamanhoString, .tipo = INT };
+				$$.traducao = '\t' + tamanhoString + " = " + to_string($1.traducao.length() - 2) + " + 1;\n" +
+					'\t' + $$.label + " = (char*) malloc(" + tamanhoString + ");\n" + 
+					"\tstrcat(" + $$.label + ", " + $1.traducao + ");\n";
 			}
 			| 
 			TK_NUM
@@ -694,41 +723,6 @@ L 			: L TK_LOGICO L
 			}
 			|
 			R
-			;
-
-STR 		: STR TK_CONCATENACAO STR
-			{
-				defineTiposCompativeis($1.label, $3.label);
-				$$.tipo = $1.tipo;
-				$$.label = "tmp" + proximaVariavelTemporaria();
-				string tamanhoString = "tmp" + proximaVariavelTemporaria();
-				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo, .tamanho = tamanhoString };
-				mapaTemporario[tamanhoString] = { .id = tamanhoString, .tipo = INT };
-				$$.traducao = $1.traducao + $3.traducao + 
-					'\t' + tamanhoString + " = " + mapaTemporario[$1.label].tamanho + " + " +
-				 	mapaTemporario[$3.label].tamanho + ";\n" + '\t' + tamanhoString + " = " + tamanhoString + " + 1;\n" +
-					'\t' + $$.label + " = (char*) malloc(" + tamanhoString + ");\n" + 
-					"\tstrcat(" + $$.label + ", " + $1.label + ");\n" + "\tstrcat(" + $$.label + ", " + $3.label + ");\n";
-			}
-			| TK_ID
-			{
-				mapV mapa = buscaMapa($1.label);
-        		string var = mapa[$1.label].temporario;
-        		$$.label = mapaTemporario[var].id;
-        		$$.tipo = mapaTemporario[var].tipo;
-        		$$.traducao = "";
-			}
-			| TK_STRING
-			{
-				$$.tipo = $1.tipo;
-				$$.label = "tmp" + proximaVariavelTemporaria();
-				string tamanhoString = "tmp" + proximaVariavelTemporaria();
-				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo, .tamanho = tamanhoString };
-				mapaTemporario[tamanhoString] = { .id = tamanhoString, .tipo = INT };
-				$$.traducao = '\t' + tamanhoString + " = " + to_string($1.traducao.length() - 2) + " + 1;\n" +
-					'\t' + $$.label + " = (char*) malloc(" + tamanhoString + ");\n" + 
-					"\tstrcat(" + $$.label + ", " + $1.traducao + ");\n";
-			}
 			;
 
 SE  		: TK_IF '(' L ')' BLOCO_IF BLOCO
