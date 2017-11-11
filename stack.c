@@ -1,24 +1,26 @@
-#include <stack>
-#include <iostream>	
-#include <sstream>
-
-
-using std::stack;    
+#include <stdio.h>	
+#include <stdlib.h>
+#include <string.h>
 
 int main(int argc, char const *argv[])
 {
-	stack< int > numbers;
-	numbers.push( 1 );
-	numbers.push( 2 );
+	void **array = (void**)malloc(4 * sizeof(void*));
 
-	stack<int> m = numbers;
+	int a = 4; float b = 5; char c = 'h'; char e [] = "matheus";
 
-	while ( not m.empty( ) )
-	{
-	    int number = m.top( );
-	    std::cout << number << std::endl;
-	    m.pop( );
-	}
-	std::cout << numbers.size() << std::endl;
-	return 0;
+	char* g = (char*) malloc(10);
+	strcat(g, "notebook");
+
+	array[0] = (void*) &a;
+	array[1] = (void*) &b;
+	array[2] = (void*) &c;
+	array[3] = (void*) g ; // &e
+
+	printf("%d\n", *((int*) array[0]));
+	printf("%f\n", *((float*) array[1]));
+	printf("%c\n", *((char*) array[2]));
+	printf("%s\n", (char*) array[3]); //printf("%c\n", ((char*) array[3])[1]);
+
+	free(g);
+	free(array);
 }

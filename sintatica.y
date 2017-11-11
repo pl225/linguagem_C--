@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include <list>
 #include <stack>
 
 #define YYSTYPE atributos
@@ -12,6 +13,7 @@
 #define CHAR "3"
 #define CHARS "4"
 #define SIZE_STR 10
+#define FUNCAO "5"
 
 using namespace std;
 
@@ -36,8 +38,17 @@ typedef struct
 	string temporario;
 } variavelDeclarada;
 
+typedef struct
+{
+	string id;
+	string retorno;
+	string traducao;
+	list <variavelTemporaria> parametros;
+} funcaoDeclarada;
+
 typedef map<string, variavelTemporaria> mapT;
 typedef map<string, variavelDeclarada> mapV;
+typedef map<string, funcaoDeclarada> mapF;
 
 typedef struct 
 {
@@ -50,7 +61,9 @@ typedef struct
 static stack<contextoBloco> pilhaContexto;
 
 static mapT mapaTemporario;
+static mapT mapaTemporarioCopia;
 static mapV mapaDeclarado;
+static mapF mapaFuncao;
 
 mapV controiMapaVariaveis () {
 	mapV m;
@@ -169,6 +182,22 @@ string liberarStrings () {
     return s;
 }
 
+string traduzirFuncoes () {
+	string s = "";
+	for (mapF::iterator it = mapaFuncao.begin(); it!=mapaFuncao.end(); ++it) {
+    	s += it->second.traducao;
+	}
+    return s;
+}
+
+void processaArgumentoFuncao(string label, string tipo) {
+	string var = "tmp" + proximaVariavelTemporaria();
+	pilhaContexto.top().mapaVariaveis[label] = { .id = label, .tipo = tipo, var};
+	mapaTemporario[var] = {.id = var, .tipo = tipo};
+	string nomeFuncao = pilhaContexto.top().rotuloInicio;
+	mapaFuncao[nomeFuncao].parametros.push_front({ .id = var, .tipo = tipo }); // testar antes se ja nao existe
+}
+
 %}
 
 %token TK_NUM TK_BOOL TK_CHAR TK_STRING
@@ -179,7 +208,7 @@ string liberarStrings () {
 %token TK_FIM TK_ERROR
 %token TK_IF TK_WHILE TK_BREAK TK_CONTINUE TK_DO TK_FOR
 %token TK_OP_ABREV TK_OP_1 TK_ELSE TK_SWITCH TK_CASE TK_DEFAULT
-%token TK_PRINT TK_SCAN
+%token TK_PRINT TK_SCAN TK_TIPO_FUNCAO
 
 %start S
 
@@ -191,10 +220,11 @@ string liberarStrings () {
 
 %%
 
-S 			: PILHA_GLOBAL BLOCO
+S 			: PILHA_GLOBAL COMANDOS
 			{
 				cout << "/*Compilador FAEN*/" << endl;
 				cout << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\n#include<stdlib.h>\n#define SIZE_STR 10\nusing namespace std;" << endl;
+				cout << traduzirFuncoes() << endl;
 				cout << "int main(void)\n{\n" << declaraVariaveisTemporarias() + $2.traducao + liberarStrings() << "\treturn 0;\n}" << endl; 
 			}
 			;
@@ -231,6 +261,7 @@ COMANDO 	: DECLARACAO ';'
 			| ESCOLHA
 			| PRINT ';'
 			| SCAN ';'
+			| DECLARA_FUNCAO
 			;
 
 DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
@@ -981,7 +1012,51 @@ LOOP_CONTROLE: TK_BREAK
 				$$.traducao = "\tgoto " + cb.rotuloInicio + ";\n";
 			}
 
+TIPO_DADO:	TK_TIPO_STRING | TK_TIPO_INT | TK_TIPO_CHAR | TK_TIPO_BOOL | TK_TIPO_FLUT32;
 
+ARGUMENTOS_FUNCAO: TK_ID ':' TIPO_DADO ARGUMENTOS_FUNCAO_AUX
+				{
+					processaArgumentoFuncao($1.label, $3.tipo);
+					mapaFuncao[pilhaContexto.top().rotuloInicio].traducao = decideTipo($3.tipo) + 
+						pilhaContexto.top().mapaVariaveis[$1.label].temporario + $4.traducao;
+				}
+				|{ $$.traducao = ""; }
+				;
+
+ARGUMENTOS_FUNCAO_AUX:	',' TK_ID ':' TIPO_DADO ARGUMENTOS_FUNCAO_AUX
+				{
+					processaArgumentoFuncao($2.label, $4.tipo);
+					$$.traducao = ", " + decideTipo($4.tipo) + 
+						pilhaContexto.top().mapaVariaveis[$2.label].temporario + $5.traducao;
+				}
+				|{ $$.traducao = ""; }
+				;
+
+DECLARA_FUNCAO:	TK_TIPO_FUNCAO BLOCO_FUNCAO '(' ARGUMENTOS_FUNCAO ')' ':' TIPO_DADO BLOCO 
+				{
+					string nomeFuncao = pilhaContexto.top().rotuloInicio;
+					mapaFuncao[nomeFuncao].retorno = $8.tipo;
+					mapaFuncao[nomeFuncao].traducao = decideTipo($8.tipo) + nomeFuncao + 
+						'(' + mapaFuncao[nomeFuncao].traducao + ')' +
+						"{\n" + $8.traducao + "}\n";
+					mapaTemporario = mapaTemporarioCopia;
+					mapaTemporarioCopia.clear();
+					pilhaContexto.pop();
+				} 
+				;
+
+BLOCO_FUNCAO 	: TK_ID
+				{
+					verificaVariavelJaDeclarada($1.label);
+					string var = "tmp" + proximaVariavelTemporaria();
+					pilhaContexto.top().mapaVariaveis[$1.label] = { .id = $1.label, .tipo = FUNCAO, var};
+					mapaFuncao[var] = { .id = var, .retorno = "", .traducao = "", .parametros = list<variavelTemporaria>()};
+					pilhaContexto.push({ .quebravel = false, .mapaVariaveis = controiMapaVariaveis(),
+						.rotuloInicio = var, .rotuloFim = ""});
+					mapaTemporarioCopia = mapaTemporario;
+					mapaTemporario.clear();
+				}
+				;
 %%
 
 #include "lex.yy.c"

@@ -27,6 +27,7 @@ Caractere "char"
 Caracteres "chars"
 Vazio "vazio"
 Padrao "padrao"
+Funcao "funcao"
 
 Castint "(int)"
 Castflut32 "(flut32)"
@@ -116,6 +117,8 @@ Retorna "retorna"
 
 {Castint} { yylval.tipo = INT; return TK_CAST; }
 {Castflut32} { yylval.tipo = FLUT32; return TK_CAST; }
+
+{Funcao} {return TK_TIPO_FUNCAO;}
 
 {Inteiro}		{yylval.traducao = yytext; yylval.tipo = INT; return TK_TIPO_INT;}
 
