@@ -1,3 +1,6 @@
 funcao primeira (a: int, b: chars) : int {
-	escreva(a);
+	chars c = "hhhh";
+	escreva(c);
+	c = c."jjj";
+	escreva(c);
 }

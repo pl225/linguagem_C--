@@ -573,10 +573,14 @@ ATRIBUICAO	: TK_ID '=' TK_BOOL
 						mapaTemporario[varCast] = { .id = varCast, .tipo = FLUT32 };
 						$$.traducao = $3.traducao + '\t' + varCast + " = (float) " + $3.label + ";\n" +
 						'\t' + mapaTemporario[mapa[$1.label].temporario].id + " = " + varCast + ";\n";
-					} else {
-						$$.traducao = $3.traducao + '\t' + mapaTemporario[mapa[$1.label].temporario].id + 
-							" = " + $3.label + ";\n";	
 					}
+				} else if ($1.tipo == CHARS) {
+					string temporarioId = mapa[$1.label].temporario;
+					string tamanhoString = mapaTemporario[temporarioId].tamanho;
+					$$.traducao = $3.traducao + "\tif(" + tamanhoString + " > 0) free(" + temporarioId + ");\n" +
+						'\t' + tamanhoString + " = " + mapaTemporario[$3.label].tamanho + ";\n" +
+				 		'\t' + temporarioId + " = (char*) malloc(" + tamanhoString + ");\n" + 
+						"\tstrcat(" + temporarioId + ", " + $3.label + ");\n";
 				} else {
 					$$.traducao = $3.traducao + '\t' + mapaTemporario[mapa[$1.label].temporario].id + 
 					" = " + $3.label + ";\n";
