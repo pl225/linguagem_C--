@@ -29,6 +29,7 @@ typedef struct
 	string id;
 	string tipo;
 	string tamanho;
+	bool isParametro;
 } variavelTemporaria;
 
 typedef struct 
@@ -107,6 +108,15 @@ string declaraVariaveisTemporarias () {
 	string s = "";
 	for (mapT::iterator it = mapaTemporario.begin(); it!=mapaTemporario.end(); ++it) {
     	s += '\t' + decideTipo(it->second.tipo) + ' ' + it->second.id + ";\n";
+	}
+    return s;
+}
+
+string declaraVariaveisTemporariasFuncao () {
+	string s = "";
+	for (mapT::iterator it = mapaTemporario.begin(); it!=mapaTemporario.end(); ++it) {
+		if (!it->second.isParametro)
+    		s += '\t' + decideTipo(it->second.tipo) + ' ' + it->second.id + ";\n";
 	}
     return s;
 }
@@ -193,7 +203,7 @@ string traduzirFuncoes () {
 void processaArgumentoFuncao(string label, string tipo) {
 	string var = "tmp" + proximaVariavelTemporaria();
 	pilhaContexto.top().mapaVariaveis[label] = { .id = label, .tipo = tipo, var};
-	mapaTemporario[var] = {.id = var, .tipo = tipo};
+	mapaTemporario[var] = {.id = var, .tipo = tipo, .tamanho = "", .isParametro = true};
 	string nomeFuncao = pilhaContexto.top().rotuloInicio;
 	mapaFuncao[nomeFuncao].parametros.push_front({ .id = var, .tipo = tipo }); // testar antes se ja nao existe
 }
@@ -1042,7 +1052,7 @@ DECLARA_FUNCAO:	TK_TIPO_FUNCAO BLOCO_FUNCAO '(' ARGUMENTOS_FUNCAO ')' ':' TIPO_D
 					mapaFuncao[nomeFuncao].retorno = $8.tipo;
 					mapaFuncao[nomeFuncao].traducao = decideTipo($8.tipo) + nomeFuncao + 
 						'(' + mapaFuncao[nomeFuncao].traducao + ')' +
-						"{\n" + $8.traducao + "}\n";
+						"{\n" + declaraVariaveisTemporariasFuncao() + $8.traducao + "}\n";
 					mapaTemporario = mapaTemporarioCopia;
 					mapaTemporarioCopia.clear();
 					pilhaContexto.pop();

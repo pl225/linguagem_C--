@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct {
+	char a;
+	int b;
+} lala;
+
 int main(int argc, char const *argv[])
 {
 	void **array = (void**)malloc(4 * sizeof(void*));
@@ -23,4 +28,8 @@ int main(int argc, char const *argv[])
 
 	free(g);
 	free(array);
+
+	lala mais = {'k', 3};
+	putchar(mais.a);
+	printf("%d\n", mais.b);
 }

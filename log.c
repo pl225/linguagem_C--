@@ -6,6 +6,14 @@
 #define SIZE_STR 10
 using namespace std;
 int tmp1(int tmp3, char *tmp2){
+	char * tmp10;
+	int  tmp11;
+	char * tmp4;
+	int  tmp5;
+	char * tmp6;
+	int  tmp7;
+	char * tmp8;
+	int  tmp9;
 	tmp5 = 4 + 1;
 	tmp4 = (char*) malloc(tmp5);
 	strcat(tmp4, "hhhh");
@@ -30,5 +38,7 @@ int tmp1(int tmp3, char *tmp2){
 
 int main(void)
 {
+	char *a; // feito manualmente
+	tmp1(3, a); // feito manualmente
 	return 0;
 }
