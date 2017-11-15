@@ -35,10 +35,17 @@ int tmp1(int tmp3, char *tmp2){
 	strcat(tmp6, tmp10);
 	cout << tmp6 << endl;
 }
+char *tmp12(int tmp14, char *tmp13){
+	int  tmp15;
+	tmp15 = 4;
+	cout << tmp15 << endl;
+}
 
 int main(void)
 {
-	char *a; // feito manualmente
-	tmp1(3, a); // feito manualmente
+	int  tmp16;
+	int  tmp17;
+	tmp16 = 2;
+	tmp17 = tmp16;
 	return 0;
 }

@@ -5,6 +5,7 @@
 #include <map>
 #include <list>
 #include <stack>
+#include <algorithm>
 
 #define YYSTYPE atributos
 #define INT "0"
@@ -24,12 +25,24 @@ struct atributos
 	string tipo;
 };
 
+typedef struct 
+{
+	string id;
+	string tipo;	
+} parametrosFuncao;
+
 typedef struct
 {
 	string id;
 	string tipo;
 	string tamanho;
 	bool isParametro;
+	struct 
+	{
+		string retorno;
+		string traducao;
+		list <parametrosFuncao> parametros;
+	} funcao;
 } variavelTemporaria;
 
 typedef struct 
@@ -39,17 +52,9 @@ typedef struct
 	string temporario;
 } variavelDeclarada;
 
-typedef struct
-{
-	string id;
-	string retorno;
-	string traducao;
-	list <variavelTemporaria> parametros;
-} funcaoDeclarada;
-
 typedef map<string, variavelTemporaria> mapT;
 typedef map<string, variavelDeclarada> mapV;
-typedef map<string, funcaoDeclarada> mapF;
+//typedef map<string, funcaoDeclarada> mapF;
 
 typedef struct 
 {
@@ -64,7 +69,7 @@ static stack<contextoBloco> pilhaContexto;
 static mapT mapaTemporario;
 static mapT mapaTemporarioCopia;
 static mapV mapaDeclarado;
-static mapF mapaFuncao;
+//static mapF mapaFuncao;
 
 mapV controiMapaVariaveis () {
 	mapV m;
@@ -107,17 +112,28 @@ string decideValorBooleano (string b) {
 string declaraVariaveisTemporarias () {
 	string s = "";
 	for (mapT::iterator it = mapaTemporario.begin(); it!=mapaTemporario.end(); ++it) {
-    	s += '\t' + decideTipo(it->second.tipo) + ' ' + it->second.id + ";\n";
+		if (it->second.tipo != FUNCAO)
+    		s += '\t' + decideTipo(it->second.tipo) + ' ' + it->second.id + ";\n";
 	}
     return s;
 }
 
 string declaraVariaveisTemporariasFuncao () {
+	mapT mapa;
+
+	set_difference(mapaTemporario.begin(), mapaTemporario.end(),
+                      mapaTemporarioCopia.begin(), mapaTemporarioCopia.end(),
+                      insert_iterator<mapT>(mapa, mapa.end()),
+              [](const mapT::value_type & a, const mapT::value_type & b)
+              { return a.first < b.first; }
+                     );
+
 	string s = "";
-	for (mapT::iterator it = mapaTemporario.begin(); it!=mapaTemporario.end(); ++it) {
+	for (mapT::iterator it = mapa.begin(); it!=mapa.end(); ++it) {
 		if (!it->second.isParametro)
     		s += '\t' + decideTipo(it->second.tipo) + ' ' + it->second.id + ";\n";
 	}
+	mapa.clear();
     return s;
 }
 
@@ -194,8 +210,9 @@ string liberarStrings () {
 
 string traduzirFuncoes () {
 	string s = "";
-	for (mapF::iterator it = mapaFuncao.begin(); it!=mapaFuncao.end(); ++it) {
-    	s += it->second.traducao;
+	for (mapT::iterator it = mapaTemporario.begin(); it!=mapaTemporario.end(); ++it) {
+		if (it->second.tipo == FUNCAO)
+    		s += it->second.funcao.traducao;
 	}
     return s;
 }
@@ -205,7 +222,7 @@ void processaArgumentoFuncao(string label, string tipo) {
 	pilhaContexto.top().mapaVariaveis[label] = { .id = label, .tipo = tipo, var};
 	mapaTemporario[var] = {.id = var, .tipo = tipo, .tamanho = "", .isParametro = true};
 	string nomeFuncao = pilhaContexto.top().rotuloInicio;
-	mapaFuncao[nomeFuncao].parametros.push_front({ .id = var, .tipo = tipo }); // testar antes se ja nao existe
+	mapaTemporario[nomeFuncao].funcao.parametros.push_front({ .id = var, .tipo = tipo }); // testar antes se ja nao existe
 }
 
 %}
@@ -1031,7 +1048,7 @@ TIPO_DADO:	TK_TIPO_STRING | TK_TIPO_INT | TK_TIPO_CHAR | TK_TIPO_BOOL | TK_TIPO_
 ARGUMENTOS_FUNCAO: TK_ID ':' TIPO_DADO ARGUMENTOS_FUNCAO_AUX
 				{
 					processaArgumentoFuncao($1.label, $3.tipo);
-					mapaFuncao[pilhaContexto.top().rotuloInicio].traducao = decideTipo($3.tipo) + 
+					mapaTemporario[pilhaContexto.top().rotuloInicio].funcao.traducao = decideTipo($3.tipo) + 
 						pilhaContexto.top().mapaVariaveis[$1.label].temporario + $4.traducao;
 				}
 				|{ $$.traducao = ""; }
@@ -1049,13 +1066,15 @@ ARGUMENTOS_FUNCAO_AUX:	',' TK_ID ':' TIPO_DADO ARGUMENTOS_FUNCAO_AUX
 DECLARA_FUNCAO:	TK_TIPO_FUNCAO BLOCO_FUNCAO '(' ARGUMENTOS_FUNCAO ')' ':' TIPO_DADO BLOCO 
 				{
 					string nomeFuncao = pilhaContexto.top().rotuloInicio;
-					mapaFuncao[nomeFuncao].retorno = $8.tipo;
-					mapaFuncao[nomeFuncao].traducao = decideTipo($8.tipo) + nomeFuncao + 
-						'(' + mapaFuncao[nomeFuncao].traducao + ')' +
+					mapaTemporario[nomeFuncao].funcao.retorno = $8.tipo;
+					mapaTemporario[nomeFuncao].funcao.traducao = decideTipo($8.tipo) + nomeFuncao + 
+						'(' + mapaTemporario[nomeFuncao].funcao.traducao + ')' +
 						"{\n" + declaraVariaveisTemporariasFuncao() + $8.traducao + "}\n";
+					mapaTemporarioCopia[nomeFuncao] = mapaTemporario[nomeFuncao];
 					mapaTemporario = mapaTemporarioCopia;
 					mapaTemporarioCopia.clear();
 					pilhaContexto.pop();
+					$$.traducao = "";
 				} 
 				;
 
@@ -1064,11 +1083,12 @@ BLOCO_FUNCAO 	: TK_ID
 					verificaVariavelJaDeclarada($1.label);
 					string var = "tmp" + proximaVariavelTemporaria();
 					pilhaContexto.top().mapaVariaveis[$1.label] = { .id = $1.label, .tipo = FUNCAO, var};
-					mapaFuncao[var] = { .id = var, .retorno = "", .traducao = "", .parametros = list<variavelTemporaria>()};
+					mapaTemporario[var] = { .id = var, .tipo = FUNCAO, .tamanho = "", .isParametro = false,
+						.funcao = {.retorno = "", .traducao = "", .parametros = list<parametrosFuncao>()}
+					};
+					mapaTemporarioCopia = mapaTemporario;
 					pilhaContexto.push({ .quebravel = false, .mapaVariaveis = controiMapaVariaveis(),
 						.rotuloInicio = var, .rotuloFim = ""});
-					mapaTemporarioCopia = mapaTemporario;
-					mapaTemporario.clear();
 				}
 				;
 %%

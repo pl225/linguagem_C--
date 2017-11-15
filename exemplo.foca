@@ -4,3 +4,7 @@ funcao primeira (a: int, b: chars) : int {
 	c = c."jjj";
 	escreva(c);
 }
+funcao segunda (a: int, b: chars) : chars {
+	escreva(4);
+}
+int i = 2;
