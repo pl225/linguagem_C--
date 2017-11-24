@@ -54,7 +54,6 @@ typedef struct
 
 typedef map<string, variavelTemporaria> mapT;
 typedef map<string, variavelDeclarada> mapV;
-//typedef map<string, funcaoDeclarada> mapF;
 
 typedef struct 
 {
@@ -69,7 +68,7 @@ static stack<contextoBloco> pilhaContexto;
 static mapT mapaTemporario;
 static mapT mapaTemporarioCopia;
 static mapV mapaDeclarado;
-//static mapF mapaFuncao;
+static list<parametrosFuncao> parametrosAuxiliar;
 
 mapV controiMapaVariaveis () {
 	mapV m;
@@ -289,6 +288,7 @@ COMANDO 	: DECLARACAO ';'
 			| PRINT ';'
 			| SCAN ';'
 			| DECLARA_FUNCAO
+			| CALL_FUNCTION ';'
 			;
 
 DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
@@ -1089,6 +1089,44 @@ BLOCO_FUNCAO 	: TK_ID
 					mapaTemporarioCopia = mapaTemporario;
 					pilhaContexto.push({ .quebravel = false, .mapaVariaveis = controiMapaVariaveis(),
 						.rotuloInicio = var, .rotuloFim = ""});
+				}
+				;
+
+ARG_FUNC_CALL	: E ARG_FUNC_CALL_AUX
+				{
+					$$.traducao = $1.traducao + $2.traducao;
+					parametrosAuxiliar.push_front({.id = $1.label, .tipo = $1.tipo});
+				}
+				| { $$.traducao = ""; }
+				;
+
+ARG_FUNC_CALL_AUX : ',' E ARG_FUNC_CALL_AUX
+				{
+					$$.traducao = $2.traducao + $3.traducao;
+					parametrosAuxiliar.push_front({.id = $2.label, .tipo = $2.tipo});
+				}
+				| { $$.traducao = ""; }
+				;
+
+CALL_FUNCTION	: TK_ID '(' ARG_FUNC_CALL ')'
+				{
+					mapV mapa = buscaMapa($1.label);
+					if (mapa[$1.label].tipo == FUNCAO) {
+						string traducao = "";
+						string temporario = mapa[$1.label].temporario;
+						list<parametrosFuncao>::iterator real = mapaTemporario[temporario].funcao.parametros.begin(),
+							aux = parametrosAuxiliar.begin();
+
+						while (real != mapaTemporario[temporario].funcao.parametros.end() && aux != parametrosAuxiliar.end()) {
+							if (real->tipo != aux->tipo) yyerror("Tipos de parâmetros incorretos enviados para a função.");
+							traducao += aux->id + ',';
+							real++; aux++;
+						}
+						if (real != mapaTemporario[temporario].funcao.parametros.end() || aux != parametrosAuxiliar.end()) 
+							yyerror("Número errado de parâmetros enviado à função.");
+						if (traducao.length() > 0) traducao.pop_back();
+						$$.traducao = $3.traducao + '\t' + temporario + '(' + traducao + ");\n";
+					}	
 				}
 				;
 %%
