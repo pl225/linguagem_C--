@@ -62,6 +62,7 @@ typedef struct
 	string rotuloInicio;
 	string rotuloFim;
 	bool funcional;
+	bool isGlobal;
 } contextoBloco;
 
 static stack<contextoBloco> pilhaContexto;
@@ -297,7 +298,7 @@ S 			: PILHA_GLOBAL COMANDOS
 PILHA_GLOBAL: 
 			{
 				pilhaContexto.push({ .quebravel = false, .mapaVariaveis = controiMapaVariaveis(),
-					.rotuloInicio = proximoRotulo(), .rotuloFim = proximoRotulo()});
+					.rotuloInicio = proximoRotulo(), .rotuloFim = proximoRotulo(), .funcional = false, .isGlobal = true});
 			}
 
 BLOCO		: '{' COMANDOS '}'
@@ -1125,6 +1126,7 @@ TIPO_DADO_FUNC	: TIPO_DADO
 
 BLOCO_FUNCAO 	: TK_ID
 				{
+					if (!pilhaContexto.top().isGlobal) yyerror("Uma função só pode ser declarada no escopo global.");
 					verificaVariavelJaDeclarada($1.label);
 					string var = "tmp" + proximaVariavelTemporaria();
 					pilhaContexto.top().mapaVariaveis[$1.label] = { .id = $1.label, .tipo = FUNCAO, var};
