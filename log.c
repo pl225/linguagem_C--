@@ -8,6 +8,7 @@ using namespace std;
 int tmp1(int tmp3, float tmp2){
 	char * tmp10;
 	int  tmp11;
+	int  tmp12;
 	char * tmp4;
 	int  tmp5;
 	char * tmp6;
@@ -34,35 +35,37 @@ int tmp1(int tmp3, float tmp2){
 	tmp6 = (char*) malloc(tmp7);
 	strcat(tmp6, tmp10);
 	cout << tmp6 << endl;
+	tmp12 = 4;
+	return tmp12;
 }
-char *tmp12(int tmp14, char *tmp13){
-	int  tmp15;
-	tmp15 = 4;
-	cout << tmp15 << endl;
+char *tmp13(int tmp15, char *tmp14){
+	int  tmp16;
+	tmp16 = 4;
+	cout << tmp16 << endl;
 }
-float tmp20(){
-	cout << tmp17 << endl;
+float tmp21(){
+	cout << tmp18 << endl;
 }
 
 int main(void)
 {
-	int  tmp16;
 	int  tmp17;
 	int  tmp18;
 	int  tmp19;
-	int  tmp21;
-	float  tmp22;
-	int  tmp23;
-	tmp16 = 2;
-	tmp17 = tmp16;
-	tmp18 = 2;
-	tmp19 = tmp17>tmp18;
-	tmp23 = !tmp19;
-	if (tmp23) goto rotulo_3;
-	tmp20();
-	tmp21 = 4;
-	tmp22 = 4.32;
-	tmp1(tmp21,tmp22);
+	int  tmp20;
+	int  tmp22;
+	float  tmp23;
+	int  tmp24;
+	tmp17 = 2;
+	tmp18 = tmp17;
+	tmp19 = 2;
+	tmp20 = tmp18>tmp19;
+	tmp24 = !tmp20;
+	if (tmp24) goto rotulo_3;
+	tmp21();
+	tmp22 = 4;
+	tmp23 = 4.32;
+	tmp1(tmp22,tmp23);
 	rotulo_3:
 	return 0;
 }

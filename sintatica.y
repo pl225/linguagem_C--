@@ -61,6 +61,7 @@ typedef struct
 	mapV mapaVariaveis;
 	string rotuloInicio;
 	string rotuloFim;
+	bool funcional;
 } contextoBloco;
 
 static stack<contextoBloco> pilhaContexto;
@@ -176,6 +177,17 @@ contextoBloco controlarLaco () {
 	yyerror("Este bloco não permite controle de laços.");							
 }
 
+contextoBloco controlarRetorno () {
+	stack<contextoBloco> p = pilhaContexto;
+	while (not p.empty()){
+		if (p.top().funcional) {
+			return p.top();
+		}
+	    p.pop();
+	}
+	yyerror("Este bloco não permite retorno de funções.");							
+}
+
 void verificaVariavelJaDeclarada (string s) {
 	if (pilhaContexto.top().mapaVariaveis.find(s) != pilhaContexto.top().mapaVariaveis.end()) {
 		yyerror("A variável "+ s + " já foi declarada.");					
@@ -230,11 +242,11 @@ void processaArgumentoFuncao(string label, string tipo) {
 %token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLUT32 TK_TIPO_FLUT64  TK_TIPO_BOOL TK_TIPO_STRING
 %token TK_TIPO_CHAR TK_MAIS_MENOS TK_MULTI_DIV TK_CONCATENACAO
 %token TK_BIN TK_HEX TK_OCT
-%token TK_RELACIONAL TK_LOGICO
+%token TK_RELACIONAL TK_LOGICO 
 %token TK_FIM TK_ERROR
 %token TK_IF TK_WHILE TK_BREAK TK_CONTINUE TK_DO TK_FOR
 %token TK_OP_ABREV TK_OP_1 TK_ELSE TK_SWITCH TK_CASE TK_DEFAULT
-%token TK_PRINT TK_SCAN TK_TIPO_FUNCAO
+%token TK_PRINT TK_SCAN TK_TIPO_FUNCAO TK_RETORNA
 
 %start S
 
@@ -289,6 +301,7 @@ COMANDO 	: DECLARACAO ';'
 			| SCAN ';'
 			| DECLARA_FUNCAO
 			| CALL_FUNCTION ';'
+			| RETORNA ';'
 			;
 
 DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
@@ -1063,11 +1076,10 @@ ARGUMENTOS_FUNCAO_AUX:	',' TK_ID ':' TIPO_DADO ARGUMENTOS_FUNCAO_AUX
 				|{ $$.traducao = ""; }
 				;
 
-DECLARA_FUNCAO:	TK_TIPO_FUNCAO BLOCO_FUNCAO '(' ARGUMENTOS_FUNCAO ')' ':' TIPO_DADO BLOCO 
+DECLARA_FUNCAO:	TK_TIPO_FUNCAO BLOCO_FUNCAO '(' ARGUMENTOS_FUNCAO ')' ':' TIPO_DADO_FUNC BLOCO 
 				{
 					string nomeFuncao = pilhaContexto.top().rotuloInicio;
-					mapaTemporario[nomeFuncao].funcao.retorno = $8.tipo;
-					mapaTemporario[nomeFuncao].funcao.traducao = decideTipo($8.tipo) + nomeFuncao + 
+					mapaTemporario[nomeFuncao].funcao.traducao = decideTipo($7.tipo) + nomeFuncao + 
 						'(' + mapaTemporario[nomeFuncao].funcao.traducao + ')' +
 						"{\n" + declaraVariaveisTemporariasFuncao() + $8.traducao + "}\n";
 					mapaTemporarioCopia[nomeFuncao] = mapaTemporario[nomeFuncao];
@@ -1076,6 +1088,12 @@ DECLARA_FUNCAO:	TK_TIPO_FUNCAO BLOCO_FUNCAO '(' ARGUMENTOS_FUNCAO ')' ':' TIPO_D
 					pilhaContexto.pop();
 					$$.traducao = "";
 				} 
+				;
+
+TIPO_DADO_FUNC	: TIPO_DADO
+				{
+					mapaTemporario[pilhaContexto.top().rotuloInicio].funcao.retorno = $1.tipo;
+				}
 				;
 
 BLOCO_FUNCAO 	: TK_ID
@@ -1088,7 +1106,7 @@ BLOCO_FUNCAO 	: TK_ID
 					};
 					mapaTemporarioCopia = mapaTemporario;
 					pilhaContexto.push({ .quebravel = false, .mapaVariaveis = controiMapaVariaveis(),
-						.rotuloInicio = var, .rotuloFim = ""});
+						.rotuloInicio = var, .rotuloFim = "", .funcional = true});
 				}
 				;
 
@@ -1127,6 +1145,14 @@ CALL_FUNCTION	: TK_ID '(' ARG_FUNC_CALL ')'
 						if (traducao.length() > 0) traducao.pop_back();
 						$$.traducao = $3.traducao + '\t' + temporario + '(' + traducao + ");\n";
 					}	
+				}
+				;
+
+RETORNA 		: TK_RETORNA E
+				{
+					contextoBloco cb = controlarRetorno();			
+					if (mapaTemporario[cb.rotuloInicio].funcao.retorno != $2.tipo) yyerror("Tipo de retorno inválido.");
+					$$.traducao = $2.traducao + "\treturn " + $2.label + ";\n";
 				}
 				;
 %%

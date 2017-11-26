@@ -90,6 +90,8 @@ Retorna "retorna"
 
 {Atribui} { return *yytext; }
 
+{Retorna} { return TK_RETORNA; }
+
 {Switch} { return TK_SWITCH; }
 {Case} { return TK_CASE; }
 {Padrao} { return TK_DEFAULT; }

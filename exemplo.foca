@@ -3,6 +3,7 @@ funcao primeira (a: int, b: flut32) : int {
 	escreva(c);
 	c = c."jjj";
 	escreva(c);
+	retorna 4;
 }
 funcao segunda (a: int, b: chars) : chars {
 	escreva(4);
