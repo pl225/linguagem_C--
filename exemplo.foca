@@ -1,4 +1,4 @@
-funcao primeira (a: int, b: flut32) : int {
+funcao primeira (a: int, b: flut32, b: char) : int {
 	chars c = "hhhh";
 	escreva(c);
 	c = c."jjj";
@@ -13,9 +13,5 @@ int i = 2;
 
 se (i >= 2) {
 	int j = 3;
-	funcao terceira () : flut32 {
-		escreva(j);
-	}
-	terceira();
 	primeira(4, 4.32);
 }

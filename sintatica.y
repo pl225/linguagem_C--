@@ -256,6 +256,7 @@ string traduzirFuncoes () {
 }
 
 void processaArgumentoFuncao(string label, string tipo) {
+	verificaVariavelJaDeclarada(label);
 	string var = "tmp" + proximaVariavelTemporaria();
 	pilhaContexto.top().mapaVariaveis[label] = { .id = label, .tipo = tipo, var};
 	mapaTemporario[var] = {.id = var, .tipo = tipo, .tamanho = "", .isParametro = true};

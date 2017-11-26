@@ -1,1 +1,1 @@
-Uma função só pode ser declarada no escopo global.
+A variável b já foi declarada.
