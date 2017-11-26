@@ -788,6 +788,10 @@ E 			: E TK_MAIS_MENOS E
 				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				$$.traducao = $2.traducao + '\t' + $$.label + " = ( " + decideTipo($1.tipo) + " ) " + $2.label + ";\n";
 			}
+			| CALL_FUNCTION 
+			{
+				$$ = $1;
+			}
 			;
 
 
@@ -1180,9 +1184,14 @@ CALL_FUNCTION	: TK_ID '(' ARG_FUNC_CALL ')'
 						if (real != mapaTemporario[temporario].funcao.parametros.end() || aux != parametrosAuxiliar.end()) 
 							yyerror("Número errado de parâmetros enviado à função.");
 						if (traducao.length() > 0) traducao.pop_back();
-						$$.traducao = $3.traducao + traducaoCast + '\t' + temporario + '(' + traducao + ");\n";
+						$$.label = "tmp" + proximaVariavelTemporaria();
+						$$.tipo = mapaTemporario[temporario].funcao.retorno;
+						mapaTemporario[$$.label] = {.id = $$.label, .tipo = $$.tipo};
+						$$.traducao = $3.traducao + traducaoCast + '\t' + $$.label + " = " + temporario + '(' + traducao + ");\n";
 						parametrosAuxiliar.clear();
-					}	
+					} else {
+						yyerror("A variável " + $1.label + " não é uma função.");
+					} 	
 				}
 				;
 

@@ -55,23 +55,26 @@ int main(void)
 	int  tmp20;
 	int  tmp21;
 	int  tmp22;
-	int  tmp23;
+	float  tmp23;
 	float  tmp24;
-	float  tmp25;
+	int  tmp25;
 	int  tmp26;
 	int  tmp27;
+	int  tmp28;
+	int  tmp29;
 	tmp18 = 2;
 	tmp19 = tmp18;
 	tmp20 = 2;
 	tmp21 = tmp19>=tmp20;
-	tmp27 = !tmp21;
-	if (tmp27) goto rotulo_3;
+	tmp29 = !tmp21;
+	if (tmp29) goto rotulo_3;
 	tmp22 = 3;
-	tmp23 = tmp22;
-	tmp24 = 4.27;
-	tmp25 = 4.32;
-	tmp26 = (int ) tmp24;
-	tmp1(tmp26,tmp25);
+	tmp23 = 4.27;
+	tmp24 = 4.32;
+	tmp25 = (int ) tmp23;
+	tmp26 = tmp1(tmp25,tmp24);
+	tmp27 = tmp22+tmp26;
+	tmp28 = tmp27;
 	rotulo_3:
 	return 0;
 }

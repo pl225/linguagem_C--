@@ -12,6 +12,5 @@ funcao segunda (a: int, b: chars) : chars {
 int i = 2;
 
 se (i >= 2) {
-	int j = 3;
-	primeira(4.27, 4.32);
+	int j = 3 + primeira(4.27, 4.32);
 }
