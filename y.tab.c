@@ -775,7 +775,7 @@ static const yytype_uint16 yyrline[] =
      958,   962,   969,   978,   986,   994,  1004,  1010,  1015,  1023,
     1033,  1071,  1076,  1082,  1088,  1088,  1088,  1088,  1088,  1090,
     1096,  1099,  1105,  1108,  1122,  1128,  1143,  1148,  1151,  1156,
-    1159,  1182
+    1159,  1189
 };
 #endif
 
@@ -2818,38 +2818,53 @@ yyreduce:
     {
 					mapV mapa = buscaMapa((yyvsp[-3]).label);
 					if (mapa[(yyvsp[-3]).label].tipo == FUNCAO) {
-						string traducao = "";
+						string traducao = "", traducaoCast;
 						string temporario = mapa[(yyvsp[-3]).label].temporario;
 						list<parametrosFuncao>::iterator real = mapaTemporario[temporario].funcao.parametros.begin(),
 							aux = parametrosAuxiliar.begin();
 
 						while (real != mapaTemporario[temporario].funcao.parametros.end() && aux != parametrosAuxiliar.end()) {
-							if (real->tipo != aux->tipo) yyerror("Tipos de parâmetros incorretos enviados para a função.");
-							traducao += aux->id + ',';
+							defineTiposCompativeis(real->tipo, aux->tipo);
+							if (real->tipo != aux->tipo) {
+								string var = "tmp" + proximaVariavelTemporaria();
+								mapaTemporario[var] = {.id = var, .tipo = real->tipo};
+								traducaoCast += '\t' + var + " = (" + decideTipo(real->tipo) + ") " + aux->id + ";\n";
+								traducao += var + ',';
+							} else {
+								traducao += aux->id + ',';
+							}
 							real++; aux++;
 						}
 						if (real != mapaTemporario[temporario].funcao.parametros.end() || aux != parametrosAuxiliar.end()) 
 							yyerror("Número errado de parâmetros enviado à função.");
 						if (traducao.length() > 0) traducao.pop_back();
-						(yyval).traducao = (yyvsp[-1]).traducao + '\t' + temporario + '(' + traducao + ");\n";
+						(yyval).traducao = (yyvsp[-1]).traducao + traducaoCast + '\t' + temporario + '(' + traducao + ");\n";
 						parametrosAuxiliar.clear();
 					}	
 				}
-#line 2839 "y.tab.c" /* yacc.c:1646  */
+#line 2846 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 111:
-#line 1183 "sintatica.y" /* yacc.c:1646  */
+#line 1190 "sintatica.y" /* yacc.c:1646  */
     {
-					contextoBloco cb = controlarRetorno();			
-					if (mapaTemporario[cb.rotuloInicio].funcao.retorno != (yyvsp[0]).tipo) yyerror("Tipo de retorno inválido.");
-					(yyval).traducao = (yyvsp[0]).traducao + "\treturn " + (yyvsp[0]).label + ";\n";
+					contextoBloco cb = controlarRetorno();		
+					string retorno = mapaTemporario[cb.rotuloInicio].funcao.retorno;
+					defineTiposCompativeis(retorno, (yyvsp[0]).tipo);
+					if (retorno != (yyvsp[0]).tipo) {
+						string var = "tmp" + proximaVariavelTemporaria();
+						mapaTemporario[var] = {.id = var, .tipo = retorno};
+						(yyval).traducao = (yyvsp[0]).traducao + '\t' + var + " = (" + decideTipo(retorno) + ") " + (yyvsp[0]).label + ";\n"
+							"\treturn " + var + ";\n";
+					} else {
+						(yyval).traducao = (yyvsp[0]).traducao + "\treturn " + (yyvsp[0]).label + ";\n";
+					}
 				}
-#line 2849 "y.tab.c" /* yacc.c:1646  */
+#line 2864 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2853 "y.tab.c" /* yacc.c:1646  */
+#line 2868 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -3077,7 +3092,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 1189 "sintatica.y" /* yacc.c:1906  */
+#line 1204 "sintatica.y" /* yacc.c:1906  */
 
 
 #include "lex.yy.c"

@@ -1160,20 +1160,27 @@ CALL_FUNCTION	: TK_ID '(' ARG_FUNC_CALL ')'
 				{
 					mapV mapa = buscaMapa($1.label);
 					if (mapa[$1.label].tipo == FUNCAO) {
-						string traducao = "";
+						string traducao = "", traducaoCast;
 						string temporario = mapa[$1.label].temporario;
 						list<parametrosFuncao>::iterator real = mapaTemporario[temporario].funcao.parametros.begin(),
 							aux = parametrosAuxiliar.begin();
 
 						while (real != mapaTemporario[temporario].funcao.parametros.end() && aux != parametrosAuxiliar.end()) {
-							if (real->tipo != aux->tipo) yyerror("Tipos de parâmetros incorretos enviados para a função.");
-							traducao += aux->id + ',';
+							defineTiposCompativeis(real->tipo, aux->tipo);
+							if (real->tipo != aux->tipo) {
+								string var = "tmp" + proximaVariavelTemporaria();
+								mapaTemporario[var] = {.id = var, .tipo = real->tipo};
+								traducaoCast += '\t' + var + " = (" + decideTipo(real->tipo) + ") " + aux->id + ";\n";
+								traducao += var + ',';
+							} else {
+								traducao += aux->id + ',';
+							}
 							real++; aux++;
 						}
 						if (real != mapaTemporario[temporario].funcao.parametros.end() || aux != parametrosAuxiliar.end()) 
 							yyerror("Número errado de parâmetros enviado à função.");
 						if (traducao.length() > 0) traducao.pop_back();
-						$$.traducao = $3.traducao + '\t' + temporario + '(' + traducao + ");\n";
+						$$.traducao = $3.traducao + traducaoCast + '\t' + temporario + '(' + traducao + ");\n";
 						parametrosAuxiliar.clear();
 					}	
 				}
@@ -1181,9 +1188,17 @@ CALL_FUNCTION	: TK_ID '(' ARG_FUNC_CALL ')'
 
 RETORNA 		: TK_RETORNA E
 				{
-					contextoBloco cb = controlarRetorno();			
-					if (mapaTemporario[cb.rotuloInicio].funcao.retorno != $2.tipo) yyerror("Tipo de retorno inválido.");
-					$$.traducao = $2.traducao + "\treturn " + $2.label + ";\n";
+					contextoBloco cb = controlarRetorno();		
+					string retorno = mapaTemporario[cb.rotuloInicio].funcao.retorno;
+					defineTiposCompativeis(retorno, $2.tipo);
+					if (retorno != $2.tipo) {
+						string var = "tmp" + proximaVariavelTemporaria();
+						mapaTemporario[var] = {.id = var, .tipo = retorno};
+						$$.traducao = $2.traducao + '\t' + var + " = (" + decideTipo(retorno) + ") " + $2.label + ";\n"
+							"\treturn " + var + ";\n";
+					} else {
+						$$.traducao = $2.traducao + "\treturn " + $2.label + ";\n";
+					}
 				}
 				;
 %%
