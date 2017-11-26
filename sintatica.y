@@ -137,6 +137,32 @@ string declaraVariaveisTemporariasFuncao () {
     return s;
 }
 
+string declaraVariaveisGlobais () {
+	stack<contextoBloco> p = pilhaContexto;
+	contextoBloco cb;
+	string s = "\n";
+	mapT mapa, mapAux;
+	do {
+		cb = p.top();
+		p.pop();
+	} while (not p.empty());
+	for (mapV::iterator it = cb.mapaVariaveis.begin(); it!=cb.mapaVariaveis.end(); ++it) {
+		if (it->second.tipo != FUNCAO) {
+    		s += decideTipo(mapaTemporario[it->second.temporario].tipo) + ' ' + mapaTemporario[it->second.temporario].id + ";\n";
+			mapa[it->second.temporario] = mapaTemporario[it->second.temporario];
+		}
+	}
+	set_difference(mapaTemporario.begin(), mapaTemporario.end(),
+                      mapa.begin(), mapa.end(),
+                      insert_iterator<mapT>(mapAux, mapAux.end()),
+              [](const mapT::value_type & a, const mapT::value_type & b)
+              { return a.first < b.first; }
+                     );
+	mapaTemporario = mapAux;
+
+	return s;
+}
+
 int yylex(void);
 void yyerror(string);
 
@@ -262,6 +288,7 @@ S 			: PILHA_GLOBAL COMANDOS
 			{
 				cout << "/*Compilador FAEN*/" << endl;
 				cout << "#include <iostream>\n#include<string.h>\n#include<stdio.h>\n#include<stdlib.h>\n#define SIZE_STR 10\nusing namespace std;" << endl;
+				cout << declaraVariaveisGlobais() << endl;
 				cout << traduzirFuncoes() << endl;
 				cout << "int main(void)\n{\n" << declaraVariaveisTemporarias() + $2.traducao + liberarStrings() << "\treturn 0;\n}" << endl; 
 			}
@@ -1144,6 +1171,7 @@ CALL_FUNCTION	: TK_ID '(' ARG_FUNC_CALL ')'
 							yyerror("Número errado de parâmetros enviado à função.");
 						if (traducao.length() > 0) traducao.pop_back();
 						$$.traducao = $3.traducao + '\t' + temporario + '(' + traducao + ");\n";
+						parametrosAuxiliar.clear();
 					}	
 				}
 				;

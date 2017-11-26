@@ -11,7 +11,7 @@ funcao segunda (a: int, b: chars) : chars {
 
 int i = 2;
 
-se (i > 2) {
+se (i >= 2) {
 	funcao terceira () : flut32 {
 		escreva(i);
 	}

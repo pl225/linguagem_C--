@@ -5,6 +5,9 @@
 #include<stdlib.h>
 #define SIZE_STR 10
 using namespace std;
+
+int  tmp18;
+
 int tmp1(int tmp3, float tmp2){
 	char * tmp10;
 	int  tmp11;
@@ -50,7 +53,6 @@ float tmp21(){
 int main(void)
 {
 	int  tmp17;
-	int  tmp18;
 	int  tmp19;
 	int  tmp20;
 	int  tmp22;
@@ -59,7 +61,7 @@ int main(void)
 	tmp17 = 2;
 	tmp18 = tmp17;
 	tmp19 = 2;
-	tmp20 = tmp18>tmp19;
+	tmp20 = tmp18>=tmp19;
 	tmp24 = !tmp20;
 	if (tmp24) goto rotulo_3;
 	tmp21();
