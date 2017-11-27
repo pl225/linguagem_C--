@@ -1176,6 +1176,15 @@ CALL_FUNCTION	: TK_ID '(' ARG_FUNC_CALL ')'
 								mapaTemporario[var] = {.id = var, .tipo = real->tipo};
 								traducaoCast += '\t' + var + " = (" + decideTipo(real->tipo) + ") " + aux->id + ";\n";
 								traducao += var + ',';
+							} else if (aux->tipo == CHARS) {
+								string varString = "tmp" + proximaVariavelTemporaria();
+								string tamanhoString = "tmp" + proximaVariavelTemporaria();
+								mapaTemporario[varString] = {.id = varString, .tipo = CHARS, .tamanho = tamanhoString};
+								mapaTemporario[tamanhoString] = {.id = tamanhoString, .tipo = INT};
+								traducaoCast += '\t' + tamanhoString + " = " + mapaTemporario[aux->id].tamanho + ";\n" +
+												'\t' + varString + " = (char*) malloc(" + tamanhoString + ");\n" +
+												"\tstrcat(" + varString + ", " + aux->id + ");\n";
+								traducao += varString + ',';
 							} else {
 								traducao += aux->id + ',';
 							}
@@ -1187,7 +1196,15 @@ CALL_FUNCTION	: TK_ID '(' ARG_FUNC_CALL ')'
 						$$.label = "tmp" + proximaVariavelTemporaria();
 						$$.tipo = mapaTemporario[temporario].funcao.retorno;
 						mapaTemporario[$$.label] = {.id = $$.label, .tipo = $$.tipo};
-						$$.traducao = $3.traducao + traducaoCast + '\t' + $$.label + " = " + temporario + '(' + traducao + ");\n";
+						if ($$.tipo == CHARS) {
+							string tamanhoString = "tmp" + proximaVariavelTemporaria();
+							mapaTemporario[tamanhoString] = {.id = tamanhoString, .tipo = INT};
+							mapaTemporario[$$.label].tamanho = tamanhoString;
+							$$.traducao = $3.traducao + traducaoCast + '\t' + $$.label + " = " + temporario + '(' + traducao + ");\n" +
+											'\t' + tamanhoString + " = strlen(" + $$.label + ");\n";
+						} else {
+							$$.traducao = $3.traducao + traducaoCast + '\t' + $$.label + " = " + temporario + '(' + traducao + ");\n";
+						}
 						parametrosAuxiliar.clear();
 					} else {
 						yyerror("A variável " + $1.label + " não é uma função.");

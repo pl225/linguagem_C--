@@ -775,7 +775,7 @@ static const yytype_uint16 yyrline[] =
      957,   962,   966,   973,   982,   990,   998,  1008,  1014,  1019,
     1027,  1037,  1075,  1080,  1086,  1092,  1092,  1092,  1092,  1092,
     1094,  1100,  1103,  1109,  1112,  1126,  1132,  1147,  1152,  1155,
-    1160,  1163,  1198
+    1160,  1163,  1215
 };
 #endif
 
@@ -2840,6 +2840,15 @@ yyreduce:
 								mapaTemporario[var] = {.id = var, .tipo = real->tipo};
 								traducaoCast += '\t' + var + " = (" + decideTipo(real->tipo) + ") " + aux->id + ";\n";
 								traducao += var + ',';
+							} else if (aux->tipo == CHARS) {
+								string varString = "tmp" + proximaVariavelTemporaria();
+								string tamanhoString = "tmp" + proximaVariavelTemporaria();
+								mapaTemporario[varString] = {.id = varString, .tipo = CHARS, .tamanho = tamanhoString};
+								mapaTemporario[tamanhoString] = {.id = tamanhoString, .tipo = INT};
+								traducaoCast += '\t' + tamanhoString + " = " + mapaTemporario[aux->id].tamanho + ";\n" +
+												'\t' + varString + " = (char*) malloc(" + tamanhoString + ");\n" +
+												"\tstrcat(" + varString + ", " + aux->id + ");\n";
+								traducao += varString + ',';
 							} else {
 								traducao += aux->id + ',';
 							}
@@ -2851,17 +2860,25 @@ yyreduce:
 						(yyval).label = "tmp" + proximaVariavelTemporaria();
 						(yyval).tipo = mapaTemporario[temporario].funcao.retorno;
 						mapaTemporario[(yyval).label] = {.id = (yyval).label, .tipo = (yyval).tipo};
-						(yyval).traducao = (yyvsp[-1]).traducao + traducaoCast + '\t' + (yyval).label + " = " + temporario + '(' + traducao + ");\n";
+						if ((yyval).tipo == CHARS) {
+							string tamanhoString = "tmp" + proximaVariavelTemporaria();
+							mapaTemporario[tamanhoString] = {.id = tamanhoString, .tipo = INT};
+							mapaTemporario[(yyval).label].tamanho = tamanhoString;
+							(yyval).traducao = (yyvsp[-1]).traducao + traducaoCast + '\t' + (yyval).label + " = " + temporario + '(' + traducao + ");\n" +
+											'\t' + tamanhoString + " = strlen(" + (yyval).label + ");\n";
+						} else {
+							(yyval).traducao = (yyvsp[-1]).traducao + traducaoCast + '\t' + (yyval).label + " = " + temporario + '(' + traducao + ");\n";
+						}
 						parametrosAuxiliar.clear();
 					} else {
 						yyerror("A variável " + (yyvsp[-3]).label + " não é uma função.");
 					} 	
 				}
-#line 2861 "y.tab.c" /* yacc.c:1646  */
+#line 2878 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 112:
-#line 1199 "sintatica.y" /* yacc.c:1646  */
+#line 1216 "sintatica.y" /* yacc.c:1646  */
     {
 					contextoBloco cb = controlarRetorno();		
 					string retorno = mapaTemporario[cb.rotuloInicio].funcao.retorno;
@@ -2875,11 +2892,11 @@ yyreduce:
 						(yyval).traducao = (yyvsp[0]).traducao + "\treturn " + (yyvsp[0]).label + ";\n";
 					}
 				}
-#line 2879 "y.tab.c" /* yacc.c:1646  */
+#line 2896 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2883 "y.tab.c" /* yacc.c:1646  */
+#line 2900 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -3107,7 +3124,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 1213 "sintatica.y" /* yacc.c:1906  */
+#line 1230 "sintatica.y" /* yacc.c:1906  */
 
 
 #include "lex.yy.c"

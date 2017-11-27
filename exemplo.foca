@@ -1,16 +1,7 @@
-funcao primeira (a: int, b: flut32) : int {
-	chars c = "hhhh";
-	escreva(c);
-	c = c."jjj";
-	escreva(c);
-	retorna 4.5;
-}
 funcao segunda (a: int, b: chars) : chars {
 	escreva(4);
+	retorna "retorno_funcao";
 }
 
-int i = 2;
-
-se (i >= 2) {
-	int j = 3 + primeira(4.27, 4.32);
-}
+chars s = segunda(4, "alo");
+escreva(s);

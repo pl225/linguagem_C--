@@ -6,75 +6,45 @@
 #define SIZE_STR 10
 using namespace std;
 
-int  tmp19;
+char * tmp14;
 
-int tmp1(int tmp3, float tmp2){
-	char * tmp10;
-	int  tmp11;
-	float  tmp12;
-	int  tmp13;
-	char * tmp4;
-	int  tmp5;
-	char * tmp6;
-	int  tmp7;
-	char * tmp8;
-	int  tmp9;
-	tmp5 = 4 + 1;
-	tmp4 = (char*) malloc(tmp5);
-	strcat(tmp4, "hhhh");
-	tmp7 = tmp5;
-	tmp6 = (char*) malloc(tmp7);
-	strcat(tmp6, tmp4);
-	cout << tmp6 << endl;
-	tmp9 = 3 + 1;
-	tmp8 = (char*) malloc(tmp9);
-	strcat(tmp8, "jjj");
-	tmp11 = tmp7 + tmp9;
-	tmp11 = tmp11 + 1;
-	tmp10 = (char*) malloc(tmp11);
-	strcat(tmp10, tmp6);
-	strcat(tmp10, tmp8);
-	if(tmp7 > 0) free(tmp6);
-	tmp7 = tmp11;
-	tmp6 = (char*) malloc(tmp7);
-	strcat(tmp6, tmp10);
-	cout << tmp6 << endl;
-	tmp12 = 4.5;
-	tmp13 = (int ) tmp12;
-	return tmp13;
-}
-char *tmp14(int tmp16, char *tmp15){
-	int  tmp17;
-	tmp17 = 4;
-	cout << tmp17 << endl;
+char *tmp1(int tmp3, char *tmp2){
+	int  tmp4;
+	char * tmp5;
+	int  tmp6;
+	tmp4 = 4;
+	cout << tmp4 << endl;
+	tmp6 = 14 + 1;
+	tmp5 = (char*) malloc(tmp6);
+	strcat(tmp5, "retorno_funcao");
+	return tmp5;
 }
 
 int main(void)
 {
-	int  tmp18;
-	int  tmp20;
-	int  tmp21;
-	int  tmp22;
-	float  tmp23;
-	float  tmp24;
-	int  tmp25;
-	int  tmp26;
-	int  tmp27;
-	int  tmp28;
-	int  tmp29;
-	tmp18 = 2;
-	tmp19 = tmp18;
-	tmp20 = 2;
-	tmp21 = tmp19>=tmp20;
-	tmp29 = !tmp21;
-	if (tmp29) goto rotulo_3;
-	tmp22 = 3;
-	tmp23 = 4.27;
-	tmp24 = 4.32;
-	tmp25 = (int ) tmp23;
-	tmp26 = tmp1(tmp25,tmp24);
-	tmp27 = tmp22+tmp26;
-	tmp28 = tmp27;
-	rotulo_3:
+	char * tmp10;
+	int  tmp11;
+	char * tmp12;
+	int  tmp13;
+	int  tmp15;
+	int  tmp7;
+	char * tmp8;
+	int  tmp9;
+	tmp7 = 4;
+	tmp9 = 3 + 1;
+	tmp8 = (char*) malloc(tmp9);
+	strcat(tmp8, "alo");
+	tmp11 = tmp9;
+	tmp10 = (char*) malloc(tmp11);
+	strcat(tmp10, tmp8);
+	tmp12 = tmp1(tmp7,tmp10);
+	tmp13 = strlen(tmp12);
+	tmp15 = tmp13;
+	tmp14 = (char*) malloc(tmp15);
+	strcat(tmp14, tmp12);
+	cout << tmp14 << endl;
+	if (tmp11 > 0) free(tmp10);
+	if (tmp13 > 0) free(tmp12);
+	if (tmp9 > 0) free(tmp8);
 	return 0;
 }
