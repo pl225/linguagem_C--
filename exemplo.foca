@@ -1,19 +1,36 @@
-funcao segunda (a: int, b: chars) : chars {
+char a = 'j', b, c = 'c';
+bool z = verdadeiro, f = falso, g;
+b = 'k';
+g = verdadeiro;
+b = c;
+
+escreva(b);
+escreva(g);
+
+funcao segunda (a: int, b: char) : chars {
 	escreva(4);
 	chars t = "z";
+	escreva(b);
 	retorna t;
 }
 
-chars s = segunda(4, "alo");
+funcao terceira (b: bool) : bool {
+	escreva(b);
+	retorna falso;
+}
+
+chars s = segunda(4, 'a');
 escreva(s);
 
-int i = 4 + 7 % 2 +5, b = 9 / 4 + 7;
+int i = 4 + 7 % 2 +5, m = 9 / 4 + 7;
 int k = 2 % 6;
 
 i += i;
-k *= b;
-b %= 2;
+k *= m;
+m %= 2;
 
 escreva(i);
-escreva(b);
+escreva(m);
 escreva(k);
+
+escreva(terceira(verdadeiro));
