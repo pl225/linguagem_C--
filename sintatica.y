@@ -704,17 +704,37 @@ ATRIBUICAO	: TK_ID '=' TK_BOOL
 				$$.traducao = '\t' + mapaTemporario[mapa[$1.label].temporario].id +
 				" = " + mapaTemporario[mapa[$1.label].temporario].id + op + mais1;
 			}
+			| TK_ID TK_OP_ABREV E
+			{
+				mapV mapa = buscaMapa($1.label);
+        		string var = mapa[$1.label].temporario;
+        		$1.label = mapaTemporario[var].id;
+        		$1.tipo = mapaTemporario[var].tipo;
+        		$1.traducao = "";
+     		 	struct atributos op;
+    		    if ($2.traducao == "+=") { 
+      		  		op.traducao = " + ";
+      		  	} else if ($2.traducao == "-=") {
+        			op.traducao = " - "; 
+		        } else if ($2.traducao == "*=") {
+		        	op.traducao = " * ";
+       			} else if ($2.traducao == "%=") {
+       				op.traducao = " % ";
+       			} else {
+        			op.traducao = " / ";
+				}
+				$$ = processaOpAritmetica($1, op, $3);
+				$$.traducao += '\t' + $1.label + " = " + $$.label + ";\n";
+			}
 			;
 
 E 			: E TK_MAIS_MENOS E
 			{
-				defineTiposCompativeis($1.tipo, $3.tipo);
 				$$ = processaOpAritmetica($1, $2, $3);
 			}
 			|
 			E TK_MULTI_DIV E
 			{
-				defineTiposCompativeis($1.tipo, $3.tipo);
 				$$ = processaOpAritmetica($1, $2, $3);
 			}
 			|

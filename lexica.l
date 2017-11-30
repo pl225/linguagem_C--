@@ -104,7 +104,7 @@ Retorna "retorna"
 {Do} { return TK_DO; }
 {For} { return TK_FOR; }
 
-{MaisIgual}|{MenosIgual}|{VezesIgual}|{DivideIgual} { yylval.traducao = yytext; return TK_OP_ABREV; }
+{MaisIgual}|{MenosIgual}|{VezesIgual}|{DivideIgual}|{ModuloIgual} { yylval.traducao = yytext; return TK_OP_ABREV; }
 {MaisMais}|{MenosMenos} { yylval.traducao = yytext; return TK_OP_1; }
 
 {MaiorQue}|{MaiorOuIgualQue}|{MenorQue}|{MenorOuIgualQue}|{Diferente}|{Igual} { yylval.traducao = yytext; return TK_RELACIONAL; }

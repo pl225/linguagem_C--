@@ -54,6 +54,10 @@ int main(void)
 	int  tmp33;
 	int  tmp34;
 	int  tmp35;
+	int  tmp37;
+	int  tmp38;
+	int  tmp39;
+	int  tmp40;
 	tmp10 = 4;
 	tmp12 = 3 + 1;
 	tmp11 = (char*) malloc(tmp12);
@@ -85,6 +89,13 @@ int main(void)
 	tmp34 = 6;
 	tmp35 = tmp33%tmp34;
 	tmp36 = tmp35;
+	tmp37 = tmp32 + tmp32;
+	tmp32 = tmp37;
+	tmp38 = tmp36 * tmp31;
+	tmp36 = tmp38;
+	tmp39 = 2;
+	tmp40 = tmp31 % tmp39;
+	tmp31 = tmp40;
 	cout << tmp32 << endl;
 	cout << tmp31 << endl;
 	cout << tmp36 << endl;

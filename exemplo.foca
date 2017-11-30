@@ -10,6 +10,10 @@ escreva(s);
 int i = 4 + 7 % 2 +5, b = 9 / 4 + 7;
 int k = 2 % 6;
 
+i += i;
+k *= b;
+b %= 2;
+
 escreva(i);
 escreva(b);
 escreva(k);
