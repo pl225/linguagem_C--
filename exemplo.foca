@@ -1,6 +1,7 @@
 funcao segunda (a: int, b: chars) : chars {
 	escreva(4);
-	retorna "retorno_funcao";
+	chars t = "z";
+	retorna t;
 }
 
 chars s = segunda(4, "alo");

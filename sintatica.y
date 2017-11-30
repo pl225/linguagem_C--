@@ -260,8 +260,13 @@ void processaArgumentoFuncao(string label, string tipo) {
 	string var = "tmp" + proximaVariavelTemporaria();
 	pilhaContexto.top().mapaVariaveis[label] = { .id = label, .tipo = tipo, var};
 	mapaTemporario[var] = {.id = var, .tipo = tipo, .tamanho = "", .isParametro = true};
+	if (tipo == CHARS) {
+		string tamanhoString = "tmp" + proximaVariavelTemporaria();
+		mapaTemporario[var].tamanho = tamanhoString;
+		mapaTemporario[tamanhoString] = {.id = tamanhoString, .tipo = INT};
+	}
 	string nomeFuncao = pilhaContexto.top().rotuloInicio;
-	mapaTemporario[nomeFuncao].funcao.parametros.push_front({ .id = var, .tipo = tipo }); // testar antes se ja nao existe
+	mapaTemporario[nomeFuncao].funcao.parametros.push_front({ .id = var, .tipo = tipo });
 }
 
 %}
