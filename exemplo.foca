@@ -6,3 +6,10 @@ funcao segunda (a: int, b: chars) : chars {
 
 chars s = segunda(4, "alo");
 escreva(s);
+
+int i = 4 + 7 *2 +5, b = 9 / 4 + 7;
+int k = 2 / 6;
+
+escreva(i);
+escreva(b);
+escreva(k);

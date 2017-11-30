@@ -269,6 +269,31 @@ void processaArgumentoFuncao(string label, string tipo) {
 	mapaTemporario[nomeFuncao].funcao.parametros.push_front({ .id = var, .tipo = tipo });
 }
 
+struct atributos processaOpAritmetica (struct atributos $1, struct atributos $2, struct atributos $3) {
+	defineTiposCompativeis($1.tipo, $3.tipo);
+	struct atributos $$;
+	$$.label = "tmp" + proximaVariavelTemporaria();
+	$$.traducao = $1.traducao + $3.traducao;
+	if ($1.tipo != $3.tipo) {
+		string varCast = "tmp" + proximaVariavelTemporaria();
+		$$.tipo = FLUT32;
+		mapaTemporario[varCast] = { .id = varCast, .tipo = FLUT32 };
+		mapaTemporario[$$.label] = { .id = $$.label, .tipo = FLUT32 };
+		if ($1.tipo == INT && $3.tipo == FLUT32) {
+			$$.traducao += '\t' + varCast + " = (float) " + $1.label + ";\n" +
+			'\t' + $$.label + " = " + varCast + $2.traducao + $3.label + ";\n";
+		} else if ($1.tipo == FLUT32 && $3.tipo == INT) {
+			$$.traducao += '\t' + varCast + " = (float) " + $3.label + ";\n" +
+			'\t' + $$.label + " = " + varCast + $2.traducao + $1.label + ";\n";
+		}
+	} else {
+		$$.tipo = $1.tipo;
+		mapaTemporario[$$.label] = { .id = $$.label, .tipo = $1.tipo };
+		$$.traducao += '\t' + $$.label + " = " + $1.label + $2.traducao + $3.label + ";\n";
+	}
+	return $$;
+}
+
 %}
 
 %token TK_NUM TK_BOOL TK_CHAR TK_STRING
@@ -683,49 +708,13 @@ ATRIBUICAO	: TK_ID '=' TK_BOOL
 E 			: E TK_MAIS_MENOS E
 			{
 				defineTiposCompativeis($1.tipo, $3.tipo);
-				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = $1.traducao + $3.traducao;
-				if ($1.tipo != $3.tipo) {
-					string varCast = "tmp" + proximaVariavelTemporaria();
-					$$.tipo = FLUT32;
-					mapaTemporario[varCast] = { .id = varCast, .tipo = FLUT32 };
-					mapaTemporario[$$.label] = { .id = $$.label, .tipo = FLUT32 };
-					if ($1.tipo == INT && $3.tipo == FLUT32) {
-						$$.traducao += '\t' + varCast + " = (float) " + $1.label + ";\n" +
-						'\t' + $$.label + " = " + varCast + $2.traducao + $3.label + ";\n";
-					} else if ($1.tipo == FLUT32 && $3.tipo == INT) {
-						$$.traducao += '\t' + varCast + " = (float) " + $3.label + ";\n" +
-						'\t' + $$.label + " = " + varCast + $2.traducao + $1.label + ";\n";
-					}
-				} else {
-					$$.tipo = $1.tipo;
-					mapaTemporario[$$.label] = { .id = $$.label, .tipo = $1.tipo };
-					$$.traducao += '\t' + $$.label + " = " + $1.label + $2.traducao + $3.label + ";\n";
-				}
+				$$ = processaOpAritmetica($1, $2, $3);
 			}
 			|
 			E TK_MULTI_DIV E
 			{
 				defineTiposCompativeis($1.tipo, $3.tipo);
-				$$.label = "tmp" + proximaVariavelTemporaria();
-				$$.traducao = $1.traducao + $3.traducao;
-				if ($1.tipo != $3.tipo) {
-					string varCast = "tmp" + proximaVariavelTemporaria();
-					$$.tipo = FLUT32;
-					mapaTemporario[varCast] = { .id = varCast, .tipo = FLUT32 };
-					mapaTemporario[$$.label] = { .id = $$.label, .tipo = FLUT32 };
-					if ($1.tipo == INT && $3.tipo == FLUT32) {
-						$$.traducao += '\t' + varCast + " = (float) " + $1.label + ";\n" +
-						'\t' + $$.label + " = " + varCast + $2.traducao + $3.label + ";\n";
-					} else if ($1.tipo == FLUT32 && $3.tipo == INT) {
-						$$.traducao += '\t' + varCast + " = (float) " + $3.label + ";\n" +
-						'\t' + $$.label + " = " + varCast + $2.traducao + $1.label + ";\n";
-					}
-				} else {
-					$$.tipo = $1.tipo;
-					mapaTemporario[$$.label] = { .id = $$.label, .tipo = $1.tipo };
-					$$.traducao += '\t' + $$.label + " = " + $1.label + $2.traducao + $3.label + ";\n";
-				}
+				$$ = processaOpAritmetica($1, $2, $3);
 			}
 			|
 			E TK_CONCATENACAO E
