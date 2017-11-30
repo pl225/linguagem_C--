@@ -85,6 +85,7 @@ Retorna "retorna"
 
 {Soma}|{Subtracao} { yylval.traducao = yytext; return TK_MAIS_MENOS; }
 {Divisao}|{Multiplicacao} { yylval.traducao = yytext; return TK_MULTI_DIV; }
+{Modulo} { yylval.traducao = yytext; return TK_MODULO; }
 
 [(){}[\];,:]	{ return *yytext; }
 

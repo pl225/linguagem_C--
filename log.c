@@ -70,7 +70,7 @@ int main(void)
 	tmp19 = 4;
 	tmp20 = 7;
 	tmp21 = 2;
-	tmp22 = tmp20*tmp21;
+	tmp22 = tmp20%tmp21;
 	tmp23 = tmp19+tmp22;
 	tmp24 = 5;
 	tmp25 = tmp23+tmp24;
@@ -83,7 +83,7 @@ int main(void)
 	tmp31 = tmp30;
 	tmp33 = 2;
 	tmp34 = 6;
-	tmp35 = tmp33/tmp34;
+	tmp35 = tmp33%tmp34;
 	tmp36 = tmp35;
 	cout << tmp32 << endl;
 	cout << tmp31 << endl;

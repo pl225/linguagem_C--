@@ -299,7 +299,7 @@ struct atributos processaOpAritmetica (struct atributos $1, struct atributos $2,
 %token TK_NUM TK_BOOL TK_CHAR TK_STRING
 %token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLUT32 TK_TIPO_FLUT64  TK_TIPO_BOOL TK_TIPO_STRING
 %token TK_TIPO_CHAR TK_MAIS_MENOS TK_MULTI_DIV TK_CONCATENACAO
-%token TK_BIN TK_HEX TK_OCT
+%token TK_BIN TK_HEX TK_OCT TK_MODULO
 %token TK_RELACIONAL TK_LOGICO 
 %token TK_FIM TK_ERROR
 %token TK_IF TK_WHILE TK_BREAK TK_CONTINUE TK_DO TK_FOR
@@ -311,6 +311,7 @@ struct atributos processaOpAritmetica (struct atributos $1, struct atributos $2,
 %left TK_CONCATENACAO
 %left TK_MAIS_MENOS
 %left TK_MULTI_DIV
+%left TK_MODULO
 %left TK_LOGICO TK_RELACIONAL
 %left TK_CAST
 
@@ -712,6 +713,12 @@ E 			: E TK_MAIS_MENOS E
 			}
 			|
 			E TK_MULTI_DIV E
+			{
+				defineTiposCompativeis($1.tipo, $3.tipo);
+				$$ = processaOpAritmetica($1, $2, $3);
+			}
+			|
+			E TK_MODULO E
 			{
 				defineTiposCompativeis($1.tipo, $3.tipo);
 				$$ = processaOpAritmetica($1, $2, $3);
