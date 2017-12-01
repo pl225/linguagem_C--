@@ -64,28 +64,29 @@ extern int yydebug;
     TK_HEX = 274,
     TK_OCT = 275,
     TK_MODULO = 276,
-    TK_RELACIONAL = 277,
-    TK_LOGICO = 278,
-    TK_SEJA = 279,
-    TK_FIM = 280,
-    TK_ERROR = 281,
-    TK_IF = 282,
-    TK_WHILE = 283,
-    TK_BREAK = 284,
-    TK_CONTINUE = 285,
-    TK_DO = 286,
-    TK_FOR = 287,
-    TK_OP_ABREV = 288,
-    TK_OP_1 = 289,
-    TK_ELSE = 290,
-    TK_SWITCH = 291,
-    TK_CASE = 292,
-    TK_DEFAULT = 293,
-    TK_PRINT = 294,
-    TK_SCAN = 295,
-    TK_TIPO_FUNCAO = 296,
-    TK_RETORNA = 297,
-    TK_CAST = 298
+    TK_CONCAT_IGUAL = 277,
+    TK_RELACIONAL = 278,
+    TK_LOGICO = 279,
+    TK_SEJA = 280,
+    TK_FIM = 281,
+    TK_ERROR = 282,
+    TK_IF = 283,
+    TK_WHILE = 284,
+    TK_BREAK = 285,
+    TK_CONTINUE = 286,
+    TK_DO = 287,
+    TK_FOR = 288,
+    TK_OP_ABREV = 289,
+    TK_OP_1 = 290,
+    TK_ELSE = 291,
+    TK_SWITCH = 292,
+    TK_CASE = 293,
+    TK_DEFAULT = 294,
+    TK_PRINT = 295,
+    TK_SCAN = 296,
+    TK_TIPO_FUNCAO = 297,
+    TK_RETORNA = 298,
+    TK_CAST = 299
   };
 #endif
 /* Tokens.  */
@@ -108,28 +109,29 @@ extern int yydebug;
 #define TK_HEX 274
 #define TK_OCT 275
 #define TK_MODULO 276
-#define TK_RELACIONAL 277
-#define TK_LOGICO 278
-#define TK_SEJA 279
-#define TK_FIM 280
-#define TK_ERROR 281
-#define TK_IF 282
-#define TK_WHILE 283
-#define TK_BREAK 284
-#define TK_CONTINUE 285
-#define TK_DO 286
-#define TK_FOR 287
-#define TK_OP_ABREV 288
-#define TK_OP_1 289
-#define TK_ELSE 290
-#define TK_SWITCH 291
-#define TK_CASE 292
-#define TK_DEFAULT 293
-#define TK_PRINT 294
-#define TK_SCAN 295
-#define TK_TIPO_FUNCAO 296
-#define TK_RETORNA 297
-#define TK_CAST 298
+#define TK_CONCAT_IGUAL 277
+#define TK_RELACIONAL 278
+#define TK_LOGICO 279
+#define TK_SEJA 280
+#define TK_FIM 281
+#define TK_ERROR 282
+#define TK_IF 283
+#define TK_WHILE 284
+#define TK_BREAK 285
+#define TK_CONTINUE 286
+#define TK_DO 287
+#define TK_FOR 288
+#define TK_OP_ABREV 289
+#define TK_OP_1 290
+#define TK_ELSE 291
+#define TK_SWITCH 292
+#define TK_CASE 293
+#define TK_DEFAULT 294
+#define TK_PRINT 295
+#define TK_SCAN 296
+#define TK_TIPO_FUNCAO 297
+#define TK_RETORNA 298
+#define TK_CAST 299
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

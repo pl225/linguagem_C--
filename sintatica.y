@@ -299,7 +299,7 @@ struct atributos processaOpAritmetica (struct atributos $1, struct atributos $2,
 %token TK_NUM TK_BOOL TK_CHAR TK_STRING
 %token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLUT32 TK_TIPO_FLUT64  TK_TIPO_BOOL TK_TIPO_STRING
 %token TK_TIPO_CHAR TK_MAIS_MENOS TK_MULTI_DIV TK_CONCATENACAO
-%token TK_BIN TK_HEX TK_OCT TK_MODULO
+%token TK_BIN TK_HEX TK_OCT TK_MODULO TK_CONCAT_IGUAL
 %token TK_RELACIONAL TK_LOGICO TK_SEJA
 %token TK_FIM TK_ERROR
 %token TK_IF TK_WHILE TK_BREAK TK_CONTINUE TK_DO TK_FOR
@@ -676,6 +676,18 @@ ATRIBUICAO	:TK_ID '=' E
 				}
 				$$ = processaOpAritmetica($1, op, $3);
 				$$.traducao += '\t' + $1.label + " = " + $$.label + ";\n";
+			}
+			| TK_ID TK_CONCAT_IGUAL E
+			{
+				defineTiposCompativeis(CHARS, $3.tipo);
+				mapV mapa = buscaMapa($1.label);
+				defineTiposCompativeis(CHARS, mapa[$1.label].tipo);
+        		$$.traducao = $3.traducao + '\t' + mapaTemporario[mapa[$1.label].temporario].tamanho +
+        						" = " + mapaTemporario[mapa[$1.label].temporario].tamanho + " + " 
+        						+ mapaTemporario[$3.label].tamanho + ";\n" + '\t' + mapa[$1.label].temporario + 
+        						" = (char*) realloc(" + mapa[$1.label].temporario + 
+        						", " + mapaTemporario[$3.label].tamanho + ");\n" +
+        						"\tstrcat(" + mapa[$1.label].temporario + ", " + $3.label + ");\n";
 			}
 			;
 

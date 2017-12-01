@@ -36,6 +36,8 @@ escreva(i);
 escreva(m);
 escreva(k);
 
+escreva(julia + 1000);
+
 escreva(terceira(verdadeiro));
 
 escreva(bruno);
@@ -43,5 +45,7 @@ escreva(joca);
 escreva(julia);
 
 seja pc = "pular";
+
+pc .= "muito";
 
 escreva(pc);

@@ -69,6 +69,7 @@ MenosIgual "-="
 VezesIgual "*="
 DivideIgual "/="
 ModuloIgual "%=" 
+ConcatenaIgual ".="
 
 
 And "e"
@@ -108,6 +109,7 @@ Retorna "retorna"
 
 {MaisIgual}|{MenosIgual}|{VezesIgual}|{DivideIgual}|{ModuloIgual} { yylval.traducao = yytext; return TK_OP_ABREV; }
 {MaisMais}|{MenosMenos} { yylval.traducao = yytext; return TK_OP_1; }
+{ConcatenaIgual} { return TK_CONCAT_IGUAL; }
 
 {MaiorQue}|{MaiorOuIgualQue}|{MenorQue}|{MenorOuIgualQue}|{Diferente}|{Igual} { yylval.traducao = yytext; return TK_RELACIONAL; }
 {And}|{Or}|{Not} { yylval.traducao = yytext; return TK_LOGICO; }
