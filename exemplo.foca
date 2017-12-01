@@ -25,6 +25,9 @@ escreva(s);
 int i = 4 + 7 % 2 +5, m = 9 / 4 + 7;
 int k = 2 % 6;
 
+seja joca = 'o', bruno = 47;
+seja julia = 666.66666;
+
 i += i;
 k *= m;
 m %= 2;
@@ -34,3 +37,11 @@ escreva(m);
 escreva(k);
 
 escreva(terceira(verdadeiro));
+
+escreva(bruno);
+escreva(joca);
+escreva(julia);
+
+seja pc = "pular";
+
+escreva(pc);

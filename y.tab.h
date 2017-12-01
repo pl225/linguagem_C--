@@ -66,25 +66,26 @@ extern int yydebug;
     TK_MODULO = 276,
     TK_RELACIONAL = 277,
     TK_LOGICO = 278,
-    TK_FIM = 279,
-    TK_ERROR = 280,
-    TK_IF = 281,
-    TK_WHILE = 282,
-    TK_BREAK = 283,
-    TK_CONTINUE = 284,
-    TK_DO = 285,
-    TK_FOR = 286,
-    TK_OP_ABREV = 287,
-    TK_OP_1 = 288,
-    TK_ELSE = 289,
-    TK_SWITCH = 290,
-    TK_CASE = 291,
-    TK_DEFAULT = 292,
-    TK_PRINT = 293,
-    TK_SCAN = 294,
-    TK_TIPO_FUNCAO = 295,
-    TK_RETORNA = 296,
-    TK_CAST = 297
+    TK_SEJA = 279,
+    TK_FIM = 280,
+    TK_ERROR = 281,
+    TK_IF = 282,
+    TK_WHILE = 283,
+    TK_BREAK = 284,
+    TK_CONTINUE = 285,
+    TK_DO = 286,
+    TK_FOR = 287,
+    TK_OP_ABREV = 288,
+    TK_OP_1 = 289,
+    TK_ELSE = 290,
+    TK_SWITCH = 291,
+    TK_CASE = 292,
+    TK_DEFAULT = 293,
+    TK_PRINT = 294,
+    TK_SCAN = 295,
+    TK_TIPO_FUNCAO = 296,
+    TK_RETORNA = 297,
+    TK_CAST = 298
   };
 #endif
 /* Tokens.  */
@@ -109,25 +110,26 @@ extern int yydebug;
 #define TK_MODULO 276
 #define TK_RELACIONAL 277
 #define TK_LOGICO 278
-#define TK_FIM 279
-#define TK_ERROR 280
-#define TK_IF 281
-#define TK_WHILE 282
-#define TK_BREAK 283
-#define TK_CONTINUE 284
-#define TK_DO 285
-#define TK_FOR 286
-#define TK_OP_ABREV 287
-#define TK_OP_1 288
-#define TK_ELSE 289
-#define TK_SWITCH 290
-#define TK_CASE 291
-#define TK_DEFAULT 292
-#define TK_PRINT 293
-#define TK_SCAN 294
-#define TK_TIPO_FUNCAO 295
-#define TK_RETORNA 296
-#define TK_CAST 297
+#define TK_SEJA 279
+#define TK_FIM 280
+#define TK_ERROR 281
+#define TK_IF 282
+#define TK_WHILE 283
+#define TK_BREAK 284
+#define TK_CONTINUE 285
+#define TK_DO 286
+#define TK_FOR 287
+#define TK_OP_ABREV 288
+#define TK_OP_1 289
+#define TK_ELSE 290
+#define TK_SWITCH 291
+#define TK_CASE 292
+#define TK_DEFAULT 293
+#define TK_PRINT 294
+#define TK_SCAN 295
+#define TK_TIPO_FUNCAO 296
+#define TK_RETORNA 297
+#define TK_CAST 298
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

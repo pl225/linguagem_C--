@@ -300,7 +300,7 @@ struct atributos processaOpAritmetica (struct atributos $1, struct atributos $2,
 %token TK_MAIN TK_ID TK_TIPO_INT TK_TIPO_FLUT32 TK_TIPO_FLUT64  TK_TIPO_BOOL TK_TIPO_STRING
 %token TK_TIPO_CHAR TK_MAIS_MENOS TK_MULTI_DIV TK_CONCATENACAO
 %token TK_BIN TK_HEX TK_OCT TK_MODULO
-%token TK_RELACIONAL TK_LOGICO 
+%token TK_RELACIONAL TK_LOGICO TK_SEJA
 %token TK_FIM TK_ERROR
 %token TK_IF TK_WHILE TK_BREAK TK_CONTINUE TK_DO TK_FOR
 %token TK_OP_ABREV TK_OP_1 TK_ELSE TK_SWITCH TK_CASE TK_DEFAULT
@@ -362,6 +362,7 @@ COMANDO 	: DECLARACAO ';'
 			| DECLARA_FUNCAO
 			| CALL_FUNCTION ';'
 			| RETORNA ';'
+			| DEC_DIN ';'
 			;
 
 DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
@@ -1195,6 +1196,47 @@ RETORNA 		: TK_RETORNA E
 					}
 				}
 				;
+
+DEC_DIN			: TK_SEJA TK_ID '=' E DEC_DIN_AUX
+				{
+					verificaVariavelJaDeclarada($2.label);
+					$$.label = "tmp" + proximaVariavelTemporaria();
+	        		$$.tipo = $4.tipo;
+	  				pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+	  				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+	  				if ($4.tipo == CHARS) {
+	  					string tamanhoString = "tmp" + proximaVariavelTemporaria();
+	  					mapaTemporario[tamanhoString] = { .id = tamanhoString, .tipo = INT };
+	  					mapaTemporario[$$.label].tamanho = tamanhoString;
+	  					$$.traducao = $4.traducao + '\t' + tamanhoString + " = " + mapaTemporario[$4.label].tamanho + ";\n" +
+	  								'\t' + $$.label + " = (char*) malloc(" + tamanhoString + ");\n" +
+	  								"\tstrcat(" + $$.label + ", " + $4.label + ");\n"; 
+	  				} else {
+	  					$$.traducao = $4.traducao + '\t' + $$.label + " = " + $4.label + ";\n" + $5.traducao;
+	  				}
+				}
+				;
+
+DEC_DIN_AUX		: ',' TK_ID '=' E DEC_DIN_AUX
+				{
+					verificaVariavelJaDeclarada($2.label);
+					$$.label = "tmp" + proximaVariavelTemporaria();
+	        		$$.tipo = $4.tipo;
+	  				pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
+	  				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
+					if ($4.tipo == CHARS) {
+	  					string tamanhoString = "tmp" + proximaVariavelTemporaria();
+	  					mapaTemporario[tamanhoString] = { .id = tamanhoString, .tipo = INT };
+	  					mapaTemporario[$$.label].tamanho = tamanhoString;
+	  					$$.traducao = $4.traducao + '\t' + tamanhoString + " = " + mapaTemporario[$4.label].tamanho + ";\n" +
+	  								'\t' + $$.label + " = (char*) malloc(" + tamanhoString + ");\n" +
+	  								"\tstrcat(" + $$.label + ", " + $4.label + ");\n"; 
+	  				} else {
+	  					$$.traducao = $4.traducao + '\t' + $$.label + " = " + $4.label + ";\n" + $5.traducao;
+	  				}
+				}
+				| { $$.traducao = ""; $$.tipo = ""; $$.label = ""; }
+
 %%
 
 #include "lex.yy.c"

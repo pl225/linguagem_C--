@@ -31,6 +31,7 @@ Funcao "funcao"
 
 Castint "(int)"
 Castflut32 "(flut32)"
+Var "seja"
 
 If "se"
 Else "senao"
@@ -104,6 +105,7 @@ Retorna "retorna"
 {Do} { return TK_DO; }
 {For} { return TK_FOR; }
 
+
 {MaisIgual}|{MenosIgual}|{VezesIgual}|{DivideIgual}|{ModuloIgual} { yylval.traducao = yytext; return TK_OP_ABREV; }
 {MaisMais}|{MenosMenos} { yylval.traducao = yytext; return TK_OP_1; }
 
@@ -112,6 +114,8 @@ Retorna "retorna"
 
 {PRINT} { return TK_PRINT; }
 {SCAN} { return TK_SCAN; }
+
+{Var} { return TK_SEJA; }
 
 "main"	{return TK_MAIN;}
 
