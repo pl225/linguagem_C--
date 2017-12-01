@@ -1093,9 +1093,16 @@ ARGUMENTOS_FUNCAO_AUX:	',' TK_ID ':' TIPO_DADO ARGUMENTOS_FUNCAO_AUX
 DECLARA_FUNCAO:	TK_TIPO_FUNCAO BLOCO_FUNCAO '(' ARGUMENTOS_FUNCAO ')' ':' TIPO_DADO_FUNC BLOCO 
 				{
 					string nomeFuncao = pilhaContexto.top().rotuloInicio;
+					string tamanhoStringParametros = "";
+					list<parametrosFuncao> a = mapaTemporario[nomeFuncao].funcao.parametros;
+					for (list<parametrosFuncao>::iterator it = a.begin(); it != a.end(); ++it) {
+						if (it->tipo == CHARS) {
+							tamanhoStringParametros += '\t' + mapaTemporario[it->id].tamanho + " = strlen(" + it->id + ");\n"; 
+						}
+					}
 					mapaTemporario[nomeFuncao].funcao.traducao = decideTipo($7.tipo) + nomeFuncao + 
 						'(' + mapaTemporario[nomeFuncao].funcao.traducao + ')' +
-						"{\n" + declaraVariaveisTemporariasFuncao() + $8.traducao + "}\n";
+						"{\n" + declaraVariaveisTemporariasFuncao() + tamanhoStringParametros + $8.traducao + "}\n";
 					mapaTemporarioCopia[nomeFuncao] = mapaTemporario[nomeFuncao];
 					mapaTemporario = mapaTemporarioCopia;
 					mapaTemporarioCopia.clear();

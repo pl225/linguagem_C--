@@ -14,7 +14,7 @@ funcao segunda (a: int, b: char) : chars {
 	retorna t;
 }
 
-funcao terceira (b: bool) : bool {
+funcao terceira (b: chars) : bool {
 	escreva(b);
 	retorna falso;
 }
@@ -38,7 +38,11 @@ escreva(k);
 
 escreva(julia + 1000);
 
-escreva(terceira(verdadeiro));
+se (julia > 600) {
+	escreva("maior que 600");
+}
+
+escreva(terceira("bbb"));
 
 escreva(bruno);
 escreva(joca);

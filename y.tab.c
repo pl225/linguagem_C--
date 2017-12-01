@@ -810,8 +810,8 @@ static const yytype_uint16 yyrline[] =
      841,   851,   863,   877,   883,   890,   902,   914,   927,   932,
      937,   944,   955,   960,   964,   971,   980,   988,   996,  1006,
     1012,  1018,  1056,  1061,  1067,  1073,  1073,  1073,  1073,  1073,
-    1075,  1081,  1084,  1090,  1093,  1107,  1113,  1128,  1133,  1136,
-    1141,  1144,  1196,  1212,  1232,  1250
+    1075,  1081,  1084,  1090,  1093,  1114,  1120,  1135,  1140,  1143,
+    1148,  1151,  1203,  1219,  1239,  1257
 };
 #endif
 
@@ -2749,28 +2749,35 @@ yyreduce:
 #line 1094 "sintatica.y" /* yacc.c:1646  */
     {
 					string nomeFuncao = pilhaContexto.top().rotuloInicio;
+					string tamanhoStringParametros = "";
+					list<parametrosFuncao> a = mapaTemporario[nomeFuncao].funcao.parametros;
+					for (list<parametrosFuncao>::iterator it = a.begin(); it != a.end(); ++it) {
+						if (it->tipo == CHARS) {
+							tamanhoStringParametros += '\t' + mapaTemporario[it->id].tamanho + " = strlen(" + it->id + ");\n"; 
+						}
+					}
 					mapaTemporario[nomeFuncao].funcao.traducao = decideTipo((yyvsp[-1]).tipo) + nomeFuncao + 
 						'(' + mapaTemporario[nomeFuncao].funcao.traducao + ')' +
-						"{\n" + declaraVariaveisTemporariasFuncao() + (yyvsp[0]).traducao + "}\n";
+						"{\n" + declaraVariaveisTemporariasFuncao() + tamanhoStringParametros + (yyvsp[0]).traducao + "}\n";
 					mapaTemporarioCopia[nomeFuncao] = mapaTemporario[nomeFuncao];
 					mapaTemporario = mapaTemporarioCopia;
 					mapaTemporarioCopia.clear();
 					pilhaContexto.pop();
 					(yyval).traducao = "";
 				}
-#line 2762 "y.tab.c" /* yacc.c:1646  */
+#line 2769 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 105:
-#line 1108 "sintatica.y" /* yacc.c:1646  */
+#line 1115 "sintatica.y" /* yacc.c:1646  */
     {
 					mapaTemporario[pilhaContexto.top().rotuloInicio].funcao.retorno = (yyvsp[0]).tipo;
 				}
-#line 2770 "y.tab.c" /* yacc.c:1646  */
+#line 2777 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 106:
-#line 1114 "sintatica.y" /* yacc.c:1646  */
+#line 1121 "sintatica.y" /* yacc.c:1646  */
     {
 					if (!pilhaContexto.top().isGlobal) yyerror("Uma função só pode ser declarada no escopo global.");
 					verificaVariavelJaDeclarada((yyvsp[0]).label);
@@ -2783,41 +2790,41 @@ yyreduce:
 					pilhaContexto.push({ .quebravel = false, .mapaVariaveis = controiMapaVariaveis(),
 						.rotuloInicio = var, .rotuloFim = "", .funcional = true});
 				}
-#line 2787 "y.tab.c" /* yacc.c:1646  */
+#line 2794 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 107:
-#line 1129 "sintatica.y" /* yacc.c:1646  */
+#line 1136 "sintatica.y" /* yacc.c:1646  */
     {
 					(yyval).traducao = (yyvsp[-1]).traducao + (yyvsp[0]).traducao;
 					parametrosAuxiliar.push_front({.id = (yyvsp[-1]).label, .tipo = (yyvsp[-1]).tipo});
 				}
-#line 2796 "y.tab.c" /* yacc.c:1646  */
+#line 2803 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 108:
-#line 1133 "sintatica.y" /* yacc.c:1646  */
+#line 1140 "sintatica.y" /* yacc.c:1646  */
     { (yyval).traducao = ""; }
-#line 2802 "y.tab.c" /* yacc.c:1646  */
+#line 2809 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 109:
-#line 1137 "sintatica.y" /* yacc.c:1646  */
+#line 1144 "sintatica.y" /* yacc.c:1646  */
     {
 					(yyval).traducao = (yyvsp[-1]).traducao + (yyvsp[0]).traducao;
 					parametrosAuxiliar.push_front({.id = (yyvsp[-1]).label, .tipo = (yyvsp[-1]).tipo});
 				}
-#line 2811 "y.tab.c" /* yacc.c:1646  */
+#line 2818 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 110:
-#line 1141 "sintatica.y" /* yacc.c:1646  */
+#line 1148 "sintatica.y" /* yacc.c:1646  */
     { (yyval).traducao = ""; }
-#line 2817 "y.tab.c" /* yacc.c:1646  */
+#line 2824 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 111:
-#line 1145 "sintatica.y" /* yacc.c:1646  */
+#line 1152 "sintatica.y" /* yacc.c:1646  */
     {
 					mapV mapa = buscaMapa((yyvsp[-3]).label);
 					if (mapa[(yyvsp[-3]).label].tipo == FUNCAO) {
@@ -2867,11 +2874,11 @@ yyreduce:
 						yyerror("A variável " + (yyvsp[-3]).label + " não é uma função.");
 					} 	
 				}
-#line 2871 "y.tab.c" /* yacc.c:1646  */
+#line 2878 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 112:
-#line 1197 "sintatica.y" /* yacc.c:1646  */
+#line 1204 "sintatica.y" /* yacc.c:1646  */
     {
 					contextoBloco cb = controlarRetorno();		
 					string retorno = mapaTemporario[cb.rotuloInicio].funcao.retorno;
@@ -2885,11 +2892,11 @@ yyreduce:
 						(yyval).traducao = (yyvsp[0]).traducao + "\treturn " + (yyvsp[0]).label + ";\n";
 					}
 				}
-#line 2889 "y.tab.c" /* yacc.c:1646  */
+#line 2896 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 113:
-#line 1213 "sintatica.y" /* yacc.c:1646  */
+#line 1220 "sintatica.y" /* yacc.c:1646  */
     {
 					verificaVariavelJaDeclarada((yyvsp[-3]).label);
 					(yyval).label = "tmp" + proximaVariavelTemporaria();
@@ -2907,11 +2914,11 @@ yyreduce:
 	  					(yyval).traducao = (yyvsp[-1]).traducao + '\t' + (yyval).label + " = " + (yyvsp[-1]).label + ";\n" + (yyvsp[0]).traducao;
 	  				}
 				}
-#line 2911 "y.tab.c" /* yacc.c:1646  */
+#line 2918 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 114:
-#line 1233 "sintatica.y" /* yacc.c:1646  */
+#line 1240 "sintatica.y" /* yacc.c:1646  */
     {
 					verificaVariavelJaDeclarada((yyvsp[-3]).label);
 					(yyval).label = "tmp" + proximaVariavelTemporaria();
@@ -2929,17 +2936,17 @@ yyreduce:
 	  					(yyval).traducao = (yyvsp[-1]).traducao + '\t' + (yyval).label + " = " + (yyvsp[-1]).label + ";\n" + (yyvsp[0]).traducao;
 	  				}
 				}
-#line 2933 "y.tab.c" /* yacc.c:1646  */
+#line 2940 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 115:
-#line 1250 "sintatica.y" /* yacc.c:1646  */
+#line 1257 "sintatica.y" /* yacc.c:1646  */
     { (yyval).traducao = ""; (yyval).tipo = ""; (yyval).label = ""; }
-#line 2939 "y.tab.c" /* yacc.c:1646  */
+#line 2946 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2943 "y.tab.c" /* yacc.c:1646  */
+#line 2950 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -3167,7 +3174,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 1252 "sintatica.y" /* yacc.c:1906  */
+#line 1259 "sintatica.y" /* yacc.c:1906  */
 
 
 #include "lex.yy.c"
