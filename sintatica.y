@@ -807,6 +807,30 @@ ATRIBUICAO	:TK_ID '=' E
         						", " + mapaTemporario[$3.label].tamanho + ");\n" +
         						"\tstrcat(" + mapa[$1.label].temporario + ", " + $3.label + ");\n";
 			}
+			| TK_ID '[' E ']' '=' E
+			{
+				defineTiposCompativeis($3.tipo, INT);
+				mapV mapa = buscaMapa($1.label);
+				defineTiposCompativeis(vetorParaElemento(mapa[$1.label].tipo), $6.tipo);
+        		string var = mapa[$1.label].temporario;
+        		string tamanhoVetor = mapaTemporario[var].tamanho;
+        		if ($6.tipo == CHARS) {
+	        		$$.traducao = $3.traducao + $6.traducao + "\tif(" + $3.label + " < 0 || " + $3.label + " >= " + tamanhoVetor + ") exit(1);\n" +
+						'\t' + var + '[' + $3.label + "] = (char*) realloc(" + var + '[' + $3.label + "], " + mapaTemporario[$6.label].tamanho + ");\n" + 
+						"\tstrcpy(" + var + '[' + $3.label + ']' + ", " + $6.label + ");\n";
+        		} else {
+        			if (vetorParaElemento(mapa[$1.label].tipo) != $6.tipo) {
+        				string varCast = "tmp" + proximaVariavelTemporaria();
+        				mapaTemporario[varCast] = { .id = varCast, .tipo = $6.tipo == INT ? FLUT32 : INT };
+        				$$.traducao = $3.traducao + $6.traducao + "\tif (" + $3.label + " < 0 || " + $3.label + " >= " + tamanhoVetor + ") exit(1);\n" +
+        					'\t' + varCast + " = (" + decideTipo(mapaTemporario[varCast].tipo) + ") " + $6.label + ";\n"; 
+	        				'\t' + var + '[' + $3.label + "] = " + varCast + ";\n";
+        			} else {
+        				$$.traducao = $3.traducao + $6.traducao + "\tif (" + $3.label + " < 0 || " + $3.label + " >= " + tamanhoVetor + ") exit(1);\n" +
+	        			'\t' + var + '[' + $3.label + "] = " + $6.label + ";\n";
+        			}
+        		}
+			}
 			;
 
 E 			: E TK_MAIS_MENOS E

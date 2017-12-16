@@ -15,3 +15,12 @@ escreva(texto [ 0 ]);
 aloha = cel;
 
 escreva (aloha [ 1 ]);
+
+aloha [ 2 ] = pat;
+f [ 0 ] = 38;
+
+texto [ 1 ] = "retrato";
+
+escreva(aloha [ 2 ]);
+escreva(f [ 0 ]);
+escreva(texto [ 1 ]);
