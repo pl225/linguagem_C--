@@ -233,18 +233,15 @@ void verificaVariavelJaDeclarada (string s) {
 
 void defineTiposCompativeis (string s1, string s2) {
 	bool v = false;
-	if (s1 == BOOL && s2 != BOOL)
-		v = true;
-	if (s1 == CHAR && s2 != CHAR)
-		v = true;
-	if (s1 == INT && s2 != INT && s2 != FLUT32)
-		v = true;
-	if (s1 == FLUT32 && s2 != INT && s2 != FLUT32)
-		v = true;
-	if (s1 == CHARS && s2 != CHARS)
-		v = true;
-	if (v)
-		yyerror("As variáveis " + s1 + " e " + s2 + " não são de tipos compatíveis.");
+	if (s1 == BOOL && s2 != BOOL) v = true;
+	if (s1 == CHAR && s2 != CHAR) v = true;
+	if (s1 == INT && s2 != INT && s2 != FLUT32) v = true;
+	if (s1 == FLUT32 && s2 != INT && s2 != FLUT32) v = true;
+	if (s1 == CHARS && s2 != CHARS) v = true;
+	if (s1 == INT_VETOR && s2 != INT_VETOR) v = true;
+	if (s1 == FLUT32_VETOR && s2 != FLUT32_VETOR) v = true;
+	if (s1 == CHARS_VETOR && s2 != CHARS_VETOR) v = true;
+	if (v) yyerror("As variáveis " + s1 + " e " + s2 + " não são de tipos compatíveis.");
 }
 
 string liberarStrings () {
@@ -747,6 +744,12 @@ ATRIBUICAO	:TK_ID '=' E
 						'\t' + tamanhoString + " = " + mapaTemporario[$3.label].tamanho + ";\n" +
 				 		'\t' + temporarioId + " = (char*) malloc(" + tamanhoString + ");\n" + 
 						"\tstrcat(" + temporarioId + ", " + $3.label + ");\n";
+				} else if ($1.tipo == INT_VETOR || $1.tipo == FLUT32_VETOR || $1.tipo == CHARS_VETOR) {
+					string tamanhoVetor = "tmp" + proximaVariavelTemporaria();
+					mapaTemporario[tamanhoVetor] = {.id = tamanhoVetor, .tipo = INT};
+					mapaTemporario[mapa[$1.label].temporario].tamanho = tamanhoVetor;
+					$$.traducao = $3.traducao + '\t' + tamanhoVetor + " = " + mapaTemporario[$3.label].tamanho + ";\n" +
+						'\t' + mapaTemporario[mapa[$1.label].temporario].id + " = " + $3.label + ";\n";
 				} else {
 					$$.traducao = $3.traducao + '\t' + mapaTemporario[mapa[$1.label].temporario].id + 
 					" = " + $3.label + ";\n";

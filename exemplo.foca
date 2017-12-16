@@ -11,3 +11,7 @@ escreva (cel [ 1 ] );
 chars palavras [ 5 ], palavrinha = "k.o.", texto = [ "arvore" , "laranja" , "flor" ];
 
 escreva(texto [ 0 ]);
+
+aloha = cel;
+
+escreva (aloha [ 1 ]);

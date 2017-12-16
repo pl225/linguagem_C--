@@ -59,6 +59,9 @@ int main(void)
 	int  tmp5;
 	char * tmp50;
 	int  tmp51;
+	int  tmp52;
+	int  tmp53;
+	float  tmp54;
 	int  tmp7;
 	int  tmp9;
 	tmp1 = 88;
@@ -134,6 +137,12 @@ int main(void)
 	tmp50 = (char*) malloc(tmp51);
 	strcat(tmp50, tmp43[tmp49]);
 	cout << tmp50 << endl;
+	tmp52 = tmp25;
+	tmp30 = tmp24;
+	tmp53 = 1;
+	if (tmp53 < 0 || tmp53 >= tmp52) exit(1);
+	tmp54 = tmp30[tmp53];
+	cout << tmp54 << endl;
 	if (tmp36 > 0) free(tmp35);
 	if (tmp38 > 0) free(tmp37);
 	if (tmp40 > 0) free(tmp39);
