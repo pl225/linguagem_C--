@@ -996,13 +996,7 @@ ATRIBUICAO	:TK_ID '=' E
 					string tamanhoString = "tmp" + proximaVariavelTemporaria();
 					mapaTemporario[tamanhoString] = {.id = tamanhoString, .tipo = INT};
 					string rotulo = proximoRotulo();
-					$$.traducao += //'\t' + tamanhoString + " = strlen(" + var + '[' + posicao + "]);\n" +
-						//"\tif(" + tamanhoString + " > 0) goto " + rotulo + ";\n" +
-						//'\t' + var + '[' + posicao + "] = (char*) malloc(" + tamanhoString + ");\n" +
-						//'\t' + rotulo + ":\n" +
-						//'\t' + var + '[' + posicao + "] = (char*) realloc(" + var + '[' + posicao + "], " + mapaTemporario[$9.label].tamanho + ");\n" + 
-						//"\tstrcat(" + var + '[' + posicao + ']' + ", " + $9.label + ");\n";
-						'\t' + var + '[' + posicao + "] = " + $9.label + ";\n";
+					$$.traducao += '\t' + var + '[' + posicao + "] = " + $9.label + ";\n";
 				}
 			}
 			;
@@ -1128,6 +1122,35 @@ E 			: E TK_MAIS_MENOS E
 	        			'\t' + varElemento + " = " + var + '[' + $3.label + "];\n";
         		}
 			} 
+			| TK_ID '[' E ']' '[' E ']'
+			{
+				defineTiposCompativeis($3.tipo, INT);
+				defineTiposCompativeis($6.tipo, INT);
+				mapV mapa = buscaMapa($1.label);
+				string var = mapa[$1.label].temporario;
+        		string linhas = mapaTemporario[var].tamanho;
+        		string colunas = mapaTemporario[var].coluna;
+        		string posicao = "tmp" + proximaVariavelTemporaria();
+        		mapaTemporario[posicao] = {.id = posicao, .tipo = INT};
+        		string varElemento = "tmp" + proximaVariavelTemporaria();
+        		mapaTemporario[varElemento] = {.id = varElemento, .tipo = vetorParaElemento(mapaTemporario[var].tipo)};
+        		$$.label = varElemento;
+        		$$.tipo = mapaTemporario[varElemento].tipo;
+        		$$.traducao = $3.traducao + $6.traducao + "\tif(" + linhas + " < 0 || " + $3.label + " >= " + linhas + ") exit(1);\n" +
+						"\tif(" + colunas + " < 0 || " + $6.label + " >= " + colunas + ") exit(1);\n" +
+						'\t' + posicao + " = " + $3.label + " * " + colunas + ";\n" +
+						'\t' + posicao + " = " + posicao + " + " + $6.label + ";\n";
+				if ($$.tipo == CHARS) {
+					string tamanhoString = "tmp" + proximaVariavelTemporaria();
+	        		mapaTemporario[tamanhoString] = {.id = tamanhoString, .tipo = INT};
+	        		mapaTemporario[varElemento].tamanho = tamanhoString;
+	        		$$.traducao += '\t' + tamanhoString + " = strlen(" + var + '[' + posicao + ']' + ") + 1;\n" +
+						'\t' + $$.label + " = (char*) malloc(" + tamanhoString + ");\n" + 
+						"\tstrcat(" + $$.label + ", " + var + '[' + posicao + ']' +");\n";
+				} else {
+					$$.traducao += '\t' + varElemento + " = " + var + '[' + posicao + "];\n";
+				}
+			}
 			;
 
 
