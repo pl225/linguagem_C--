@@ -3,3 +3,7 @@ int a = 88 , b = [ 4, 5, 6 ] , d = [ 9 ];
 int f = [ 4444 ], g [ 2 ];
 
 escreva( b [ 2 ] );
+
+flut32 aloha [ 17 ] , pat = 2, cel = [ 4 , 12 , 44.8 ];
+
+escreva (cel [ 1 ] );

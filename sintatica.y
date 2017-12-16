@@ -16,6 +16,7 @@
 #define SIZE_STR 10
 #define FUNCAO "5"
 #define INT_VETOR "6"
+#define FLUT32_VETOR "7"
 
 using namespace std;
 
@@ -101,6 +102,7 @@ string decideTipo (string tipo) {
 	else if (tipo == CHAR) return "char ";
 	else if (tipo == CHARS) return "char *";
 	else if (tipo == INT_VETOR) return "int *";
+	else if (tipo == FLUT32_VETOR) return "float *";
 }
 
 string decideOperadorRelacional (string op) {
@@ -302,6 +304,7 @@ struct atributos processaOpAritmetica (struct atributos $1, struct atributos $2,
 
 string vetorParaElemento (string tipo) {
 	if (tipo == INT_VETOR) return INT;
+	else if (tipo == FLUT32_VETOR) return FLUT32;
 }
 
 struct atributos traducaoVetorNumerico (struct atributos $1, struct atributos $3) {
@@ -322,6 +325,11 @@ struct atributos traducaoVetorNumerico (struct atributos $1, struct atributos $3
 			string varCast = "tmp" + proximaVariavelTemporaria();
 			mapaTemporario[varCast] = {.id = varCast, .tipo = INT };
 			$$.traducao += it->traducao + '\t' + varCast + " = (int) " + it->label + ";\n" +
+				'\t' + $$.label + '[' + to_string(i) + "] = " + varCast + ";\n";
+		} else if (it->tipo == INT && $3.tipo == FLUT32_VETOR) { 
+			string varCast = "tmp" + proximaVariavelTemporaria();
+			mapaTemporario[varCast] = {.id = varCast, .tipo = FLUT32 };
+			$$.traducao += it->traducao + '\t' + varCast + " = (float) " + it->label + ";\n" +
 				'\t' + $$.label + '[' + to_string(i) + "] = " + varCast + ";\n";
 		} else {
 			$$.traducao += it->traducao + '\t' + $$.label + '[' + to_string(i) 
@@ -406,10 +414,10 @@ COMANDO 	: DECLARACAO ';'
 
 DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 			{
-				if ($3.tipo != "") defineTiposCompativeis($1.tipo, $3.tipo);
+				if ($3.tipo != "" && $3.tipo != FLUT32_VETOR) defineTiposCompativeis($1.tipo, $3.tipo);
 				verificaVariavelJaDeclarada($2.label);
 				$$.label = "tmp" + proximaVariavelTemporaria();
-	        	$$.tipo = $1.tipo;
+	        	$$.tipo = $3.tipo == FLUT32_VETOR ? $3.tipo : FLUT32;
 	  			pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				if ($3.tipo != "") {
@@ -418,6 +426,9 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 						mapaTemporario[varCast] = { .id = varCast, .tipo = FLUT32 };
 						$$.traducao = $3.traducao + '\t' + varCast + " = (float) " + $3.label + ";\n" +
 						'\t' + $$.label + " = " + varCast + ";\n" + $4.traducao;
+					}  else if ($3.tipo == FLUT32_VETOR) {
+							$$ = traducaoVetorNumerico($$, $3);
+							$$.traducao += $4.traducao;
 					} else {
 						$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
 					}
@@ -501,16 +512,21 @@ DECLARACAO_VF32: '=' E
 				 {
 				 	$$ = $2;
 				 }
+				 | DECLARACAO_VETOR
+				 {
+				 	$$ = $1;
+				 	$$.tipo = FLUT32_VETOR;
+				 }
 				 |
 				 { $$.traducao = ""; $$.tipo = ""; $$.label = ""; }
 				 ;
 
 DECLARACAO_F32 : ',' TK_ID DECLARACAO_VF32 DECLARACAO_F32
 				{
-					if ($3.tipo != "") defineTiposCompativeis(FLUT32, $3.tipo);
+					if ($3.tipo != "" && $3.tipo != FLUT32_VETOR) defineTiposCompativeis($1.tipo, $3.tipo);
 					verificaVariavelJaDeclarada($2.label);
 					$$.label = "tmp" + proximaVariavelTemporaria();
-		        	$$.tipo = FLUT32;
+		        	$$.tipo = $3.tipo == FLUT32_VETOR ? $3.tipo : FLUT32;
 		  			pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 		  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 					if ($3.tipo != "") {
@@ -519,6 +535,9 @@ DECLARACAO_F32 : ',' TK_ID DECLARACAO_VF32 DECLARACAO_F32
 							mapaTemporario[varCast] = { .id = varCast, .tipo = FLUT32 };
 							$$.traducao = $3.traducao + '\t' + varCast + " = (float) " + $3.label + ";\n" +
 							'\t' + $$.label + " = " + varCast + ";\n" + $4.traducao;
+						} else if ($3.tipo == FLUT32_VETOR) {
+							$$ = traducaoVetorNumerico($$, $3);
+							$$.traducao += $4.traducao;
 						} else {
 							$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
 						}
