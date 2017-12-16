@@ -1,5 +1,13 @@
 int a [ 3 ] [ 5 ], k = 4, b [ 7 ] [ 2 ];
 
-flut32 aa [ 5 ] [ 9 ], kk = 7, bb [ 12 ] [ 3 ];
+a [ 1 ] [ 4 ] = 14.5;
 
-chars aaa [ 4 ] [ 6 ], kkk = "abc", bbb [ 3 ] [ 5 ];
+flut32 f [ 2 ] [ 3 ];
+
+f [ 1 ] [ 2 ] = 27;
+
+chars olha [ 2 ];
+
+olha [ 1 ] = "OMG";
+
+escreva(olha [ 1 ]);

@@ -358,7 +358,7 @@ struct atributos traducaoMatrizNumerico (struct atributos $1, struct atributos $
 	struct atributos $$ = $1;
 	if (pilhaVetores.empty()) {
 		mapaTemporario[$$.label].tamanho = $3.label;
-		mapaTemporario[$$.label].coluna = $3.tipo;
+		mapaTemporario[$$.label].coluna = $3.coluna;
 		string tamanhoMatriz = "tmp" + proximaVariavelTemporaria();
 		mapaTemporario[tamanhoMatriz] = {.id = tamanhoMatriz, .tipo = INT};
 		$$.traducao = $3.traducao + '\t' + tamanhoMatriz + " = " + $3.label + " + " + $3.coluna + ";\n" +
@@ -960,13 +960,41 @@ ATRIBUICAO	:TK_ID '=' E
         				string varCast = "tmp" + proximaVariavelTemporaria();
         				mapaTemporario[varCast] = { .id = varCast, .tipo = $6.tipo == INT ? FLUT32 : INT };
         				$$.traducao = $3.traducao + $6.traducao + "\tif (" + $3.label + " < 0 || " + $3.label + " >= " + tamanhoVetor + ") exit(1);\n" +
-        					'\t' + varCast + " = (" + decideTipo(mapaTemporario[varCast].tipo) + ") " + $6.label + ";\n"; 
+        					'\t' + varCast + " = (" + decideTipo(mapaTemporario[varCast].tipo) + ") " + $6.label + ";\n" +
 	        				'\t' + var + '[' + $3.label + "] = " + varCast + ";\n";
         			} else {
         				$$.traducao = $3.traducao + $6.traducao + "\tif (" + $3.label + " < 0 || " + $3.label + " >= " + tamanhoVetor + ") exit(1);\n" +
 	        			'\t' + var + '[' + $3.label + "] = " + $6.label + ";\n";
         			}
         		}
+			}
+			| TK_ID '[' E ']' '[' E ']' '=' E
+			{
+				defineTiposCompativeis($3.tipo, INT);
+				defineTiposCompativeis($6.tipo, INT);
+				mapV mapa = buscaMapa($1.label);
+				defineTiposCompativeis(vetorParaElemento(mapa[$1.label].tipo), $9.tipo);
+				string var = mapa[$1.label].temporario;
+        		string linhas = mapaTemporario[var].tamanho;
+        		string colunas = mapaTemporario[var].coluna;
+        		string posicao = "tmp" + proximaVariavelTemporaria();
+        		mapaTemporario[posicao] = {.id = posicao, .tipo = INT};
+        		$$.traducao = $3.traducao + $6.traducao + "\tif(" + linhas + " < 0 || " + $3.label + " >= " + linhas + ") exit(1);\n" +
+						"\tif(" + colunas + " < 0 || " + $6.label + " >= " + colunas + ") exit(1);\n" +
+						'\t' + posicao + " = " + $3.label + " * " + colunas + ";\n" +
+						'\t' + posicao + " = " + posicao + " + " + $6.label + ";\n" + $9.traducao;
+        		if (mapa[$1.label].tipo == FLUT32_MATRIZ || mapa[$1.label].tipo == INT_MATRIZ) {
+					if (vetorParaElemento(mapa[$1.label].tipo) != $9.tipo) {
+						string varCast = "tmp" + proximaVariavelTemporaria();
+        				mapaTemporario[varCast] = { .id = varCast, .tipo = $6.tipo == INT ? FLUT32 : INT };
+        				$$.traducao += '\t' + varCast + " = (" + decideTipo(mapaTemporario[varCast].tipo) + ") " + $9.label + ";\n" +
+        					'\t' + var + '[' + posicao + "] = " + varCast + ";\n";
+					} else {
+						$$.traducao += '\t' + var + '[' + posicao + "] = " + $9.label + ";\n";
+					}
+				} else {
+					
+				}
 			}
 			;
 
