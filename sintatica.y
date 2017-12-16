@@ -361,7 +361,7 @@ struct atributos traducaoMatrizNumerico (struct atributos $1, struct atributos $
 		mapaTemporario[$$.label].coluna = $3.coluna;
 		string tamanhoMatriz = "tmp" + proximaVariavelTemporaria();
 		mapaTemporario[tamanhoMatriz] = {.id = tamanhoMatriz, .tipo = INT};
-		$$.traducao = $3.traducao + '\t' + tamanhoMatriz + " = " + $3.label + " + " + $3.coluna + ";\n" +
+		$$.traducao = $3.traducao + '\t' + tamanhoMatriz + " = " + $3.label + " * " + $3.coluna + ";\n" +
 			'\t' + $$.label + " = (" + decideTipo($$.tipo) + ") malloc(sizeof(" + decideTipo(vetorParaElemento($$.tipo)) +
 			")*" + tamanhoMatriz + ");\n";
 		return $$;
@@ -993,7 +993,16 @@ ATRIBUICAO	:TK_ID '=' E
 						$$.traducao += '\t' + var + '[' + posicao + "] = " + $9.label + ";\n";
 					}
 				} else {
-					
+					string tamanhoString = "tmp" + proximaVariavelTemporaria();
+					mapaTemporario[tamanhoString] = {.id = tamanhoString, .tipo = INT};
+					string rotulo = proximoRotulo();
+					$$.traducao += //'\t' + tamanhoString + " = strlen(" + var + '[' + posicao + "]);\n" +
+						//"\tif(" + tamanhoString + " > 0) goto " + rotulo + ";\n" +
+						//'\t' + var + '[' + posicao + "] = (char*) malloc(" + tamanhoString + ");\n" +
+						//'\t' + rotulo + ":\n" +
+						//'\t' + var + '[' + posicao + "] = (char*) realloc(" + var + '[' + posicao + "], " + mapaTemporario[$9.label].tamanho + ");\n" + 
+						//"\tstrcat(" + var + '[' + posicao + ']' + ", " + $9.label + ");\n";
+						'\t' + var + '[' + posicao + "] = " + $9.label + ";\n";
 				}
 			}
 			;
