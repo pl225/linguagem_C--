@@ -118,8 +118,8 @@ string decideValorBooleano (string b) {
 
 string declaraVariaveisTemporarias () {
 	string s = "";
-	for (mapT::iterator it = mapaTemporario.begin(); it!=mapaTemporario.end(); ++it) {
-		if (it->second.tipo != FUNCAO)
+	for (mapT::iterator it = mapaTemporario.begin(); it!=mapaTemporario.end(); ++it) { 
+		if (it->second.tipo != FUNCAO) 
     		s += '\t' + decideTipo(it->second.tipo) + ' ' + it->second.id + ";\n";
 	}
     return s;
@@ -298,6 +298,10 @@ struct atributos processaOpAritmetica (struct atributos $1, struct atributos $2,
 		$$.traducao += '\t' + $$.label + " = " + $1.label + $2.traducao + $3.label + ";\n";
 	}
 	return $$;
+}
+
+string vetorParaElemento (string tipo) {
+	if (tipo == INT_VETOR) return INT;
 }
 
 %}
@@ -875,6 +879,19 @@ E 			: E TK_MAIS_MENOS E
 			{
 				$$ = $1;
 			}
+			| TK_ID '[' E ']'
+			{
+				defineTiposCompativeis($3.tipo, INT);
+				mapV mapa = buscaMapa($1.label);
+        		string var = mapa[$1.label].temporario;
+        		string tamanhoVetor = mapaTemporario[var].tamanho;
+        		string varElemento = "tmp" + proximaVariavelTemporaria();
+        		mapaTemporario[varElemento] = {.id = varElemento, .tipo = vetorParaElemento(mapaTemporario[var].tipo)};
+        		$$.label = varElemento;
+        		$$.tipo = mapaTemporario[varElemento].tipo;
+        		$$.traducao = $3.traducao + "\tif (" + $3.label + " < 0 || " + $3.label + " >= " + tamanhoVetor + ") exit(1);\n" +
+        			'\t' + varElemento + " = " + var + '[' + $3.label + "];\n";
+			} 
 			;
 
 

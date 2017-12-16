@@ -20,6 +20,8 @@ int main(void)
 	int  tmp12;
 	int  tmp14;
 	int  tmp16;
+	int  tmp17;
+	int  tmp18;
 	int  tmp2;
 	int  tmp3;
 	int  tmp4;
@@ -47,5 +49,9 @@ int main(void)
 	tmp12 = 2;
 	tmp14 = tmp12;
 	tmp13 = (int*) malloc(sizeof(int)*tmp14);
+	tmp17 = 2;
+	if (tmp17 < 0 || tmp17 >= tmp9) exit(1);
+	tmp18 = tmp8[tmp17];
+	cout << tmp18 << endl;
 	return 0;
 }
