@@ -18,6 +18,9 @@
 #define INT_VETOR "6"
 #define FLUT32_VETOR "7"
 #define CHARS_VETOR "8"
+#define INT_MATRIZ "9"
+#define FLUT32_MATRIZ "10"
+#define CHARS_MATRIZ "11"
 
 using namespace std;
 
@@ -26,6 +29,7 @@ struct atributos
 	string label;
 	string traducao;
 	string tipo;
+	string coluna;
 };
 
 typedef struct 
@@ -46,6 +50,7 @@ typedef struct
 		string traducao;
 		list <parametrosFuncao> parametros;
 	} funcao;
+	string coluna;
 } variavelTemporaria;
 
 typedef struct 
@@ -105,6 +110,9 @@ string decideTipo (string tipo) {
 	else if (tipo == INT_VETOR) return "int *";
 	else if (tipo == FLUT32_VETOR) return "float *";
 	else if (tipo == CHARS_VETOR) return "char**";
+	else if (tipo == INT_MATRIZ) return "int*";
+	else if (tipo == FLUT32_MATRIZ) return "float*";
+	else if (tipo == CHARS_MATRIZ) return "char**";
 }
 
 string decideOperadorRelacional (string op) {
@@ -305,6 +313,9 @@ string vetorParaElemento (string tipo) {
 	if (tipo == INT_VETOR) return INT;
 	else if (tipo == FLUT32_VETOR) return FLUT32;
 	else if (tipo == CHARS_VETOR) return CHARS;
+	else if (tipo == INT_MATRIZ) return INT;
+	else if (tipo == FLUT32_MATRIZ) return FLUT32;
+	else if (tipo == CHARS_MATRIZ) return CHARS;
 }
 
 struct atributos traducaoVetorNumerico (struct atributos $1, struct atributos $3) {
@@ -340,6 +351,68 @@ struct atributos traducaoVetorNumerico (struct atributos $1, struct atributos $3
 		i++;
 	}
 	valoresVetor.clear();
+	return $$;
+}
+
+struct atributos traducaoMatrizNumerico (struct atributos $1, struct atributos $3) {
+	struct atributos $$ = $1;
+	if (pilhaVetores.empty()) {
+		mapaTemporario[$$.label].tamanho = $3.label;
+		mapaTemporario[$$.label].coluna = $3.tipo;
+		string tamanhoMatriz = "tmp" + proximaVariavelTemporaria();
+		mapaTemporario[tamanhoMatriz] = {.id = tamanhoMatriz, .tipo = INT};
+		$$.traducao = $3.traducao + '\t' + tamanhoMatriz + " = " + $3.label + " + " + $3.coluna + ";\n" +
+			'\t' + $$.label + " = (" + decideTipo($$.tipo) + ") malloc(sizeof(" + decideTipo(vetorParaElemento($$.tipo)) +
+			")*" + tamanhoMatriz + ");\n";
+		return $$;
+	} else {
+		/*string linha = "tmp" + proximaVariavelTemporaria();
+		string coluna = "tmp" + proximaVariavelTemporaria();
+		mapaTemporario[linha] = {.id = linha, .tiṕo = INT};
+		mapaTemporario[coluna] = {.id = coluna, .tipo = INT};
+		$$.traducao = '\t' + linha + " = " + pilhaVetores.size() + ';\n' +
+			'\t' + coluna + " = " + pilhaVetores.top().size() + ';\n';
+		int cols = pilhaVetores.top().size();
+		if ($$.tipo == INT_MATRIZ) {
+			int i = 0;
+			while (!pilhaVetores.empty()) {
+				list<atributos> colunas = pilhaVetores.top();
+				pilhaVetores.pop();
+				if (colunas != cols) yyerror("Apenas matrizes quadradas podem ser c")
+			}
+		}*/
+	}
+	/*list<atributos> valoresVetor = pilhaVetores.top();
+	pilhaVetores.pop();
+	string tamanhoVetor = "tmp" + proximaVariavelTemporaria();
+	mapaTemporario[tamanhoVetor] = {.id = tamanhoVetor, .tipo = INT};
+	mapaTemporario[$$.label].tamanho = tamanhoVetor;
+	$$.traducao = $3.traducao + '\t' + tamanhoVetor + " = " + 
+		(valoresVetor.size() == 0 ? $3.label : to_string(valoresVetor.size())) + ";\n" +
+		'\t' + $$.label + " = (" +  decideTipo($3.tipo) + ") malloc(sizeof(" + decideTipo(vetorParaElemento($3.tipo))
+			+ ")*" + tamanhoVetor + ");\n";
+	int i = 0;
+	for (list<atributos>::iterator it = valoresVetor.begin(); it != valoresVetor.end(); ++it) {
+		defineTiposCompativeis(it->tipo, vetorParaElemento($3.tipo));
+		if (it->tipo == FLUT32 && $3.tipo == INT_VETOR) {
+			string varCast = "tmp" + proximaVariavelTemporaria();
+			mapaTemporario[varCast] = {.id = varCast, .tipo = INT };
+			$$.traducao += it->traducao + '\t' + varCast + " = (int) " + it->label + ";\n" +
+				'\t' + $$.label + '[' + to_string(i) + "] = " + varCast + ";\n";
+		} else if (it->tipo == INT && $3.tipo == FLUT32_VETOR) { 
+			string varCast = "tmp" + proximaVariavelTemporaria();
+			mapaTemporario[varCast] = {.id = varCast, .tipo = FLUT32 };
+			$$.traducao += it->traducao + '\t' + varCast + " = (float) " + it->label + ";\n" +
+				'\t' + $$.label + '[' + to_string(i) + "] = " + varCast + ";\n";
+		} else if ($3.tipo == CHARS_VETOR) { 
+			$$.traducao += it->traducao + '\t' + $$.label + '[' + to_string(i) + ']' + " = " + it->label + ";\n";
+		} else {
+			$$.traducao += it->traducao + '\t' + $$.label + '[' + to_string(i) 
+				+ "] = " + it->label + ";\n";
+		}
+		i++;
+	}
+	valoresVetor.clear();*/
 	return $$;
 }
 
@@ -416,10 +489,10 @@ COMANDO 	: DECLARACAO ';'
 
 DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 			{
-				if ($3.tipo != "" && $3.tipo != FLUT32_VETOR) defineTiposCompativeis($1.tipo, $3.tipo);
+				if ($3.tipo != "" && $3.tipo != FLUT32_VETOR && $3.tipo != FLUT32_MATRIZ) defineTiposCompativeis($1.tipo, $3.tipo);
 				verificaVariavelJaDeclarada($2.label);
 				$$.label = "tmp" + proximaVariavelTemporaria();
-	        	$$.tipo = $3.tipo == FLUT32_VETOR ? $3.tipo : FLUT32;
+	        	$$.tipo = $3.tipo == FLUT32_VETOR || $3.tipo == FLUT32_MATRIZ ? $3.tipo : FLUT32;
 	  			pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				if ($3.tipo != "") {
@@ -429,8 +502,11 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 						$$.traducao = $3.traducao + '\t' + varCast + " = (float) " + $3.label + ";\n" +
 						'\t' + $$.label + " = " + varCast + ";\n" + $4.traducao;
 					}  else if ($3.tipo == FLUT32_VETOR) {
-							$$ = traducaoVetorNumerico($$, $3);
-							$$.traducao += $4.traducao;
+						$$ = traducaoVetorNumerico($$, $3);
+						$$.traducao += $4.traducao;
+					} else if ($3.tipo == FLUT32_MATRIZ) {
+						$$ = traducaoMatrizNumerico($$, $3);
+						$$.traducao += $4.traducao;
 					} else {
 						$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
 					}
@@ -466,15 +542,18 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
       		}
       		| TK_TIPO_STRING TK_ID DECLARACAO_VSTRING DECLARACAO_STRING
       		{
-      			if ($3.tipo != "" && $3.tipo != CHARS_VETOR) defineTiposCompativeis($1.tipo, $3.tipo);
+      			if ($3.tipo != "" && $3.tipo != CHARS_VETOR && $3.tipo != CHARS_MATRIZ) defineTiposCompativeis($1.tipo, $3.tipo);
       			verificaVariavelJaDeclarada($2.label);
         		$$.label = "tmp" + proximaVariavelTemporaria();
-	        	$$.tipo = $3.tipo == CHARS_VETOR ? $3.tipo : $1.tipo;
+	        	$$.tipo = $3.tipo == CHARS_VETOR || $3.tipo == CHARS_MATRIZ ? $3.tipo : $1.tipo;
 	        	pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo};
 
 	        	if ($$.tipo == CHARS_VETOR) {
 	        		$$ = traducaoVetorNumerico($$, $3);
+					$$.traducao += $4.traducao;
+	        	} else if ($$.tipo == CHARS_MATRIZ) {
+					$$ = traducaoMatrizNumerico($$, $3);
 					$$.traducao += $4.traducao;
 	        	} else {
 					string tamanhoString = "tmp" + proximaVariavelTemporaria();
@@ -492,10 +571,10 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
       		}
 			| TK_TIPO_INT TK_ID DECLARACAO_VINT DECLARACAO_INT
       		{
-      			if ($3.tipo != "" && $3.tipo != INT_VETOR) defineTiposCompativeis($1.tipo, $3.tipo);
+      			if ($3.tipo != "" && $3.tipo != INT_VETOR && $3.tipo != INT_MATRIZ) defineTiposCompativeis($1.tipo, $3.tipo);
       			verificaVariavelJaDeclarada($2.label);
         		$$.label = "tmp" + proximaVariavelTemporaria();
-	        	$$.tipo = $3.tipo == INT_VETOR ? $3.tipo : $1.tipo;
+	        	$$.tipo = $3.tipo == INT_VETOR || $3.tipo == INT_MATRIZ ? $3.tipo : $1.tipo;
 	  			pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 	  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 				if ($3.tipo != "") {
@@ -506,6 +585,9 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 						'\t' + $$.label + " = " + varCast + ";\n" + $4.traducao;
 					} else if ($3.tipo == INT_VETOR) {
 						$$ = traducaoVetorNumerico($$, $3);
+						$$.traducao += $4.traducao;
+					} else if ($3.tipo == INT_MATRIZ) {
+						$$ = traducaoMatrizNumerico($$, $3);
 						$$.traducao += $4.traducao;
 					} else {
 						$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
@@ -525,16 +607,21 @@ DECLARACAO_VF32: '=' E
 				 	$$ = $1;
 				 	$$.tipo = FLUT32_VETOR;
 				 }
+				 | DECLARACAO_MATRIZ
+				 {
+				 	$$ = $1;
+				 	$$.tipo = FLUT32_MATRIZ;
+				 }
 				 |
 				 { $$.traducao = ""; $$.tipo = ""; $$.label = ""; }
 				 ;
 
 DECLARACAO_F32 : ',' TK_ID DECLARACAO_VF32 DECLARACAO_F32
 				{
-					if ($3.tipo != "" && $3.tipo != FLUT32_VETOR) defineTiposCompativeis($1.tipo, $3.tipo);
+					if ($3.tipo != "" && $3.tipo != FLUT32_VETOR && $3.tipo != FLUT32_MATRIZ) defineTiposCompativeis($1.tipo, $3.tipo);
 					verificaVariavelJaDeclarada($2.label);
 					$$.label = "tmp" + proximaVariavelTemporaria();
-		        	$$.tipo = $3.tipo == FLUT32_VETOR ? $3.tipo : FLUT32;
+		        	$$.tipo = $3.tipo == FLUT32_VETOR || $3.tipo == FLUT32_MATRIZ ? $3.tipo : FLUT32;
 		  			pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 		  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 					if ($3.tipo != "") {
@@ -545,6 +632,9 @@ DECLARACAO_F32 : ',' TK_ID DECLARACAO_VF32 DECLARACAO_F32
 							'\t' + $$.label + " = " + varCast + ";\n" + $4.traducao;
 						} else if ($3.tipo == FLUT32_VETOR) {
 							$$ = traducaoVetorNumerico($$, $3);
+							$$.traducao += $4.traducao;
+						} else if ($3.tipo == FLUT32_MATRIZ) {
+							$$ = traducaoMatrizNumerico($$, $3);
 							$$.traducao += $4.traducao;
 						} else {
 							$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
@@ -621,20 +711,28 @@ DECLARACAO_VSTRING : '=' E
 					 	$$ = $1;
 					 	$$.tipo = CHARS_VETOR;
 					}
+					| DECLARACAO_MATRIZ
+					{
+					 	$$ = $1;
+					 	$$.tipo = CHARS_MATRIZ;
+					}
 					|
 					{	$$.traducao = ""; $$.tipo = ""; $$.label = "";	}
 
 DECLARACAO_STRING  : ',' TK_ID DECLARACAO_VSTRING DECLARACAO_STRING
 					{
-						if ($3.tipo != "" && $3.tipo != CHARS_VETOR) defineTiposCompativeis(CHARS, $3.tipo);
+						if ($3.tipo != "" && $3.tipo != CHARS_VETOR && $3.tipo != CHARS_MATRIZ) defineTiposCompativeis(CHARS, $3.tipo);
 		      			verificaVariavelJaDeclarada($2.label);
 		        		$$.label = "tmp" + proximaVariavelTemporaria();
-			        	$$.tipo = $3.tipo == CHARS_VETOR ? $3.tipo : CHARS;
+			        	$$.tipo = $3.tipo == CHARS_VETOR || $3.tipo == CHARS_MATRIZ ? $3.tipo : CHARS;
 			        	pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 						mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 
 			        	if ($$.tipo == CHARS_VETOR) {
 			        		$$ = traducaoVetorNumerico($$, $3);
+							$$.traducao += $4.traducao;
+			        	} else if ($$.tipo == CHARS_MATRIZ) {
+			        		$$ = traducaoMatrizNumerico($$, $3);
 							$$.traducao += $4.traducao;
 			        	} else {
 							string tamanhoString = "tmp" + proximaVariavelTemporaria();
@@ -662,16 +760,21 @@ DECLARACAO_VINT: '=' E
 				 	$$ = $1;
 				 	$$.tipo = INT_VETOR;
 				 }
+				 | DECLARACAO_MATRIZ
+				 {
+				 	$$ = $1;
+				 	$$.tipo = INT_MATRIZ;
+				 }
 				 |
 				 { $$.traducao = ""; $$.tipo = ""; $$.label = ""; }
 				 ;
 				 
 DECLARACAO_INT : ',' TK_ID DECLARACAO_VINT DECLARACAO_INT
 				{
-					if ($3.tipo != "" && $3.tipo != INT_VETOR) defineTiposCompativeis($1.tipo, $3.tipo);
+					if ($3.tipo != "" && $3.tipo != INT_VETOR && $3.tipo != INT_MATRIZ) defineTiposCompativeis($1.tipo, $3.tipo);
 					verificaVariavelJaDeclarada($2.label);
 					$$.label = "tmp" + proximaVariavelTemporaria();
-		        	$$.tipo = $3.tipo == INT_VETOR ? $3.tipo : INT;
+		        	$$.tipo = $3.tipo == INT_VETOR || $3.tipo == INT_MATRIZ ? $3.tipo : INT;
 		  			pilhaContexto.top().mapaVariaveis[$2.label] = { .id = $2.label, .tipo = $$.tipo, $$.label };
 		  			mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 					if ($3.tipo != "") {
@@ -682,6 +785,9 @@ DECLARACAO_INT : ',' TK_ID DECLARACAO_VINT DECLARACAO_INT
 							'\t' + $$.label + " = " + varCast + ";\n" + $4.traducao;
 						} else if ($3.tipo == INT_VETOR) {
 							$$ = traducaoVetorNumerico($$, $3);
+							$$.traducao += $4.traducao;
+						} else if ($3.tipo == INT_MATRIZ) {
+							$$ = traducaoMatrizNumerico($$, $3);
 							$$.traducao += $4.traducao;
 						} else {
 							$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
@@ -718,6 +824,37 @@ DCL_VECTOR_AUX	: ',' E DCL_VECTOR_AUX
 				}
 				;
 
+DECLARACAO_MATRIZ:	'[' E ']' '[' E ']'
+				{
+					defineTiposCompativeis($2.tipo, INT);
+					defineTiposCompativeis($5.tipo, INT);
+					$$ = $2;
+					$$.traducao += $5.traducao;
+					$$.coluna = $5.label;
+				}
+				| '[' '[' E DCL_MATRIZ_AUX
+				{
+					valoresVetorAuxiliar.push_front($3);
+					pilhaVetores.push(valoresVetorAuxiliar);
+					valoresVetorAuxiliar.clear();
+				}
+				;
+
+DCL_MATRIZ_AUX	: ',' E DCL_MATRIZ_AUX
+				{
+					valoresVetorAuxiliar.push_front($2);
+				} 
+				| ']' ',' '[' DCL_MATRIZ_AUX
+				{
+					pilhaVetores.push(valoresVetorAuxiliar);
+					valoresVetorAuxiliar.clear();	
+				}
+				| ']' ']'
+				{
+					$$.traducao = ""; $$.label = ""; $$.tipo = "";	
+				}
+				;
+ 
 ATRIBUICAO	:TK_ID '=' E
 			{
 				mapV mapa = buscaMapa($1.label);

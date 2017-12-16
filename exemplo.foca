@@ -1,26 +1,5 @@
-int a = 88 , b = [ 4, 5, 6 ] , d = [ 9 ];
+int a [ 3 ] [ 5 ], k = 4, b [ 7 ] [ 2 ];
 
-int f = [ 4444 ], g [ 2 ];
+flut32 aa [ 5 ] [ 9 ], kk = 7, bb [ 12 ] [ 3 ];
 
-escreva( b [ 2 ] );
-
-flut32 aloha [ 17 ] , pat = 2, cel = [ 4 , 12 , 44.8 ];
-
-escreva (cel [ 1 ] );
-
-chars palavras [ 5 ], palavrinha = "k.o.", texto = [ "arvore" , "laranja" , "flor" ];
-
-escreva(texto [ 0 ]);
-
-aloha = cel;
-
-escreva (aloha [ 1 ]);
-
-aloha [ 2 ] = pat;
-f [ 0 ] = 38;
-
-texto [ 1 ] = "retrato";
-
-escreva(aloha [ 2 ]);
-escreva(f [ 0 ]);
-escreva(texto [ 1 ]);
+chars aaa [ 4 ] [ 6 ], kkk = "abc", bbb [ 3 ] [ 5 ];
