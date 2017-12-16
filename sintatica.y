@@ -304,6 +304,35 @@ string vetorParaElemento (string tipo) {
 	if (tipo == INT_VETOR) return INT;
 }
 
+struct atributos traducaoVetorNumerico (struct atributos $1, struct atributos $3) {
+	struct atributos $$ = $1;
+	list<atributos> valoresVetor = pilhaVetores.top();
+	pilhaVetores.pop();
+	string tamanhoVetor = "tmp" + proximaVariavelTemporaria();
+	mapaTemporario[tamanhoVetor] = {.id = tamanhoVetor, .tipo = vetorParaElemento($3.tipo)};
+	mapaTemporario[$$.label].tamanho = tamanhoVetor;
+	$$.traducao = $3.traducao + '\t' + tamanhoVetor + " = " + 
+		(valoresVetor.size() == 0 ? $3.label : to_string(valoresVetor.size())) + ";\n" +
+		'\t' + $$.label + " = (" +  decideTipo($3.tipo) + ") malloc(sizeof(" + decideTipo(vetorParaElemento($3.tipo))
+			+ ")*" + tamanhoVetor + ");\n";
+	int i = 0;
+	for (list<atributos>::iterator it = valoresVetor.begin(); it != valoresVetor.end(); ++it) {
+		defineTiposCompativeis(it->tipo, vetorParaElemento($3.tipo));
+		if (it->tipo == FLUT32 && $3.tipo == INT_VETOR) {
+			string varCast = "tmp" + proximaVariavelTemporaria();
+			mapaTemporario[varCast] = {.id = varCast, .tipo = INT };
+			$$.traducao += it->traducao + '\t' + varCast + " = (int) " + it->label + ";\n" +
+				'\t' + $$.label + '[' + to_string(i) + "] = " + varCast + ";\n";
+		} else {
+			$$.traducao += it->traducao + '\t' + $$.label + '[' + to_string(i) 
+				+ "] = " + it->label + ";\n";
+		}
+		i++;
+	}
+	valoresVetor.clear();
+	return $$;
+}
+
 %}
 
 %token TK_NUM TK_BOOL TK_CHAR TK_STRING
@@ -457,30 +486,8 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 						$$.traducao = $3.traducao + '\t' + varCast + " = (int) " + $3.label + ";\n" +
 						'\t' + $$.label + " = " + varCast + ";\n" + $4.traducao;
 					} else if ($3.tipo == INT_VETOR) {
-						list<atributos> valoresVetor = pilhaVetores.top();
-						pilhaVetores.pop();
-						string tamanhoVetor = "tmp" + proximaVariavelTemporaria();
-						mapaTemporario[tamanhoVetor] = {.id = tamanhoVetor, .tipo = INT};
-						mapaTemporario[$$.label].tamanho = tamanhoVetor;
-						string traducao = $3.traducao + '\t' + tamanhoVetor + " = " + 
-							(valoresVetor.size() == 0 ? $3.label : to_string(valoresVetor.size())) + ";\n" +
-							'\t' + $$.label + " = (int*) malloc(sizeof(int)*" + tamanhoVetor + ");\n";
-						int i = 0;
-						for (list<atributos>::iterator it = valoresVetor.begin(); it != valoresVetor.end(); ++it) {
-							defineTiposCompativeis(it->tipo, INT);
-							if (it->tipo == FLUT32) {
-								string varCast = "tmp" + proximaVariavelTemporaria();
-								mapaTemporario[varCast] = {.id = varCast, .tipo = INT };
-								traducao += it->traducao + '\t' + varCast + " = (int) " + it->label + ";\n" +
-									'\t' + $$.label + '[' + to_string(i) + "] = " + varCast + ";\n";
-							} else {
-								traducao += it->traducao + '\t' + $$.label + '[' + to_string(i) 
-									+ "] = " + it->label + ";\n";
-							}
-							i++;
-						}
-						valoresVetor.clear();
-						$$.traducao = traducao + $4.traducao;
+						$$ = traducaoVetorNumerico($$, $3);
+						$$.traducao += $4.traducao;
 					} else {
 						$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
 					}
@@ -636,30 +643,8 @@ DECLARACAO_INT : ',' TK_ID DECLARACAO_VINT DECLARACAO_INT
 							$$.traducao = $3.traducao + '\t' + varCast + " = (int) " + $3.label + ";\n" +
 							'\t' + $$.label + " = " + varCast + ";\n" + $4.traducao;
 						} else if ($3.tipo == INT_VETOR) {
-							list<atributos> valoresVetor = pilhaVetores.top();
-							pilhaVetores.pop();
-							string tamanhoVetor = "tmp" + proximaVariavelTemporaria();
-							mapaTemporario[tamanhoVetor] = {.id = tamanhoVetor, .tipo = INT};
-							mapaTemporario[$$.label].tamanho = tamanhoVetor;
-							string traducao = $3.traducao + '\t' + tamanhoVetor + " = " + 
-								(valoresVetor.size() == 0 ? $3.label : to_string(valoresVetor.size())) + ";\n" +
-								'\t' + $$.label + " = (int*) malloc(sizeof(int)*" + tamanhoVetor + ");\n";
-							int i = 0;
-							for (list<atributos>::iterator it = valoresVetor.begin(); it != valoresVetor.end(); ++it) {
-								defineTiposCompativeis(it->tipo, INT);
-								if (it->tipo == FLUT32) {
-									string varCast = "tmp" + proximaVariavelTemporaria();
-									mapaTemporario[varCast] = {.id = varCast, .tipo = INT };
-									traducao += it->traducao + '\t' + varCast + " = (int) " + it->label + ";\n" +
-										'\t' + $$.label + '[' + to_string(i) + "] = " + varCast + ";\n";
-								} else {
-									traducao += it->traducao + '\t' + $$.label + '[' + to_string(i) 
-										+ "] = " + it->label + ";\n";
-								}
-								i++;
-							}
-							valoresVetor.clear();
-							$$.traducao = traducao + $4.traducao;
+							$$ = traducaoVetorNumerico($$, $3);
+							$$.traducao += $4.traducao;
 						} else {
 							$$.traducao = $3.traducao + '\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
 						}
