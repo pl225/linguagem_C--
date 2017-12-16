@@ -7,3 +7,7 @@ escreva( b [ 2 ] );
 flut32 aloha [ 17 ] , pat = 2, cel = [ 4 , 12 , 44.8 ];
 
 escreva (cel [ 1 ] );
+
+chars palavras [ 5 ], palavrinha = "k.o.", texto = [ "arvore" , "laranja" , "flor" ];
+
+escreva(texto [ 0 ]);
