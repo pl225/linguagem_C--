@@ -79,6 +79,9 @@ Not "~"
 Main "principal"
 Retorna "retorna" 
 
+AbreColchete "[" 
+FechaColchete "]"
+
 %%
 
 "\n"		{}
@@ -89,7 +92,9 @@ Retorna "retorna"
 {Divisao}|{Multiplicacao} { yylval.traducao = yytext; return TK_MULTI_DIV; }
 {Modulo} { yylval.traducao = yytext; return TK_MODULO; }
 
-[(){}[\];,:]	{ return *yytext; }
+[(){}\;,:]	{ return *yytext; }
+
+"["|"]" { return *yytext; }
 
 {Atribui} { return *yytext; }
 
@@ -105,7 +110,6 @@ Retorna "retorna"
 {While} { return TK_WHILE; }
 {Do} { return TK_DO; }
 {For} { return TK_FOR; }
-
 
 {MaisIgual}|{MenosIgual}|{VezesIgual}|{DivideIgual}|{ModuloIgual} { yylval.traducao = yytext; return TK_OP_ABREV; }
 {MaisMais}|{MenosMenos} { yylval.traducao = yytext; return TK_OP_1; }
