@@ -6,8 +6,11 @@
 #define SIZE_STR 10
 using namespace std;
 
+char * tmp34;
+char * tmp32;
 char** tmp3;
 int* tmp18;
+void** tmp42;
 
 
 int main(void)
@@ -31,7 +34,20 @@ int main(void)
 	int  tmp25;
 	int  tmp26;
 	int  tmp27;
+	char * tmp28;
+	int  tmp29;
+	char * tmp30;
+	int  tmp31;
+	int  tmp33;
+	int  tmp35;
+	char * tmp36;
+	int  tmp37;
+	int  tmp38;
+	char  tmp39;
 	int  tmp4;
+	int  tmp40;
+	float  tmp41;
+	int  tmp43;
 	int  tmp5;
 	int  tmp6;
 	char * tmp7;
@@ -81,7 +97,37 @@ int main(void)
 	tmp26 = tmp26 + tmp25;
 	tmp27 = tmp18[tmp26];
 	cout << tmp27 << endl;
+	tmp29 = 4 + 1;
+	tmp28 = (char*) malloc(tmp29);
+	strcat(tmp28, "44.4");
+	tmp35 = tmp29;
+	tmp34 = (char*) malloc(tmp35);
+	strcat(tmp34, tmp28);
+	tmp31 = 5 + 1;
+	tmp30 = (char*) malloc(tmp31);
+	strcat(tmp30, "marte");
+	tmp33 = tmp31;
+	tmp32 = (char*) malloc(tmp33);
+	strcat(tmp32, tmp30);
+	cout << tmp34 << endl;
+	tmp43 = 5;
+	tmp42 = (void**) malloc(sizeof(void*)*tmp43);
+	tmp37 = 2 + 1;
+	tmp36 = (char*) malloc(tmp37);
+	strcat(tmp36, "oi");
+	tmp42[0] = (void*) tmp36;
+	tmp38 = 4;
+	tmp42[1] = (void*) &tmp38;
+	tmp39 = 'k';
+	tmp42[2] = (void*) &tmp39;
+	tmp40 = 1;
+	tmp42[3] = (void*) &tmp40;
+	tmp41 = 55.78;
+	tmp42[4] = (void*) &tmp41;
 	if (tmp15 > 0) free(tmp14);
+	if (tmp29 > 0) free(tmp28);
+	if (tmp31 > 0) free(tmp30);
+	if (tmp37 > 0) free(tmp36);
 	if (tmp8 > 0) free(tmp7);
 	return 0;
 }
