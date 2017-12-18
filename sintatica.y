@@ -228,6 +228,19 @@ contextoBloco controlarLaco () {
 	yyerror("Este bloco não permite controle de laços.");							
 }
 
+contextoBloco controlarLacoALL () {
+	stack<contextoBloco> p = pilhaContexto;
+	contextoBloco base;
+	while (not p.empty()){
+		if (p.top().quebravel) {
+			base = p.top();
+		}
+	    p.pop();
+	}
+	return base;
+	yyerror("Este bloco não permite controle de laços.");							
+}
+
 contextoBloco controlarRetorno () {
 	stack<contextoBloco> p = pilhaContexto;
 	while (not p.empty()){
@@ -430,7 +443,7 @@ struct atributos traducaoMatrizNumerico (struct atributos $1, struct atributos $
 %token TK_BIN TK_HEX TK_OCT TK_MODULO TK_CONCAT_IGUAL
 %token TK_RELACIONAL TK_LOGICO TK_SEJA
 %token TK_FIM TK_ERROR
-%token TK_IF TK_WHILE TK_BREAK TK_CONTINUE TK_DO TK_FOR
+%token TK_IF TK_WHILE TK_BREAK TK_CONTINUE TK_DO TK_FOR TK_BREAK_ALL
 %token TK_OP_ABREV TK_OP_1 TK_ELSE TK_SWITCH TK_CASE TK_DEFAULT
 %token TK_PRINT TK_SCAN TK_TIPO_FUNCAO TK_RETORNA
 
@@ -1435,6 +1448,11 @@ LOOP_CONTROLE: TK_BREAK
 			{
 				contextoBloco cb = controlarLaco();
 				$$.traducao = "\tgoto " + cb.rotuloInicio + ";\n";
+			}
+			|TK_BREAK_ALL
+			{
+				contextoBloco cb = controlarLacoALL();
+				$$.traducao = "\tgoto " + cb.rotuloFim + ";\n";
 			}
 
 TIPO_DADO:	TK_TIPO_STRING | TK_TIPO_INT | TK_TIPO_CHAR | TK_TIPO_BOOL | TK_TIPO_FLUT32;

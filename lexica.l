@@ -42,6 +42,7 @@ While "enquanto"
 Each "cada"
 Do "faca"
 Break "pare"
+BreakAll "quebratudo"
 Continue "continue"
 Goto "vapara"
 
@@ -126,6 +127,7 @@ FechaColchete "]"
 "main"	{return TK_MAIN;}
 
 {Break} { return TK_BREAK; }
+{BreakAll} { return TK_BREAK_ALL; }
 {Continue} { return TK_CONTINUE; }
 
 {Castint} { yylval.tipo = INT; return TK_CAST; }

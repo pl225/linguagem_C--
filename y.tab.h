@@ -76,17 +76,18 @@ extern int yydebug;
     TK_CONTINUE = 286,
     TK_DO = 287,
     TK_FOR = 288,
-    TK_OP_ABREV = 289,
-    TK_OP_1 = 290,
-    TK_ELSE = 291,
-    TK_SWITCH = 292,
-    TK_CASE = 293,
-    TK_DEFAULT = 294,
-    TK_PRINT = 295,
-    TK_SCAN = 296,
-    TK_TIPO_FUNCAO = 297,
-    TK_RETORNA = 298,
-    TK_CAST = 299
+    TK_BREAK_ALL = 289,
+    TK_OP_ABREV = 290,
+    TK_OP_1 = 291,
+    TK_ELSE = 292,
+    TK_SWITCH = 293,
+    TK_CASE = 294,
+    TK_DEFAULT = 295,
+    TK_PRINT = 296,
+    TK_SCAN = 297,
+    TK_TIPO_FUNCAO = 298,
+    TK_RETORNA = 299,
+    TK_CAST = 300
   };
 #endif
 /* Tokens.  */
@@ -121,17 +122,18 @@ extern int yydebug;
 #define TK_CONTINUE 286
 #define TK_DO 287
 #define TK_FOR 288
-#define TK_OP_ABREV 289
-#define TK_OP_1 290
-#define TK_ELSE 291
-#define TK_SWITCH 292
-#define TK_CASE 293
-#define TK_DEFAULT 294
-#define TK_PRINT 295
-#define TK_SCAN 296
-#define TK_TIPO_FUNCAO 297
-#define TK_RETORNA 298
-#define TK_CAST 299
+#define TK_BREAK_ALL 289
+#define TK_OP_ABREV 290
+#define TK_OP_1 291
+#define TK_ELSE 292
+#define TK_SWITCH 293
+#define TK_CASE 294
+#define TK_DEFAULT 295
+#define TK_PRINT 296
+#define TK_SCAN 297
+#define TK_TIPO_FUNCAO 298
+#define TK_RETORNA 299
+#define TK_CAST 300
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

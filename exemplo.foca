@@ -1,11 +1,15 @@
-chars matrix [ 4 ] [ 3 ];
+seja i = 0;
 
-matrix[2][2] = "aloha";
+enquanto (i < 10) {
+	escreva(i);
+	int j = 10;
+	enquanto (j < 20) {
+		se (i == 5) {
+			quebratudo;
+		}
+		j += 1;
+		escreva(j);
+	}
+	i += 1;
+}
 
-escreva(matrix [ 2 ] [ 2 ]);
-
-int matriz [ 4 ] [ 5 ];
-
-matriz [ 2 ] [ 3 ] = 12;
-
-escreva(matriz [ 2 ] [ 3 ]);
