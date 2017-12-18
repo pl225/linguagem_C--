@@ -335,6 +335,9 @@ string vetorParaElemento (string tipo) {
 	else if (tipo == INT_MATRIZ) return INT;
 	else if (tipo == FLUT32_MATRIZ) return FLUT32;
 	else if (tipo == CHARS_MATRIZ) return CHARS;
+	else if (tipo == CHARS) return CHAR;
+	else
+		yyerror("A variável não é vetor, matriz nem string");
 }
 
 struct atributos traducaoVetorNumerico (struct atributos $1, struct atributos $3) {

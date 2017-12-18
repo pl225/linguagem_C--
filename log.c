@@ -10,6 +10,7 @@ int  tmp62;
 int  tmp61;
 int* tmp7;
 float* tmp27;
+char * tmp87;
 char** tmp55;
 
 
@@ -81,8 +82,31 @@ int main(void)
 	int  tmp71;
 	int  tmp72;
 	int  tmp73;
+	int  tmp74;
+	int  tmp75;
+	char * tmp76;
+	int  tmp77;
+	int  tmp78;
+	int  tmp79;
 	int  tmp8;
+	int  tmp80;
+	int  tmp81;
+	int  tmp82;
+	char * tmp83;
+	int  tmp84;
+	char * tmp85;
+	int  tmp86;
+	int  tmp88;
+	int  tmp89;
 	int  tmp9;
+	char  tmp90;
+	int  tmp91;
+	char  tmp92;
+	char  tmp93;
+	int  tmp94;
+	char * tmp95;
+	int  tmp96;
+	int  tmp97;
 	tmp8 = 2;
 	tmp9 = 3;
 	tmp10 = tmp8 * tmp9;
@@ -186,7 +210,7 @@ int main(void)
 	tmp63 = 0;
 	tmp62 = tmp63;
 	rotulo_3:
-	tmp64 = 3;
+	tmp64 = 2;
 	tmp65 = tmp62<tmp64;
 	tmp73 = !tmp65;
 	if (tmp73) goto rotulo_4;
@@ -211,6 +235,48 @@ int main(void)
 	tmp62 = tmp62 + 1;
 	goto rotulo_3;
 	rotulo_4:
+	tmp74 = 1;
+	tmp75 = 2;
+	if(tmp56 < 0 || tmp74 >= tmp56) exit(1);
+	if(tmp57 < 0 || tmp75 >= tmp57) exit(1);
+	tmp78 = tmp74 * tmp57;
+	tmp78 = tmp78 + tmp75;
+	tmp77 = 5 + 1;
+	tmp76 = (char*) malloc(tmp77);
+	strcat(tmp76, "maior");
+	tmp55[tmp78] = tmp76;
+	tmp80 = 1;
+	tmp81 = 2;
+	if(tmp56 < 0 || tmp80 >= tmp56) exit(1);
+	if(tmp57 < 0 || tmp81 >= tmp57) exit(1);
+	tmp82 = tmp80 * tmp57;
+	tmp82 = tmp82 + tmp81;
+	tmp84 = strlen(tmp55[tmp82]) + 1;
+	tmp83 = (char*) malloc(tmp84);
+	strcat(tmp83, tmp55[tmp82]);
+	cout << tmp83 << endl;
+	tmp86 = 6 + 1;
+	tmp85 = (char*) malloc(tmp86);
+	strcat(tmp85, "camisa");
+	tmp88 = tmp86;
+	tmp87 = (char*) malloc(tmp88);
+	strcat(tmp87, tmp85);
+	tmp89 = 2;
+	if (tmp89 < 0 || tmp89 >= tmp88) exit(1);
+	tmp90 = tmp87[tmp89];
+	cout << tmp90 << endl;
+	tmp91 = 2;
+	if (tmp91 < 0 || tmp91 >= tmp88) exit(1);
+	tmp92 = tmp87[tmp91];
+	tmp93 = 'm';
+	tmp94 = tmp92==tmp93;
+	tmp97 = !tmp94;
+	if (tmp97) goto rotulo_8;
+	tmp96 = 8 + 1;
+	tmp95 = (char*) malloc(tmp96);
+	strcat(tmp95, "eh maior");
+	cout << tmp95 << endl;
+	rotulo_8:
 	if (tmp44 > 0) free(tmp43);
 	if (tmp46 > 0) free(tmp45);
 	if (tmp48 > 0) free(tmp47);
@@ -218,5 +284,9 @@ int main(void)
 	if (tmp52 > 0) free(tmp51);
 	if (tmp54 > 0) free(tmp53);
 	if (tmp71 > 0) free(tmp70);
+	if (tmp77 > 0) free(tmp76);
+	if (tmp84 > 0) free(tmp83);
+	if (tmp86 > 0) free(tmp85);
+	if (tmp96 > 0) free(tmp95);
 	return 0;
 }

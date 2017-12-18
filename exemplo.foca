@@ -20,8 +20,20 @@ chars soMaisUma = [
 
 int i = 0, j = 0;
 
-para (i = 0; i < 3; i++) {
+para (i = 0; i < 2; i++) {
 	para (j = 0; j < 3; j++) {
 		escreva (soMaisUma [ i ] [ j ]);
 	}
+}
+
+soMaisUma [ 1 ] [ 2 ] = "maior";
+
+escreva(soMaisUma [ 1 ] [ 2 ]);
+
+chars palavra = "camisa";
+
+escreva (palavra [ 2 ]);
+
+se (palavra [ 2 ] == 'm') {
+	escreva("eh maior");
 }
