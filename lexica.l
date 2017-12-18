@@ -84,7 +84,7 @@ FechaColchete "]"
 
 %%
 
-"\n"		{}
+"\n"		{ contaLinhas(); }
 
 {DELIM} 	{}
 

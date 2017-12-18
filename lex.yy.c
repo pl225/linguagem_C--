@@ -859,7 +859,7 @@ case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
 #line 87 "lexica.l"
-{}
+{ contaLinhas(); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP

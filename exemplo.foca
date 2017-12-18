@@ -1,6 +1,6 @@
 chars matrix [ 4 ] [ 3 ];
 
-matrix [ 2 ] [ 2 ] = "aloha";
+matrix[2][2] = "aloha";
 
 escreva(matrix [ 2 ] [ 2 ]);
 

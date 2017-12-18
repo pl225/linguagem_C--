@@ -84,6 +84,12 @@ valoresV valoresVetorAuxiliar;
 
 static stack<valoresV> pilhaVetores;
 
+static int linha = 1;
+
+void contaLinhas(){
+	linha++;
+}
+
 mapV controiMapaVariaveis () {
 	mapV m;
 	return m;
@@ -1632,6 +1638,6 @@ int main( int argc, char* argv[] )
 
 void yyerror( string MSG )
 {
-	cout << MSG << endl;
+	cout << "Erro na linha " << linha << ": " << MSG << endl;
 	exit (0);
 }				
