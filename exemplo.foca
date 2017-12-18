@@ -1,15 +1,27 @@
-seja i = 0;
+int myMatriz = [ 
+	[ 4, 7 , 9 ] , 
+	[ 2, 5, 8 ] 
+];
 
-enquanto (i < 10) {
-	escreva(i);
-	int j = 10;
-	enquanto (j < 20) {
-		se (i == 5) {
-			quebratudo;
-		}
-		j += 1;
-		escreva(j);
+escreva(myMatriz [ 1 ] [ 2 ]);
+
+flut32 outraMatriz = [
+	[ 11.5 , 6 , 44 , 28 ],
+	[ 9 , 5 , 17.2 , 55 ],
+	[ 105.7 , 4 , 29 , 61.4 ]
+];
+
+escreva(outraMatriz [ 2 ] [ 3 ]);
+
+chars soMaisUma = [
+	[ "arvore" , "periodo" , "compilador" ],
+	[ "thank you", "OMG" , "legal" ]
+];
+
+int i = 0, j = 0;
+
+para (i = 0; i < 3; i++) {
+	para (j = 0; j < 3; j++) {
+		escreva (soMaisUma [ i ] [ j ]);
 	}
-	i += 1;
 }
-

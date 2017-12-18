@@ -383,55 +383,49 @@ struct atributos traducaoMatrizNumerico (struct atributos $1, struct atributos $
 		$$.traducao = $3.traducao + '\t' + tamanhoMatriz + " = " + $3.label + " * " + $3.coluna + ";\n" +
 			'\t' + $$.label + " = (" + decideTipo($$.tipo) + ") malloc(sizeof(" + decideTipo(vetorParaElemento($$.tipo)) +
 			")*" + tamanhoMatriz + ");\n";
-		return $$;
 	} else {
-		/*string linha = "tmp" + proximaVariavelTemporaria();
+
+		string linha = "tmp" + proximaVariavelTemporaria();
 		string coluna = "tmp" + proximaVariavelTemporaria();
-		mapaTemporario[linha] = {.id = linha, .tiṕo = INT};
-		mapaTemporario[coluna] = {.id = coluna, .tipo = INT};
-		$$.traducao = '\t' + linha + " = " + pilhaVetores.size() + ';\n' +
-			'\t' + coluna + " = " + pilhaVetores.top().size() + ';\n';
+		mapaTemporario[linha] = {.id = linha, .tipo = INT };
+		mapaTemporario[coluna] = {.id = coluna, .tipo = INT };
+		mapaTemporario[$$.label].tamanho = linha;
+		mapaTemporario[$$.label].coluna = coluna;
+		string tamanhoMatriz = "tmp" + proximaVariavelTemporaria();
+		mapaTemporario[tamanhoMatriz] = {.id = tamanhoMatriz, .tipo = INT};
+		$$.traducao = '\t' + linha + " = " + to_string(pilhaVetores.size()) + ";\n" +
+				'\t' + coluna + " = " + to_string(pilhaVetores.top().size()) + ";\n" +
+				'\t' + tamanhoMatriz + " = " + linha + " * " + coluna + ";\n" +
+				'\t' + $$.label + " = (" + decideTipo($$.tipo) + ") malloc(sizeof(" + decideTipo(vetorParaElemento($$.tipo)) +
+				")*" + tamanhoMatriz + ");\n";
+
 		int cols = pilhaVetores.top().size();
-		if ($$.tipo == INT_MATRIZ) {
-			int i = 0;
-			while (!pilhaVetores.empty()) {
-				list<atributos> colunas = pilhaVetores.top();
-				pilhaVetores.pop();
-				if (colunas != cols) yyerror("Apenas matrizes quadradas podem ser c")
+		int i = 0;
+
+		while (!pilhaVetores.empty()) {
+			list<atributos> colunas = pilhaVetores.top();
+			pilhaVetores.pop();
+			if (colunas.size() != cols) yyerror("Apenas matrizes regulares podem ser declaradas.");
+			for (list<atributos>::iterator it = colunas.begin(); it != colunas.end(); ++it) {
+				defineTiposCompativeis(it->tipo, vetorParaElemento($$.tipo));
+				if (it->tipo == FLUT32 && $$.tipo == INT_MATRIZ) {
+					string varCast = "tmp" + proximaVariavelTemporaria();
+					mapaTemporario[varCast] = {.id = varCast, .tipo = INT };
+					$$.traducao += it->traducao + '\t' + varCast + " = (int) " + it->label + ";\n" +
+						'\t' + $$.label + '[' + to_string(i) + "] = " + varCast + ";\n";
+				} else if (it->tipo == INT && $$.tipo == FLUT32_MATRIZ) { 
+					string varCast = "tmp" + proximaVariavelTemporaria();
+					mapaTemporario[varCast] = {.id = varCast, .tipo = FLUT32 };
+					$$.traducao += it->traducao + '\t' + varCast + " = (float) " + it->label + ";\n" +
+						'\t' + $$.label + '[' + to_string(i) + "] = " + varCast + ";\n";
+				} else {
+					$$.traducao += it->traducao + '\t' + $$.label + '[' + to_string(i) +
+						"] = " + it->label + ";\n";
+				}
+				i += 1;
 			}
-		}*/
-	}
-	/*list<atributos> valoresVetor = pilhaVetores.top();
-	pilhaVetores.pop();
-	string tamanhoVetor = "tmp" + proximaVariavelTemporaria();
-	mapaTemporario[tamanhoVetor] = {.id = tamanhoVetor, .tipo = INT};
-	mapaTemporario[$$.label].tamanho = tamanhoVetor;
-	$$.traducao = $3.traducao + '\t' + tamanhoVetor + " = " + 
-		(valoresVetor.size() == 0 ? $3.label : to_string(valoresVetor.size())) + ";\n" +
-		'\t' + $$.label + " = (" +  decideTipo($3.tipo) + ") malloc(sizeof(" + decideTipo(vetorParaElemento($3.tipo))
-			+ ")*" + tamanhoVetor + ");\n";
-	int i = 0;
-	for (list<atributos>::iterator it = valoresVetor.begin(); it != valoresVetor.end(); ++it) {
-		defineTiposCompativeis(it->tipo, vetorParaElemento($3.tipo));
-		if (it->tipo == FLUT32 && $3.tipo == INT_VETOR) {
-			string varCast = "tmp" + proximaVariavelTemporaria();
-			mapaTemporario[varCast] = {.id = varCast, .tipo = INT };
-			$$.traducao += it->traducao + '\t' + varCast + " = (int) " + it->label + ";\n" +
-				'\t' + $$.label + '[' + to_string(i) + "] = " + varCast + ";\n";
-		} else if (it->tipo == INT && $3.tipo == FLUT32_VETOR) { 
-			string varCast = "tmp" + proximaVariavelTemporaria();
-			mapaTemporario[varCast] = {.id = varCast, .tipo = FLUT32 };
-			$$.traducao += it->traducao + '\t' + varCast + " = (float) " + it->label + ";\n" +
-				'\t' + $$.label + '[' + to_string(i) + "] = " + varCast + ";\n";
-		} else if ($3.tipo == CHARS_VETOR) { 
-			$$.traducao += it->traducao + '\t' + $$.label + '[' + to_string(i) + ']' + " = " + it->label + ";\n";
-		} else {
-			$$.traducao += it->traducao + '\t' + $$.label + '[' + to_string(i) 
-				+ "] = " + it->label + ";\n";
 		}
-		i++;
 	}
-	valoresVetor.clear();*/
 	return $$;
 }
 
@@ -851,9 +845,9 @@ DECLARACAO_MATRIZ:	'[' E ']' '[' E ']'
 					$$.traducao += $5.traducao;
 					$$.coluna = $5.label;
 				}
-				| '[' '[' E DCL_MATRIZ_AUX
+				| '=' '[' '[' E DCL_MATRIZ_AUX
 				{
-					valoresVetorAuxiliar.push_front($3);
+					valoresVetorAuxiliar.push_front($4);
 					pilhaVetores.push(valoresVetorAuxiliar);
 					valoresVetorAuxiliar.clear();
 				}
@@ -863,8 +857,9 @@ DCL_MATRIZ_AUX	: ',' E DCL_MATRIZ_AUX
 				{
 					valoresVetorAuxiliar.push_front($2);
 				} 
-				| ']' ',' '[' DCL_MATRIZ_AUX
+				| ']' ',' '[' E DCL_MATRIZ_AUX
 				{
+					valoresVetorAuxiliar.push_front($4);
 					pilhaVetores.push(valoresVetorAuxiliar);
 					valoresVetorAuxiliar.clear();	
 				}
