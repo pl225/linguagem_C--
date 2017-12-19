@@ -1508,6 +1508,18 @@ SCAN 		: TK_SCAN '(' TK_ID PARAM_SCAN ')'
 					string tamanho = mapaTemporario[mapa[$3.label].temporario].tamanho;
 					$$.traducao = "\tif(" + $4.label + " < 0 || " + $4.label + " >= " + tamanho + ") exit(1);\n" +
 						$4.traducao + "\tscanf(\"%d\", &" + mapa[$3.label].temporario + '[' + $4.label + "]);\n";
+				} else if (mapa[$3.label].tipo == INT_MATRIZ || mapa[$3.label].tipo == FLUT32_MATRIZ && $4.traducao != "") {
+					string linha = mapaTemporario[mapa[$3.label].temporario].tamanho;
+					string coluna = mapaTemporario[mapa[$3.label].temporario].coluna;
+					string posicao = "tmp" + proximaVariavelTemporaria();
+        			mapaTemporario[posicao] = {.id = posicao, .tipo = INT};
+					$$.traducao = $4.traducao + "\tif(" + $4.label + " < 0 || " + $4.label + " >= " + linha + ") exit(1);\n" +
+						"\tif(" + $4.tipo + " < 0 || " + $4.tipo + " >= " + coluna + ") exit(1);\n" +
+						'\t' + posicao + " = " + $4.label + " * " + coluna + ";\n" +
+						'\t' + posicao + " = " + posicao + " + " + $4.tipo + ";\n" +
+						"\tscanf(\"%d\", &" + mapa[$3.label].temporario + '[' + posicao + "]);\n";
+				} else {
+					yyerror("Entrada de dados inválida");
 				}
 
 				$$.traducao += "\tsetbuf(stdin, NULL);\n";
@@ -1518,6 +1530,14 @@ PARAM_SCAN	: '[' E ']'
  			{
  				defineTiposCompativeis($2.tipo, INT);
  				$$ = $2;
+			}
+			| '[' E ']' '[' E ']'
+			{
+				defineTiposCompativeis($2.tipo, INT);
+				defineTiposCompativeis($5.tipo, INT);
+				$$ = $2;
+				$$.traducao += $5.traducao;
+				$$.tipo = $5.label;
 			}
 			| { $$.traducao = ""; }
 			;
