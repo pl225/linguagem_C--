@@ -1,10 +1,9 @@
-chars palavras = [ "ok", "vlw", "sim", "td bem" ];
+chars palavras = [ [ "ok", "vlw" ] , [ "sim", "td bem" ] ];
 
-int i = 0;
-enquanto (i < 4) {
-	escreva(palavras [ i ]);
-	i += 1;
-}
+leia (palavras [ 0 ] [ 1 ]);
+
+escreva(palavras [ 0 ] [ 1 ]);
+
 
 int v = [
 	[ 4 , 5 , 7 ],

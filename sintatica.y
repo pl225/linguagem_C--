@@ -1470,7 +1470,8 @@ PRINT 		: TK_PRINT '(' E ')'
 SCAN 		: TK_SCAN '(' TK_ID PARAM_SCAN ')'
 			{
 				mapV mapa = buscaMapa($3.label);
-				if ((mapa[$3.label].tipo == CHARS && $4.traducao == "") || (mapa[$3.label].tipo == CHARS_VETOR && $4.traducao != "")) {
+				if ((mapa[$3.label].tipo == CHARS && $4.traducao == "") || (mapa[$3.label].tipo == CHARS_VETOR && $4.traducao != "")
+						|| (mapa[$3.label].tipo == CHARS_MATRIZ && $4.traducao != "")) {
 					string rotuloInicio = proximoRotulo();
 					string rotuloFim = proximoRotulo();
 					string tamanho = mapaTemporario[mapa[$3.label].temporario].tamanho;
@@ -1478,13 +1479,22 @@ SCAN 		: TK_SCAN '(' TK_ID PARAM_SCAN ')'
 					string tmpChar = "tmp" + proximaVariavelTemporaria();
 					mapaTemporario[tmpChar] = { .id = tmpChar, .tipo = CHAR };
 
-					id = $4.traducao == "" ? id : id + '[' + $4.label + ']';
+					if ($4.traducao != "" && mapa[$3.label].tipo == CHARS_VETOR) {
+						$$.traducao = $4.traducao + "\tif(" + $4.label + " < 0 || " + $4.label + " >= " + tamanho + ") exit(1);\n";
+						id = id + '[' + $4.label + ']';
+					} else if ($4.traducao != "" && mapa[$3.label].tipo == CHARS_MATRIZ) {
+						string linha = mapaTemporario[mapa[$3.label].temporario].tamanho;
+						string coluna = mapaTemporario[mapa[$3.label].temporario].coluna;
+						string posicao = "tmp" + proximaVariavelTemporaria();
+        				mapaTemporario[posicao] = {.id = posicao, .tipo = INT};
+						$$.traducao = $4.traducao + "\tif(" + $4.label + " < 0 || " + $4.label + " >= " + linha + ") exit(1);\n" +
+							"\tif(" + $4.tipo + " < 0 || " + $4.tipo + " >= " + coluna + ") exit(1);\n" +
+							'\t' + posicao + " = " + $4.label + " * " + coluna + ";\n" +
+							'\t' + posicao + " = " + posicao + " + " + $4.tipo + ";\n";
+						id = id + '[' + posicao + ']';
+					} 
 
-					if ($4.traducao != "") {
-						$$.traducao += $4.traducao + "\tif(" + $4.label + " < 0 || " + $4.label + " >= " + tamanho + ") exit(1);\n";
-					}
-
-					$$.traducao = $4.traducao + "\tif (" + tamanho + " > 0)" + " free(" + id + ");\n" +
+					$$.traducao += "\tif (" + tamanho + " > 0)" + " free(" + id + ");\n" +
 						'\t' + id + " = (char*) malloc(SIZE_STR);\n" +
 						'\t' + tamanho + " = 0;\n" + '\t' + rotuloInicio + ":\n" +
 						'\t' + tmpChar + " = getchar();\n" + 

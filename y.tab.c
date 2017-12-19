@@ -959,10 +959,10 @@ static const yytype_uint16 yyrline[] =
     1161,  1168,  1172,  1194,  1216,  1248,  1263,  1273,  1282,  1290,
     1293,  1303,  1315,  1329,  1335,  1342,  1354,  1366,  1379,  1384,
     1389,  1396,  1407,  1412,  1416,  1423,  1432,  1440,  1448,  1458,
-    1464,  1470,  1529,  1534,  1542,  1546,  1551,  1557,  1562,  1568,
-    1568,  1568,  1568,  1568,  1570,  1576,  1579,  1585,  1588,  1609,
-    1613,  1619,  1634,  1639,  1642,  1647,  1650,  1706,  1722,  1742,
-    1760
+    1464,  1470,  1539,  1544,  1552,  1556,  1561,  1567,  1572,  1578,
+    1578,  1578,  1578,  1578,  1580,  1586,  1589,  1595,  1598,  1619,
+    1623,  1629,  1644,  1649,  1652,  1657,  1660,  1716,  1732,  1752,
+    1770
 };
 #endif
 
@@ -3236,7 +3236,8 @@ yyreduce:
 #line 1471 "sintatica.y" /* yacc.c:1646  */
     {
 				mapV mapa = buscaMapa((yyvsp[-2]).label);
-				if ((mapa[(yyvsp[-2]).label].tipo == CHARS && (yyvsp[-1]).traducao == "") || (mapa[(yyvsp[-2]).label].tipo == CHARS_VETOR && (yyvsp[-1]).traducao != "")) {
+				if ((mapa[(yyvsp[-2]).label].tipo == CHARS && (yyvsp[-1]).traducao == "") || (mapa[(yyvsp[-2]).label].tipo == CHARS_VETOR && (yyvsp[-1]).traducao != "")
+						|| (mapa[(yyvsp[-2]).label].tipo == CHARS_MATRIZ && (yyvsp[-1]).traducao != "")) {
 					string rotuloInicio = proximoRotulo();
 					string rotuloFim = proximoRotulo();
 					string tamanho = mapaTemporario[mapa[(yyvsp[-2]).label].temporario].tamanho;
@@ -3244,13 +3245,22 @@ yyreduce:
 					string tmpChar = "tmp" + proximaVariavelTemporaria();
 					mapaTemporario[tmpChar] = { .id = tmpChar, .tipo = CHAR };
 
-					id = (yyvsp[-1]).traducao == "" ? id : id + '[' + (yyvsp[-1]).label + ']';
+					if ((yyvsp[-1]).traducao != "" && mapa[(yyvsp[-2]).label].tipo == CHARS_VETOR) {
+						(yyval).traducao = (yyvsp[-1]).traducao + "\tif(" + (yyvsp[-1]).label + " < 0 || " + (yyvsp[-1]).label + " >= " + tamanho + ") exit(1);\n";
+						id = id + '[' + (yyvsp[-1]).label + ']';
+					} else if ((yyvsp[-1]).traducao != "" && mapa[(yyvsp[-2]).label].tipo == CHARS_MATRIZ) {
+						string linha = mapaTemporario[mapa[(yyvsp[-2]).label].temporario].tamanho;
+						string coluna = mapaTemporario[mapa[(yyvsp[-2]).label].temporario].coluna;
+						string posicao = "tmp" + proximaVariavelTemporaria();
+        				mapaTemporario[posicao] = {.id = posicao, .tipo = INT};
+						(yyval).traducao = (yyvsp[-1]).traducao + "\tif(" + (yyvsp[-1]).label + " < 0 || " + (yyvsp[-1]).label + " >= " + linha + ") exit(1);\n" +
+							"\tif(" + (yyvsp[-1]).tipo + " < 0 || " + (yyvsp[-1]).tipo + " >= " + coluna + ") exit(1);\n" +
+							'\t' + posicao + " = " + (yyvsp[-1]).label + " * " + coluna + ";\n" +
+							'\t' + posicao + " = " + posicao + " + " + (yyvsp[-1]).tipo + ";\n";
+						id = id + '[' + posicao + ']';
+					} 
 
-					if ((yyvsp[-1]).traducao != "") {
-						(yyval).traducao += (yyvsp[-1]).traducao + "\tif(" + (yyvsp[-1]).label + " < 0 || " + (yyvsp[-1]).label + " >= " + tamanho + ") exit(1);\n";
-					}
-
-					(yyval).traducao = (yyvsp[-1]).traducao + "\tif (" + tamanho + " > 0)" + " free(" + id + ");\n" +
+					(yyval).traducao += "\tif (" + tamanho + " > 0)" + " free(" + id + ");\n" +
 						'\t' + id + " = (char*) malloc(SIZE_STR);\n" +
 						'\t' + tamanho + " = 0;\n" + '\t' + rotuloInicio + ":\n" +
 						'\t' + tmpChar + " = getchar();\n" + 
@@ -3290,20 +3300,20 @@ yyreduce:
 
 				(yyval).traducao += "\tsetbuf(stdin, NULL);\n";
 			}
-#line 3294 "y.tab.c" /* yacc.c:1646  */
+#line 3304 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 112:
-#line 1530 "sintatica.y" /* yacc.c:1646  */
+#line 1540 "sintatica.y" /* yacc.c:1646  */
     {
  				defineTiposCompativeis((yyvsp[-1]).tipo, INT);
  				(yyval) = (yyvsp[-1]);
 			}
-#line 3303 "y.tab.c" /* yacc.c:1646  */
+#line 3313 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 113:
-#line 1535 "sintatica.y" /* yacc.c:1646  */
+#line 1545 "sintatica.y" /* yacc.c:1646  */
     {
 				defineTiposCompativeis((yyvsp[-4]).tipo, INT);
 				defineTiposCompativeis((yyvsp[-1]).tipo, INT);
@@ -3311,85 +3321,85 @@ yyreduce:
 				(yyval).traducao += (yyvsp[-1]).traducao;
 				(yyval).tipo = (yyvsp[-1]).label;
 			}
-#line 3315 "y.tab.c" /* yacc.c:1646  */
+#line 3325 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 114:
-#line 1542 "sintatica.y" /* yacc.c:1646  */
+#line 1552 "sintatica.y" /* yacc.c:1646  */
     { (yyval).traducao = ""; }
-#line 3321 "y.tab.c" /* yacc.c:1646  */
+#line 3331 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 115:
-#line 1546 "sintatica.y" /* yacc.c:1646  */
+#line 1556 "sintatica.y" /* yacc.c:1646  */
     {
 				pilhaContexto.push({ .quebravel = true, .mapaVariaveis = controiMapaVariaveis(),
 					.rotuloInicio = proximoRotulo(), .rotuloFim = proximoRotulo()});
 			}
-#line 3330 "y.tab.c" /* yacc.c:1646  */
+#line 3340 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 116:
-#line 1552 "sintatica.y" /* yacc.c:1646  */
+#line 1562 "sintatica.y" /* yacc.c:1646  */
     {
 				contextoBloco cb = controlarLaco();
 				(yyval).traducao = "\tgoto " + cb.rotuloFim + ";\n";
 			}
-#line 3339 "y.tab.c" /* yacc.c:1646  */
+#line 3349 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 117:
-#line 1558 "sintatica.y" /* yacc.c:1646  */
+#line 1568 "sintatica.y" /* yacc.c:1646  */
     {
 				contextoBloco cb = controlarLaco();
 				(yyval).traducao = "\tgoto " + cb.rotuloInicio + ";\n";
 			}
-#line 3348 "y.tab.c" /* yacc.c:1646  */
+#line 3358 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 118:
-#line 1563 "sintatica.y" /* yacc.c:1646  */
+#line 1573 "sintatica.y" /* yacc.c:1646  */
     {
 				contextoBloco cb = controlarLacoALL();
 				(yyval).traducao = "\tgoto " + cb.rotuloFim + ";\n";
 			}
-#line 3357 "y.tab.c" /* yacc.c:1646  */
+#line 3367 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 124:
-#line 1571 "sintatica.y" /* yacc.c:1646  */
+#line 1581 "sintatica.y" /* yacc.c:1646  */
     {
 					processaArgumentoFuncao((yyvsp[-3]).label, (yyvsp[-1]).tipo);
 					mapaTemporario[pilhaContexto.top().rotuloInicio].funcao.traducao = decideTipo((yyvsp[-1]).tipo) + 
 						pilhaContexto.top().mapaVariaveis[(yyvsp[-3]).label].temporario + (yyvsp[0]).traducao;
 				}
-#line 3367 "y.tab.c" /* yacc.c:1646  */
+#line 3377 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 125:
-#line 1576 "sintatica.y" /* yacc.c:1646  */
+#line 1586 "sintatica.y" /* yacc.c:1646  */
     { (yyval).traducao = ""; }
-#line 3373 "y.tab.c" /* yacc.c:1646  */
+#line 3383 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 126:
-#line 1580 "sintatica.y" /* yacc.c:1646  */
+#line 1590 "sintatica.y" /* yacc.c:1646  */
     {
 					processaArgumentoFuncao((yyvsp[-3]).label, (yyvsp[-1]).tipo);
 					(yyval).traducao = ", " + decideTipo((yyvsp[-1]).tipo) + 
 						pilhaContexto.top().mapaVariaveis[(yyvsp[-3]).label].temporario + (yyvsp[0]).traducao;
 				}
-#line 3383 "y.tab.c" /* yacc.c:1646  */
+#line 3393 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 127:
-#line 1585 "sintatica.y" /* yacc.c:1646  */
+#line 1595 "sintatica.y" /* yacc.c:1646  */
     { (yyval).traducao = ""; }
-#line 3389 "y.tab.c" /* yacc.c:1646  */
+#line 3399 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 128:
-#line 1589 "sintatica.y" /* yacc.c:1646  */
+#line 1599 "sintatica.y" /* yacc.c:1646  */
     {
 					string nomeFuncao = pilhaContexto.top().rotuloInicio;
 					string tamanhoStringParametros = "";
@@ -3408,27 +3418,27 @@ yyreduce:
 					pilhaContexto.pop();
 					(yyval).traducao = "";
 				}
-#line 3412 "y.tab.c" /* yacc.c:1646  */
+#line 3422 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 129:
-#line 1610 "sintatica.y" /* yacc.c:1646  */
+#line 1620 "sintatica.y" /* yacc.c:1646  */
     {
 					mapaTemporario[pilhaContexto.top().rotuloInicio].funcao.retorno = (yyvsp[0]).tipo;
 				}
-#line 3420 "y.tab.c" /* yacc.c:1646  */
+#line 3430 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 130:
-#line 1614 "sintatica.y" /* yacc.c:1646  */
+#line 1624 "sintatica.y" /* yacc.c:1646  */
     {
 					mapaTemporario[pilhaContexto.top().rotuloInicio].funcao.retorno = (yyvsp[0]).tipo;	
 				}
-#line 3428 "y.tab.c" /* yacc.c:1646  */
+#line 3438 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 131:
-#line 1620 "sintatica.y" /* yacc.c:1646  */
+#line 1630 "sintatica.y" /* yacc.c:1646  */
     {
 					if (!pilhaContexto.top().isGlobal) yyerror("Uma função só pode ser declarada no escopo global.");
 					verificaVariavelJaDeclarada((yyvsp[0]).label);
@@ -3441,41 +3451,41 @@ yyreduce:
 					pilhaContexto.push({ .quebravel = false, .mapaVariaveis = controiMapaVariaveis(),
 						.rotuloInicio = var, .rotuloFim = "", .funcional = true});
 				}
-#line 3445 "y.tab.c" /* yacc.c:1646  */
+#line 3455 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 132:
-#line 1635 "sintatica.y" /* yacc.c:1646  */
+#line 1645 "sintatica.y" /* yacc.c:1646  */
     {
 					(yyval).traducao = (yyvsp[-1]).traducao + (yyvsp[0]).traducao;
 					parametrosAuxiliar.push_front({.id = (yyvsp[-1]).label, .tipo = (yyvsp[-1]).tipo});
 				}
-#line 3454 "y.tab.c" /* yacc.c:1646  */
+#line 3464 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 133:
-#line 1639 "sintatica.y" /* yacc.c:1646  */
+#line 1649 "sintatica.y" /* yacc.c:1646  */
     { (yyval).traducao = ""; }
-#line 3460 "y.tab.c" /* yacc.c:1646  */
+#line 3470 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 134:
-#line 1643 "sintatica.y" /* yacc.c:1646  */
+#line 1653 "sintatica.y" /* yacc.c:1646  */
     {
 					(yyval).traducao = (yyvsp[-1]).traducao + (yyvsp[0]).traducao;
 					parametrosAuxiliar.push_front({.id = (yyvsp[-1]).label, .tipo = (yyvsp[-1]).tipo});
 				}
-#line 3469 "y.tab.c" /* yacc.c:1646  */
+#line 3479 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 135:
-#line 1647 "sintatica.y" /* yacc.c:1646  */
+#line 1657 "sintatica.y" /* yacc.c:1646  */
     { (yyval).traducao = ""; }
-#line 3475 "y.tab.c" /* yacc.c:1646  */
+#line 3485 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 136:
-#line 1651 "sintatica.y" /* yacc.c:1646  */
+#line 1661 "sintatica.y" /* yacc.c:1646  */
     {
 					mapV mapa = buscaMapa((yyvsp[-3]).label);
 					if (mapa[(yyvsp[-3]).label].tipo == FUNCAO) {
@@ -3529,11 +3539,11 @@ yyreduce:
 						yyerror("A variável " + (yyvsp[-3]).label + " não é uma função.");
 					} 	
 				}
-#line 3533 "y.tab.c" /* yacc.c:1646  */
+#line 3543 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 137:
-#line 1707 "sintatica.y" /* yacc.c:1646  */
+#line 1717 "sintatica.y" /* yacc.c:1646  */
     {
 					contextoBloco cb = controlarRetorno();		
 					string retorno = mapaTemporario[cb.rotuloInicio].funcao.retorno;
@@ -3547,11 +3557,11 @@ yyreduce:
 						(yyval).traducao = (yyvsp[0]).traducao + "\treturn " + (yyvsp[0]).label + ";\n";
 					}
 				}
-#line 3551 "y.tab.c" /* yacc.c:1646  */
+#line 3561 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 138:
-#line 1723 "sintatica.y" /* yacc.c:1646  */
+#line 1733 "sintatica.y" /* yacc.c:1646  */
     {
 					verificaVariavelJaDeclarada((yyvsp[-3]).label);
 					(yyval).label = "tmp" + proximaVariavelTemporaria();
@@ -3569,11 +3579,11 @@ yyreduce:
 	  					(yyval).traducao = (yyvsp[-1]).traducao + '\t' + (yyval).label + " = " + (yyvsp[-1]).label + ";\n" + (yyvsp[0]).traducao;
 	  				}
 				}
-#line 3573 "y.tab.c" /* yacc.c:1646  */
+#line 3583 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 139:
-#line 1743 "sintatica.y" /* yacc.c:1646  */
+#line 1753 "sintatica.y" /* yacc.c:1646  */
     {
 					verificaVariavelJaDeclarada((yyvsp[-3]).label);
 					(yyval).label = "tmp" + proximaVariavelTemporaria();
@@ -3591,17 +3601,17 @@ yyreduce:
 	  					(yyval).traducao = (yyvsp[-1]).traducao + '\t' + (yyval).label + " = " + (yyvsp[-1]).label + ";\n" + (yyvsp[0]).traducao;
 	  				}
 				}
-#line 3595 "y.tab.c" /* yacc.c:1646  */
+#line 3605 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 140:
-#line 1760 "sintatica.y" /* yacc.c:1646  */
+#line 1770 "sintatica.y" /* yacc.c:1646  */
     { (yyval).traducao = ""; (yyval).tipo = ""; (yyval).label = ""; }
-#line 3601 "y.tab.c" /* yacc.c:1646  */
+#line 3611 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 3605 "y.tab.c" /* yacc.c:1646  */
+#line 3615 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -3829,7 +3839,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 1762 "sintatica.y" /* yacc.c:1906  */
+#line 1772 "sintatica.y" /* yacc.c:1906  */
 
 
 #include "lex.yy.c"
