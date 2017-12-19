@@ -83,11 +83,12 @@ extern int yydebug;
     TK_SWITCH = 293,
     TK_CASE = 294,
     TK_DEFAULT = 295,
-    TK_PRINT = 296,
-    TK_SCAN = 297,
-    TK_TIPO_FUNCAO = 298,
-    TK_RETORNA = 299,
-    TK_CAST = 300
+    TK_SLICE = 296,
+    TK_PRINT = 297,
+    TK_SCAN = 298,
+    TK_TIPO_FUNCAO = 299,
+    TK_RETORNA = 300,
+    TK_CAST = 301
   };
 #endif
 /* Tokens.  */
@@ -129,11 +130,12 @@ extern int yydebug;
 #define TK_SWITCH 293
 #define TK_CASE 294
 #define TK_DEFAULT 295
-#define TK_PRINT 296
-#define TK_SCAN 297
-#define TK_TIPO_FUNCAO 298
-#define TK_RETORNA 299
-#define TK_CAST 300
+#define TK_SLICE 296
+#define TK_PRINT 297
+#define TK_SCAN 298
+#define TK_TIPO_FUNCAO 299
+#define TK_RETORNA 300
+#define TK_CAST 301
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

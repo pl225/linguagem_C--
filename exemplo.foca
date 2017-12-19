@@ -1,39 +1,19 @@
-int myMatriz = [ 
-	[ 4, 7 , 9 ] , 
-	[ 2, 5, 8 ] 
-];
+flut32 vetorFlut = [ 2, 4, 5 , 6, 7, 8, 8 ], a = 3, b = 5;
 
-escreva(myMatriz [ 1 ] [ 2 ]);
+flut32 sliceFlut = vetorFlut [ 2 .. 5 ];
 
-flut32 outraMatriz = [
-	[ 11.5 , 6 , 44 , 28 ],
-	[ 9 , 5 , 17.2 , 55 ],
-	[ 105.7 , 4 , 29 , 61.4 ]
-];
+escreva(sliceFlut [ 0 ]);
 
-escreva(outraMatriz [ 2 ] [ 3 ]);
+escreva(sliceFlut [ 2 ] + b);
 
-chars soMaisUma = [
-	[ "arvore" , "periodo" , "compilador" ],
-	[ "thank you", "OMG" , "legal" ]
-];
+int vetorInt = [ 11 , 14.6 , 89, 56 , 90 ];
 
-int i = 0, j = 0;
+int sliceInt = vetorInt [ 1 .. 4 ];
 
-para (i = 0; i < 2; i++) {
-	para (j = 0; j < 3; j++) {
-		escreva (soMaisUma [ i ] [ j ]);
-	}
-}
+escreva(sliceInt [ 2 ] + a);
 
-soMaisUma [ 1 ] [ 2 ] = "maior";
+chars palavras = [ "ok", "vlw", "sim", "td bem" ];
 
-escreva(soMaisUma [ 1 ] [ 2 ]);
+chars sliceChars = palavras [ 2 .. 3 ];
 
-chars palavra = "camisa";
-
-escreva (palavra [ 2 ]);
-
-se (palavra [ 2 ] == 'm') {
-	escreva("eh maior");
-}
+escreva(sliceChars [ 1 ] . ", te perdoo");

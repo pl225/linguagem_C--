@@ -83,6 +83,8 @@ Retorna "retorna"
 AbreColchete "[" 
 FechaColchete "]"
 
+Slice ".."
+
 %%
 
 "\n"		{ contaLinhas(); }
@@ -92,6 +94,8 @@ FechaColchete "]"
 {Soma}|{Subtracao} { yylval.traducao = yytext; return TK_MAIS_MENOS; }
 {Divisao}|{Multiplicacao} { yylval.traducao = yytext; return TK_MULTI_DIV; }
 {Modulo} { yylval.traducao = yytext; return TK_MODULO; }
+
+{Slice} { return TK_SLICE; }
 
 [(){}\;,:]	{ return *yytext; }
 

@@ -441,11 +441,12 @@ struct atributos traducaoMatrizNumerico (struct atributos $1, struct atributos $
 %token TK_RELACIONAL TK_LOGICO TK_SEJA
 %token TK_FIM TK_ERROR
 %token TK_IF TK_WHILE TK_BREAK TK_CONTINUE TK_DO TK_FOR TK_BREAK_ALL
-%token TK_OP_ABREV TK_OP_1 TK_ELSE TK_SWITCH TK_CASE TK_DEFAULT
+%token TK_OP_ABREV TK_OP_1 TK_ELSE TK_SWITCH TK_CASE TK_DEFAULT TK_SLICE
 %token TK_PRINT TK_SCAN TK_TIPO_FUNCAO TK_RETORNA
 
 %start S
 
+%left TK_SLICE
 %left TK_CONCATENACAO
 %left TK_MAIS_MENOS
 %left TK_MULTI_DIV
@@ -518,8 +519,16 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 						$$.traducao = $3.traducao + '\t' + varCast + " = (float) " + $3.label + ";\n" +
 						'\t' + $$.label + " = " + varCast + ";\n" + $4.traducao;
 					}  else if ($3.tipo == FLUT32_VETOR) {
-						$$ = traducaoVetorNumerico($$, $3);
-						$$.traducao += $4.traducao;
+						if (pilhaVetores.size() > 0) {
+							$$ = traducaoVetorNumerico($$, $3);
+							$$.traducao += $4.traducao;
+						} else {
+							string tamanhoVetor = "tmp" + proximaVariavelTemporaria();
+							mapaTemporario[tamanhoVetor] = {.id = tamanhoVetor, .tipo = INT};
+							mapaTemporario[$$.label].tamanho = tamanhoVetor;
+							$$.traducao = $3.traducao + '\t' + tamanhoVetor + " = " + mapaTemporario[$3.label].tamanho + ";\n" +
+								'\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
+						}
 					} else if ($3.tipo == FLUT32_MATRIZ) {
 						$$ = traducaoMatrizNumerico($$, $3);
 						$$.traducao += $4.traducao;
@@ -566,8 +575,16 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 				mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo};
 
 	        	if ($$.tipo == CHARS_VETOR) {
-	        		$$ = traducaoVetorNumerico($$, $3);
-					$$.traducao += $4.traducao;
+	        		if (pilhaVetores.size() > 0) {
+							$$ = traducaoVetorNumerico($$, $3);
+							$$.traducao += $4.traducao;
+					} else {
+						string tamanhoVetor = "tmp" + proximaVariavelTemporaria();
+						mapaTemporario[tamanhoVetor] = {.id = tamanhoVetor, .tipo = INT};
+						mapaTemporario[$$.label].tamanho = tamanhoVetor;
+						$$.traducao = $3.traducao + '\t' + tamanhoVetor + " = " + mapaTemporario[$3.label].tamanho + ";\n" +
+							'\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
+					}
 	        	} else if ($$.tipo == CHARS_MATRIZ) {
 					$$ = traducaoMatrizNumerico($$, $3);
 					$$.traducao += $4.traducao;
@@ -600,8 +617,16 @@ DECLARACAO  : TK_TIPO_FLUT32 TK_ID DECLARACAO_VF32 DECLARACAO_F32
 						$$.traducao = $3.traducao + '\t' + varCast + " = (int) " + $3.label + ";\n" +
 						'\t' + $$.label + " = " + varCast + ";\n" + $4.traducao;
 					} else if ($3.tipo == INT_VETOR) {
-						$$ = traducaoVetorNumerico($$, $3);
-						$$.traducao += $4.traducao;
+						if (pilhaVetores.size() > 0) {
+							$$ = traducaoVetorNumerico($$, $3);
+							$$.traducao += $4.traducao;
+						} else {
+							string tamanhoVetor = "tmp" + proximaVariavelTemporaria();
+							mapaTemporario[tamanhoVetor] = {.id = tamanhoVetor, .tipo = INT};
+							mapaTemporario[$$.label].tamanho = tamanhoVetor;
+							$$.traducao = $3.traducao + '\t' + tamanhoVetor + " = " + mapaTemporario[$3.label].tamanho + ";\n" +
+								'\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
+						}
 					} else if ($3.tipo == INT_MATRIZ) {
 						$$ = traducaoMatrizNumerico($$, $3);
 						$$.traducao += $4.traducao;
@@ -647,8 +672,16 @@ DECLARACAO_F32 : ',' TK_ID DECLARACAO_VF32 DECLARACAO_F32
 							$$.traducao = $3.traducao + '\t' + varCast + " = (float) " + $3.label + ";\n" +
 							'\t' + $$.label + " = " + varCast + ";\n" + $4.traducao;
 						} else if ($3.tipo == FLUT32_VETOR) {
-							$$ = traducaoVetorNumerico($$, $3);
-							$$.traducao += $4.traducao;
+							if (pilhaVetores.size() > 0) {
+								$$ = traducaoVetorNumerico($$, $3);
+								$$.traducao += $4.traducao;
+							} else {
+								string tamanhoVetor = "tmp" + proximaVariavelTemporaria();
+								mapaTemporario[tamanhoVetor] = {.id = tamanhoVetor, .tipo = INT};
+								mapaTemporario[$$.label].tamanho = tamanhoVetor;
+								$$.traducao = $3.traducao + '\t' + tamanhoVetor + " = " + mapaTemporario[$3.label].tamanho + ";\n" +
+									'\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
+							}
 						} else if ($3.tipo == FLUT32_MATRIZ) {
 							$$ = traducaoMatrizNumerico($$, $3);
 							$$.traducao += $4.traducao;
@@ -745,8 +778,16 @@ DECLARACAO_STRING  : ',' TK_ID DECLARACAO_VSTRING DECLARACAO_STRING
 						mapaTemporario[$$.label] = { .id = $$.label, .tipo = $$.tipo };
 
 			        	if ($$.tipo == CHARS_VETOR) {
-			        		$$ = traducaoVetorNumerico($$, $3);
-							$$.traducao += $4.traducao;
+			        		if (pilhaVetores.size() > 0) {
+								$$ = traducaoVetorNumerico($$, $3);
+								$$.traducao += $4.traducao;
+							} else {
+								string tamanhoVetor = "tmp" + proximaVariavelTemporaria();
+								mapaTemporario[tamanhoVetor] = {.id = tamanhoVetor, .tipo = INT};
+								mapaTemporario[$$.label].tamanho = tamanhoVetor;
+								$$.traducao = $3.traducao + '\t' + tamanhoVetor + " = " + mapaTemporario[$3.label].tamanho + ";\n" +
+									'\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
+							}
 			        	} else if ($$.tipo == CHARS_MATRIZ) {
 			        		$$ = traducaoMatrizNumerico($$, $3);
 							$$.traducao += $4.traducao;
@@ -800,8 +841,16 @@ DECLARACAO_INT : ',' TK_ID DECLARACAO_VINT DECLARACAO_INT
 							$$.traducao = $3.traducao + '\t' + varCast + " = (int) " + $3.label + ";\n" +
 							'\t' + $$.label + " = " + varCast + ";\n" + $4.traducao;
 						} else if ($3.tipo == INT_VETOR) {
-							$$ = traducaoVetorNumerico($$, $3);
-							$$.traducao += $4.traducao;
+							if (pilhaVetores.size() > 0) {
+								$$ = traducaoVetorNumerico($$, $3);
+								$$.traducao += $4.traducao;
+							} else {
+								string tamanhoVetor = "tmp" + proximaVariavelTemporaria();
+								mapaTemporario[tamanhoVetor] = {.id = tamanhoVetor, .tipo = INT};
+								mapaTemporario[$$.label].tamanho = tamanhoVetor;
+								$$.traducao = $3.traducao + '\t' + tamanhoVetor + " = " + mapaTemporario[$3.label].tamanho + ";\n" +
+									'\t' + $$.label + " = " + $3.label + ";\n" + $4.traducao;
+							}
 						} else if ($3.tipo == INT_MATRIZ) {
 							$$ = traducaoMatrizNumerico($$, $3);
 							$$.traducao += $4.traducao;
@@ -1139,6 +1188,28 @@ E 			: E TK_MAIS_MENOS E
 	        			'\t' + varElemento + " = " + var + '[' + $3.label + "];\n";
         		}
 			} 
+			| TK_ID '[' E TK_SLICE E ']'
+			{
+				defineTiposCompativeis($3.tipo, INT);
+				defineTiposCompativeis($5.tipo, INT);
+				mapV mapa = buscaMapa($1.label);
+				if (mapa[$1.label].tipo != INT_VETOR && mapa[$1.label].tipo != FLUT32_VETOR 
+					&& mapa[$1.label].tipo != CHARS_VETOR && mapa[$1.label].tipo != CHARS)	yyerror("Slice permitido apenas em vetores");
+        		string var = mapa[$1.label].temporario;
+        		string tamanhoVetor = mapaTemporario[var].tamanho;
+        		string slice = "tmp" + proximaVariavelTemporaria();
+        		string tamanhoSlice = "tmp" + proximaVariavelTemporaria();
+        		mapaTemporario[tamanhoSlice] = { .id = tamanhoSlice, .tipo = INT };
+        		mapaTemporario[slice] = { .id = slice, .tipo = mapaTemporario[var].tipo, .tamanho = tamanhoSlice };
+        		$$.label = slice;
+        		$$.tipo = mapaTemporario[var].tipo;
+        		$$.traducao = $3.traducao + $5.traducao + "\tif(" + $3.label + " < 0 || " + $3.label + " >= " + tamanhoVetor + ") exit(1);\n" +
+        			"\tif(" + $5.label + " < 0 || " + $5.label + " >= " + tamanhoVetor + ") exit(1);\n" +
+        			'\t' + tamanhoSlice + " = " + $5.label + " - " + $3.label + ";\n" +
+        			"\tif(" + tamanhoSlice + " <= 0) exit(1);\n" +
+        			'\t' + tamanhoSlice + " = " + tamanhoSlice + " + 1;\n" +
+        			'\t' + slice + " = " + var + " + " + $3.label + ";\n";
+			}
 			| TK_ID '[' E ']' '[' E ']'
 			{
 				defineTiposCompativeis($3.tipo, INT);
