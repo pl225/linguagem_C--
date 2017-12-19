@@ -1,32 +1,12 @@
-flut32 vetorFlut = [ 2, 4, 5 , 6, 7, 8, 8 ], a = 3, b = 5;
-
-flut32 sliceFlut = vetorFlut [ 2 .. 5 ];
-
-escreva(sliceFlut [ 0 ]);
-
-escreva(sliceFlut [ 2 ] + b);
-
-int vetorInt = [ 11 , 14.6 , 89, 56 , 90 ];
-
-int sliceInt = vetorInt [ 1 .. 4 ];
-
-escreva(sliceInt [ 2 ] + a);
-
 chars palavras = [ "ok", "vlw", "sim", "td bem" ];
 
-chars sliceChars = palavras [ 2 .. 3 ];
-
-escreva(sliceChars [ 1 ] . ", te perdoo");
-
-funcao vazia () : vazio {
-	escreva (2);
+int i = 0;
+enquanto (i < 4) {
+	escreva(palavras [ i ]);
+	i += 1;
 }
 
-vazia();
+int v = [ 4 , 5 , 7 ];
 
-funcao outra (a : chars) : int {
-	escreva (a);
-	retorna 88;
-}
+leia (v [ 2 ]);
 
-escreva(2);

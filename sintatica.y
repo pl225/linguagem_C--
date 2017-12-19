@@ -1467,10 +1467,10 @@ PRINT 		: TK_PRINT '(' E ')'
 			} 
 			;
 
-SCAN 		: TK_SCAN '(' TK_ID ')'
+SCAN 		: TK_SCAN '(' TK_ID PARAM_SCAN ')'
 			{
 				mapV mapa = buscaMapa($3.label);
-				if (mapa[$3.label].tipo == CHARS) {
+				if ((mapa[$3.label].tipo == CHARS && $4.traducao == "") || (mapa[$3.label].tipo == CHARS_VETOR && $4.traducao != "")) {
 					string rotuloInicio = proximoRotulo();
 					string rotuloFim = proximoRotulo();
 					string tamanho = mapaTemporario[mapa[$3.label].temporario].tamanho;
@@ -1478,7 +1478,13 @@ SCAN 		: TK_SCAN '(' TK_ID ')'
 					string tmpChar = "tmp" + proximaVariavelTemporaria();
 					mapaTemporario[tmpChar] = { .id = tmpChar, .tipo = CHAR };
 
-					$$.traducao = "\tif (" + tamanho + " > 0)" + " free(" + id + ");\n" +
+					id = $4.traducao == "" ? id : id + '[' + $4.label + ']';
+
+					if ($4.traducao != "") {
+						$$.traducao += $4.traducao + "\tif(" + $4.label + " < 0 || " + $4.label + " >= " + tamanho + ") exit(1);\n";
+					}
+
+					$$.traducao = $4.traducao + "\tif (" + tamanho + " > 0)" + " free(" + id + ");\n" +
 						'\t' + id + " = (char*) malloc(SIZE_STR);\n" +
 						'\t' + tamanho + " = 0;\n" + '\t' + rotuloInicio + ":\n" +
 						'\t' + tmpChar + " = getchar();\n" + 
@@ -1492,16 +1498,28 @@ SCAN 		: TK_SCAN '(' TK_ID ')'
 						'\t' + tamanho + " = " + tamanho + " + 1;\n" +
 						'\t' + id + '[' + tamanho + "] = \'\\0\';\n";
 
-				} else if(mapa[$3.label].tipo == CHAR) {
+				} else if(mapa[$3.label].tipo == CHAR && $4.traducao == "") {
 					$$.traducao = "\tscanf(\"%c\", &" + mapa[$3.label].temporario + ");\n";
-				} else if(mapa[$3.label].tipo == FLUT32) {
+				} else if(mapa[$3.label].tipo == FLUT32 && $4.traducao == "") {
 					$$.traducao = "\tscanf(\"%f\", &" + mapa[$3.label].temporario + ");\n";
-				} else if(mapa[$3.label].tipo == INT) {
+				} else if(mapa[$3.label].tipo == INT && $4.traducao == "") {
 					$$.traducao = "\tscanf(\"%d\", &" + mapa[$3.label].temporario + ");\n";
+				} else if (mapa[$3.label].tipo == INT_VETOR || mapa[$3.label].tipo == FLUT32_VETOR && $4.traducao != "") {
+					string tamanho = mapaTemporario[mapa[$3.label].temporario].tamanho;
+					$$.traducao = "\tif(" + $4.label + " < 0 || " + $4.label + " >= " + tamanho + ") exit(1);\n" +
+						$4.traducao + "\tscanf(\"%d\", &" + mapa[$3.label].temporario + '[' + $4.label + "]);\n";
 				}
 
 				$$.traducao += "\tsetbuf(stdin, NULL);\n";
 			}
+			;
+
+PARAM_SCAN	: '[' E ']'
+ 			{
+ 				defineTiposCompativeis($2.tipo, INT);
+ 				$$ = $2;
+			}
+			| { $$.traducao = ""; }
 			;
 
 BLOCO_ITERACAO:
