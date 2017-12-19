@@ -17,3 +17,16 @@ chars palavras = [ "ok", "vlw", "sim", "td bem" ];
 chars sliceChars = palavras [ 2 .. 3 ];
 
 escreva(sliceChars [ 1 ] . ", te perdoo");
+
+funcao vazia () : vazio {
+	escreva (2);
+}
+
+vazia();
+
+funcao outra (a : chars) : int {
+	escreva (a);
+	retorna 88;
+}
+
+escreva(2);

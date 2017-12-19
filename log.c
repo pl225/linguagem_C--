@@ -15,6 +15,19 @@ int * tmp46;
 float * tmp14;
 int * tmp39;
 
+void tmp75(){
+	int  tmp76;
+	tmp76 = 2;
+	cout << tmp76 << endl;
+}
+int tmp78(char *tmp79){
+	int  tmp80;
+	int  tmp81;
+	tmp80 = strlen(tmp79);
+	cout << tmp79 << endl;
+	tmp81 = 88;
+	return tmp81;
+}
 
 int main(void)
 {
@@ -83,6 +96,7 @@ int main(void)
 	char * tmp73;
 	int  tmp74;
 	int  tmp8;
+	int  tmp82;
 	int  tmp9;
 	tmp15 = 7;
 	tmp14 = (float *) malloc(sizeof(float )*tmp15);
@@ -202,6 +216,9 @@ int main(void)
 	strcat(tmp73, tmp69);
 	strcat(tmp73, tmp71);
 	cout << tmp73 << endl;
+	tmp75();
+	tmp82 = 2;
+	cout << tmp82 << endl;
 	if (tmp53 > 0) free(tmp52);
 	if (tmp55 > 0) free(tmp54);
 	if (tmp57 > 0) free(tmp56);

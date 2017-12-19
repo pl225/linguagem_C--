@@ -21,6 +21,7 @@
 #define INT_MATRIZ "9"
 #define FLUT32_MATRIZ "10"
 #define CHARS_MATRIZ "11"
+#define VOID "12"
 
 using namespace std;
 
@@ -119,6 +120,7 @@ string decideTipo (string tipo) {
 	else if (tipo == INT_MATRIZ) return "int*";
 	else if (tipo == FLUT32_MATRIZ) return "float*";
 	else if (tipo == CHARS_MATRIZ) return "char**";
+	else if (tipo == VOID) return "void ";
 }
 
 string decideOperadorRelacional (string op) {
@@ -137,7 +139,7 @@ string decideValorBooleano (string b) {
 string declaraVariaveisTemporarias () {
 	string s = "";
 	for (mapT::iterator it = mapaTemporario.begin(); it!=mapaTemporario.end(); ++it) { 
-		if (it->second.tipo != FUNCAO) 
+		if (it->second.tipo != FUNCAO && it->second.tipo != VOID) 
     		s += '\t' + decideTipo(it->second.tipo) + ' ' + it->second.id + ";\n";
 	}
     return s;
@@ -172,7 +174,7 @@ string declaraVariaveisGlobais () {
 		p.pop();
 	} while (not p.empty());
 	for (mapV::iterator it = cb.mapaVariaveis.begin(); it!=cb.mapaVariaveis.end(); ++it) {
-		if (it->second.tipo != FUNCAO) {
+		if (it->second.tipo != FUNCAO && it->second.tipo != VOID) {
     		s += decideTipo(mapaTemporario[it->second.temporario].tipo) + ' ' + mapaTemporario[it->second.temporario].id + ";\n";
 			mapa[it->second.temporario] = mapaTemporario[it->second.temporario];
 		}
@@ -268,6 +270,7 @@ void defineTiposCompativeis (string s1, string s2) {
 	if (s1 == INT_VETOR && s2 != INT_VETOR) v = true;
 	if (s1 == FLUT32_VETOR && s2 != FLUT32_VETOR) v = true;
 	if (s1 == CHARS_VETOR && s2 != CHARS_VETOR) v = true;
+	if (s1 == VOID) v = true;
 	if (v) yyerror("As variáveis " + s1 + " e " + s2 + " não são de tipos compatíveis.");
 }
 
@@ -442,7 +445,7 @@ struct atributos traducaoMatrizNumerico (struct atributos $1, struct atributos $
 %token TK_FIM TK_ERROR
 %token TK_IF TK_WHILE TK_BREAK TK_CONTINUE TK_DO TK_FOR TK_BREAK_ALL
 %token TK_OP_ABREV TK_OP_1 TK_ELSE TK_SWITCH TK_CASE TK_DEFAULT TK_SLICE
-%token TK_PRINT TK_SCAN TK_TIPO_FUNCAO TK_RETORNA
+%token TK_PRINT TK_SCAN TK_TIPO_FUNCAO TK_RETORNA TK_TIPO_VOID
 
 %start S
 
@@ -1569,6 +1572,10 @@ TIPO_DADO_FUNC	: TIPO_DADO
 				{
 					mapaTemporario[pilhaContexto.top().rotuloInicio].funcao.retorno = $1.tipo;
 				}
+				| TK_TIPO_VOID
+				{
+					mapaTemporario[pilhaContexto.top().rotuloInicio].funcao.retorno = $1.tipo;	
+				}
 				;
 
 BLOCO_FUNCAO 	: TK_ID
@@ -1638,14 +1645,18 @@ CALL_FUNCTION	: TK_ID '(' ARG_FUNC_CALL ')'
 						$$.label = "tmp" + proximaVariavelTemporaria();
 						$$.tipo = mapaTemporario[temporario].funcao.retorno;
 						mapaTemporario[$$.label] = {.id = $$.label, .tipo = $$.tipo};
-						if ($$.tipo == CHARS) {
-							string tamanhoString = "tmp" + proximaVariavelTemporaria();
-							mapaTemporario[tamanhoString] = {.id = tamanhoString, .tipo = INT};
-							mapaTemporario[$$.label].tamanho = tamanhoString;
-							$$.traducao = $3.traducao + traducaoCast + '\t' + $$.label + " = " + temporario + '(' + traducao + ");\n" +
-											'\t' + tamanhoString + " = strlen(" + $$.label + ");\n";
+						if (mapaTemporario[temporario].funcao.retorno != VOID) {
+							if ($$.tipo == CHARS) {
+								string tamanhoString = "tmp" + proximaVariavelTemporaria();
+								mapaTemporario[tamanhoString] = {.id = tamanhoString, .tipo = INT};
+								mapaTemporario[$$.label].tamanho = tamanhoString;
+								$$.traducao = $3.traducao + traducaoCast + '\t' + $$.label + " = " + temporario + '(' + traducao + ");\n" +
+												'\t' + tamanhoString + " = strlen(" + $$.label + ");\n";
+							} else {
+								$$.traducao = $3.traducao + traducaoCast + '\t' + $$.label + " = " + temporario + '(' + traducao + ");\n";
+							}
 						} else {
-							$$.traducao = $3.traducao + traducaoCast + '\t' + $$.label + " = " + temporario + '(' + traducao + ");\n";
+							$$.traducao = $3.traducao + traducaoCast + '\t' + temporario + '(' + traducao + ");\n";
 						}
 						parametrosAuxiliar.clear();
 					} else {

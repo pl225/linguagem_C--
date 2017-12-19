@@ -88,7 +88,8 @@ extern int yydebug;
     TK_SCAN = 298,
     TK_TIPO_FUNCAO = 299,
     TK_RETORNA = 300,
-    TK_CAST = 301
+    TK_TIPO_VOID = 301,
+    TK_CAST = 302
   };
 #endif
 /* Tokens.  */
@@ -135,7 +136,8 @@ extern int yydebug;
 #define TK_SCAN 298
 #define TK_TIPO_FUNCAO 299
 #define TK_RETORNA 300
-#define TK_CAST 301
+#define TK_TIPO_VOID 301
+#define TK_CAST 302
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

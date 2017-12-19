@@ -151,6 +151,8 @@ Slice ".."
 
 {Caracteres} {yylval.traducao = yytext; yylval.tipo = CHARS; return TK_TIPO_STRING; }
 
+{Vazio} {yylval.traducao = yytext; yylval.tipo = VOID; return TK_TIPO_VOID; }
+
 {INT}   {yylval.traducao = yytext; yylval.tipo = INT; return TK_NUM; }
 
 {STRING} { yylval.traducao = yytext; yylval.tipo = CHARS; return TK_STRING; }
